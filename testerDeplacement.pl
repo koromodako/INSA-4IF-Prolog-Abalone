@@ -17,14 +17,16 @@ caseContient(Board, Ligne, Col, Valeur) :-
 	nth1(I, BoardList, Valeur).
 
 deplacement(Board, Ligne, Col, LigneDest, ColDest) :- 
-	Ligne >= 0, Col >= 0, LigneDest >= 0, ColDest >= 0,
-	Ligne =< 9, Col =< 9, LigneDest =< 9, ColDest =< 9,
+	between(0, 9, Ligne), between(0, 9, Col),
+	between(0, 9, LigneDest), between(0, 9, ColDest),
+	SommeOrigine is Ligne + Col, SommeDest is LigneDest + ColDest,
+	SommeOrigine \== SommeDest, 
 	not(caseContient(Board, LigneDest, ColDest, -1)). % Vérifie si la case de destination existe
 
 
 play(Result) :-
 	init(Board),
-	deplacement(Board, 1, 5, 1, 6),
+	deplacement(Board, 2, 3, 1, 4),
 	Result is 0.
 	
 
