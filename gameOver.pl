@@ -72,24 +72,24 @@ isHoriMovePos(Xfrom, Yfrom, Xto, Yto) :- % horizontal mov pos
 isHoriMoveNeg(Xfrom, Yfrom, Xto, Yto) :- % horizontal mov neg 
   Xto = Xfrom - 1.
   
-moveBalls(OldBoard, Xfrom, Yfrom, Xto, Yto, NewBoard) :- % Diag move pos or neg
-	isDiagMovePos(Xfrom, Yfrom, Xto, Yto),
-	.
-moveBalls(OldBoard, Xfrom, Yfrom, Xto, Yto, NewBoard) :- % Diag move pos or neg
-	isDiagMoveNeg(Xfrom, Yfrom, Xto, Yto),
-	.	
-moveBalls(OldBoard, Xfrom, Yfrom, Xto, Yto, NewBoard) :- 
-	isVertMovePos(Xfrom, Yfrom, Xto, Yto),
-	.	
-moveBalls(OldBoard, Xfrom, Yfrom, Xto, Yto, NewBoard) :- 
-	isVertMoveNeg(Xfrom, Yfrom, Xto, Yto),
-	.	
-moveBalls(OldBoard, Xfrom, Yfrom, Xto, Yto, NewBoard) :- 
-	isHoriMovePos(Xfrom, Yfrom, Xto, Yto),
-	.	
-moveBalls(OldBoard, Xfrom, Yfrom, Xto, Yto, NewBoard) :- 
-	isHoriMoveNeg(Xfrom, Yfrom, Xto, Yto),
-	.	
+moveBalls(OldBoard, Xf, Yfrom, Xt, Yt, NewBoard) :- % Diag move pos
+	isDiagMovePos(Xf, Yf, Xt, Yt),
+	OldBoard = NewBoard.
+moveBalls(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % Diag move neg
+	isDiagMoveNeg(Xf, Yf, Xt, Yt),
+	OldBoard = NewBoard.	
+moveBalls(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % Vert move pos  
+	isVertMovePos(Xf, Yf, Xt, Yt),
+	OldBoard = NewBoard.	
+moveBalls(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % Vert move neg
+	isVertMoveNeg(Xf, Yf, Xt, Yt),
+	OldBoard = NewBoard.	
+moveBalls(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % Hori move pos
+	isHoriMovePos(Xf, Yf, Xt, Yt),
+	OldBoard = NewBoard.	
+moveBalls(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % Hori move neg
+	isHoriMoveNeg(Xf, Yf, Xt, Yt),
+	OldBoard = NewBoard.	
 % -------------------------------------------------------------- %
 initMoveBallsUnitTest(
 [
@@ -107,5 +107,5 @@ initMoveBallsUnitTest(
 % -------------------------------------------------------------- %
 moveBallsUnitTest(Joueur) :- 
 	initMoveBallsUnitTest(Board),
-	moveBalls(Board, , , , , NewBoard).
+	moveBalls(Board, Xf, Yf, Xt, Yt, NewBoard).
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
