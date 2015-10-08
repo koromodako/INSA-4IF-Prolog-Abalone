@@ -1,4 +1,19 @@
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                       Base de faits 
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+init(
+[
+[1,1,0,0,0,-1,-1,-1,-1],
+[1,1,0,0,0,0,-1,-1,-1],
+[1,1,1,0,0,0,0,-1,-1],
+[1,1,1,0,0,0,0,2,-1],
+[1,1,1,0,0,0,2,2,2],
+[-1,1,0,0,0,0,2,2,2],
+[-1,-1,0,0,0,0,2,2,2],
+[-1,-1,-1,0,0,0,0,2,2],
+[-1,-1,-1,-1,0,0,0,2,2]
+]).
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                       Fonctions générales 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %           Compte le nombre d'éléments dans une liste
@@ -39,10 +54,44 @@ gameOverUnitTest(Joueur) :-
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-%
-% Base de faits
-%
-init(
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                 Move balls
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+isDiagMovePos(Xfrom, Yfrom, Xto, Yto) :- % Diag mov pos
+  Xto = Xfrom + 1, 
+  Yto = Yfrom + 1.
+isDiagMoveNeg(Xfrom, Yfrom, Xto, Yto) :- % Diag mov neg
+  Xto = Xfrom - 1, 
+  Yto = Yfrom - 1.
+isVertMovePos(Xfrom, Yfrom, Xto, Yto) :- % vert mov pos 
+  Yto = Yfrom + 1.
+isVertMoveNeg(Xfrom, Yfrom, Xto, Yto) :- % vert mov neg 
+  Yto = Yfrom - 1.
+isHoriMovePos(Xfrom, Yfrom, Xto, Yto) :- % horizontal mov pos 
+  Xto = Xfrom + 1.
+isHoriMoveNeg(Xfrom, Yfrom, Xto, Yto) :- % horizontal mov neg 
+  Xto = Xfrom - 1.
+  
+moveBalls(OldBoard, Xf, Yfrom, Xt, Yt, NewBoard) :- % Diag move pos
+	isDiagMovePos(Xf, Yf, Xt, Yt),
+	OldBoard = NewBoard.
+moveBalls(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % Diag move neg
+	isDiagMoveNeg(Xf, Yf, Xt, Yt),
+	OldBoard = NewBoard.	
+moveBalls(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % Vert move pos  
+	isVertMovePos(Xf, Yf, Xt, Yt),
+	OldBoard = NewBoard.	
+moveBalls(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % Vert move neg
+	isVertMoveNeg(Xf, Yf, Xt, Yt),
+	OldBoard = NewBoard.	
+moveBalls(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % Hori move pos
+	isHoriMovePos(Xf, Yf, Xt, Yt),
+	OldBoard = NewBoard.	
+moveBalls(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % Hori move neg
+	isHoriMoveNeg(Xf, Yf, Xt, Yt),
+	OldBoard = NewBoard.	
+% -------------------------------------------------------------- %
+initMoveBallsUnitTest(
 [
 [1,1,0,0,0,-1,-1,-1,-1],
 [1,1,0,0,0,0,-1,-1,-1],
@@ -53,15 +102,10 @@ init(
 [-1,-1,0,0,0,0,2,2,2],
 [-1,-1,-1,0,0,0,0,2,2],
 [-1,-1,-1,-1,0,0,0,2,2]
-]).
-
-
-%
-% Boucle principale
-%
-play(Winner) :-
-	init(Board),
-	flatten(Board, InlineBoard),
-	count(1, InlineBoard, N1),
-	count(2, InlineBoard, N2),
-	Winner is N1 + N2.
+]
+).
+% -------------------------------------------------------------- %
+moveBallsUnitTest(Joueur) :- 
+	initMoveBallsUnitTest(Board),
+	moveBalls(Board, Xf, Yf, Xt, Yt, NewBoard).
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
