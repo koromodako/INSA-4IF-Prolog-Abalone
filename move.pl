@@ -50,22 +50,74 @@ append([H|T],L,[H|R]):-
 %
 reverse([],[]).
 reverse([X|Xs],YsX) :- reverse(Xs,Ys), append(Ys,[X],YsX).
+%
+% Remplace le I-eme element de la liste
+% index demarre a 0
+%
+replace([O|T], 0, X, [X|T], O).
+replace([H|T], I, X, [H|R], O):- 
+    I > -1, 
+    NI is I-1,
+    NI=I,
+    O=H, 
+    replace(T, NI, X, R, O), 
+    !.
+replace([H|T], I, X, [H|R], O):- 
+    I > -1, 
+    NI is I-1, 
+    replace(T, NI, X, R, O), 
+    !.
+replace(L, _, _, L, _).
 % 
-% Bouge les éléments de la ligne et réalise le 
-% padding avec un 0
+% Bouge les éléments de la ligne vers la droite
+% et réalise le padding avec un 0
 %
 shiftRight(L,R) :-
     L=[H|T],
     append(T,[0],R).
 %
-% Bouge les éléments de la ligne et réalise le 
-% padding avec un 0
+% Bouge les éléments de la ligne vers la gauche
+% et réalise le padding avec un 0
 % 
 shiftLeft(L, R) :- 
     reverse(L, RL),
     RL=[H|T],
     append(T,[0],RLS),
     reverse(RLS, R).
+%
+% Bouge les éléments de la colonne C vers le haut
+% et réalise le padding avec un 0
+%
+shiftUp(M, C, RM) :-
+    M=[R1,R2,R3,R4,R5,R6,R7,R8,R9],
+    replace(R9, C, 0, NR9, OE9),!,
+    replace(R8, C, OE9, NR8, OE8),!,
+    replace(R7, C, OE8, NR7, OE7),!,
+    replace(R6, C, OE7, NR6, OE6),!,
+    replace(R5, C, OE6, NR5, OE5),!,
+    replace(R4, C, OE5, NR4, OE4),!,
+    replace(R3, C, OE4, NR3, OE3),!,
+    replace(R2, C, OE3, NR2, OE2),!,
+    replace(R1, C, OE2, NR1, _),!,
+    RM=[NR1,NR2,NR3,NR4,NR5,NR6,NR7,NR8,NR9].
+
+%
+% Bouge les éléments de la colonne C vers le bas
+% et réalise le padding avec un 0
+%
+shiftDown(M, C, RM) :-
+    M=[R1,R2,R3,R4,R5,R6,R7,R8,R9],
+    replace(R1, C, 0, NR1, OE1),!,
+    replace(R2, C, OE1, NR2, OE2),!,
+    replace(R3, C, OE2, NR3, OE3),!,
+    replace(R4, C, OE3, NR4, OE4),!,
+    replace(R5, C, OE4, NR5, OE5),!,
+    replace(R6, C, OE5, NR6, OE6),!,
+    replace(R7, C, OE6, NR7, OE7),!,
+    replace(R8, C, OE7, NR8, OE8),!,
+    replace(R9, C, OE8, NR9, _),!,
+    RM=[NR1,NR2,NR3,NR4,NR5,NR6,NR7,NR8,NR9].
+
 %% -----------------------------------------------------------
 %% Les fonctions suivantes permettent de réaliser le mouvement
 %% -----------------------------------------------------------
