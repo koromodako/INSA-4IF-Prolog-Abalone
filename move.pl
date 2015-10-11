@@ -11,8 +11,8 @@
                  shiftUp/3,
                  shiftRight/2,
                  shiftDown/3,
-                 shiftDiagTTB/3,
-                 shiftDiagBTT/3]).
+                 shiftDiagTTB/4,
+                 shiftDiagBTT/4]).
 %% -----------------------------------------------------------------------------
 
 %% -----------------------------------------------------------
@@ -140,26 +140,129 @@ shiftDown(M, C, RM) :-
 % en bas a gauche au coin en haut a droite
 % NB : TTB <=> Top To Bottom 
 %
-shiftDiagTTB(M, D, RM) :-
+% On teste l'egalite avec =:=
+%
+shiftDiagTTB(M, S, D, RM) :-
     M=[R1,R2,R3,R4,R5,R6,R7,R8,R9],
-    C0 is D,
-    replace(R1, C0, 0, NR1, OE1),
-    C1 is C0+1,
-    replace(R2, C1, OE1, NR2, OE2),
-    C2 is C1+1,
-    replace(R3, C2, OE2, NR3, OE3),
-    C3 is C2+1,
-    replace(R4, C3, OE3, NR4, OE4),
-    C4 is C3+1,
-    replace(R5, C4, OE4, NR5, OE5),
-    C5 is C4+1,
-    replace(R6, C5, OE5, NR6, OE6),
-    C6 is C5+1,
-    replace(R7, C6, OE6, NR7, OE7),
-    C7 is C6+1,
-    replace(R8, C7, OE7, NR8, OE8),
-    C8 is C7+1,
-    replace(R9, C8, OE8, NR9, _),
+    C0 is D,!,
+    (
+      ( C0 >= S,  % si compteur >= start,
+        replace(R1, C0, 0, NR1, OE1),!, % On bouge
+        (
+          (OE1=:=0, EndReached=1) % Si on a enlevé un 0, alors on a fini
+          ;
+          (EndReached=0) % Sinon on a pas fini
+        )
+      ) 
+      ;
+      (NR1=R1, OE1=0, EndReached=0) % sinon garde la meme ligne et place 0 dans l'element enleve
+    ),
+    C1 is C0+1,!, % On incrémente
+    (
+      (EndReached=:=1, NR2=R2) % Si on a fini on garde la meme ligne
+      ;
+      (C1 >= S, replace(R2, C1, OE1, NR2, OE2),!,
+        (
+          (OE2=:=0, EndReached=1)
+          ;
+          (EndReached=0)
+        )
+      )
+      ;
+      (NR2=R2, OE2=0, EndReached=0)
+    ),
+    C2 is C1+1,!,
+    (
+      (EndReached=:=1, NR3=R3)
+      ;
+      (C2 >= S, replace(R3, C2, OE2, NR3, OE3),!,
+        (
+          (OE3=:=0, EndReached=1)
+          ;
+          (EndReached=0)
+        )
+      )
+      ;
+      (NR3=R3, OE3=0, EndReached=0)
+    ),
+    C3 is C2+1,!,
+    (
+      (EndReached=:=1, NR4=R4)
+      ;
+      (C3 >= S, replace(R4, C3, OE3, NR4, OE4),!,
+        (
+          (OE4=:=0, EndReached=1)
+          ;
+          (EndReached=0)
+        )
+      )
+      ;
+      (NR4=R4, OE4=0, EndReached=0)
+    ),
+    C4 is C3+1,!,
+    (
+      (EndReached=:=1, NR5=R5)
+      ;
+      (C4 >= S, replace(R5, C4, OE4, NR5, OE5),!,
+        (
+          (OE5=:=0, EndReached=1)
+          ;
+          (EndReached=0)
+        )
+      )
+      ;
+      (NR5=R5, OE5=0, EndReached=0)
+    ),
+    C5 is C4+1,!,
+    (
+      (EndReached=:=1, NR6=R6)
+      ;
+      (C5 >= S, replace(R6, C5, OE5, NR6, OE6),!,
+        (
+          (OE6=:=0, EndReached=1)
+          ;
+          (EndReached=0)
+        )
+      )
+      ;
+      (NR6=R6, OE6=0, EndReached=0)
+    ),
+    C6 is C5+1,!,
+    (
+      (EndReached=:=1, NR7=R7)
+      ;
+      (C6 >= S, replace(R7, C6, OE6, NR7, OE7),!,
+        (
+          (OE7=:=0, EndReached=1)
+          ;
+          (EndReached=0)
+        )
+      )
+      ;
+      (NR7=R7, OE7=0, EndReached=0)
+    ),
+    C7 is C6+1,!,
+    (
+      (EndReached=:=1, NR8=R8)
+      ;
+      (C7 >= S, replace(R8, C7, OE7, NR8, OE8),!,
+        (
+          (OE8=:=0, EndReached=1)
+          ;
+          (EndReached=0)
+        )
+      )
+      ;
+      (NR8=R8, OE8=0, EndReached=0)
+    ),
+    C8 is C7+1,!,
+    (
+      (EndReached=:=1, NR9=R9)
+      ;
+      (C8 >= S, replace(R9, C8, OE8, NR9, _))
+      ;
+      (NR9=R9)
+    ),
     RM=[NR1,NR2,NR3,NR4,NR5,NR6,NR7,NR8,NR9].
     
 %
@@ -170,26 +273,126 @@ shiftDiagTTB(M, D, RM) :-
 % en bas a gauche au coin en haut a droite
 % NB : BTT <=> Bottom To Top 
 %
-shiftDiagBTT(M, D, RM) :-
+shiftDiagBTT(M, S, D, RM) :-
     M=[R1,R2,R3,R4,R5,R6,R7,R8,R9],
     C0 is 8+D,
-    replace(R9, C0, 0, NR9, OE9),
+    (
+      ( C0 =< S, replace(R9, C0, 0, NR9, OE9),!,
+        (
+          (OE9=:=0, EndReached=1)
+          ;
+          (EndReached=0)
+        )
+      )
+      ;
+      (NR9=R9, OE9=0, EndReached=0)
+    ),
     C1 is C0-1,
-    replace(R8, C1, OE9, NR8, OE8),
+    (
+      (EndReached=:=1, NR8=R8)
+      ;
+      ( C1 =< S, replace(R8, C1, OE9, NR8, OE8),!,
+        (
+          (OE8=:=0, EndReached=1)
+          ;
+          (EndReached=0)
+        )
+      )
+      ;
+      (NR8=R8, OE8=0, EndReached=0)
+    ),
     C2 is C1-1,
-    replace(R7, C2, OE8, NR7, OE7),
+    (
+      (EndReached=:=1, NR7=R7)
+      ;
+      ( C2 =< S, replace(R7, C2, OE8, NR7, OE7),!,
+        (
+          (OE7=:=0, EndReached=1)
+          ;
+          (EndReached=0)
+        )
+      )
+      ;
+      (NR7=R7, OE7=0, EndReached=0)
+    ),
     C3 is C2-1,
-    replace(R6, C3, OE7, NR6, OE6),
+    (
+      (EndReached=:=1, NR6=R6)
+      ;
+      ( C3 =< S, replace(R6, C3, OE7, NR6, OE6),!,
+        (
+          (OE6=:=0, EndReached=1)
+          ;
+          (EndReached=0)
+        )
+      )
+      ;
+      (NR6=R6, OE6=0, EndReached=0)
+    ),
     C4 is C3-1,
-    replace(R5, C4, OE6, NR5, OE5),
+    (
+      (EndReached=:=1, NR5=R5)
+      ;
+      ( C4 =< S, replace(R5, C4, OE6, NR5, OE5),!,
+        (
+          (OE5=:=0, EndReached=1)
+          ;
+          (EndReached=0)
+        )
+      )
+      ;
+      (NR5=R5, OE5=0, EndReached=0)
+    ),
     C5 is C4-1,
-    replace(R4, C5, OE5, NR4, OE4),
+    (
+      (EndReached=:=1, NR4=R4)
+      ;
+      ( C5 =< S, replace(R4, C5, OE5, NR4, OE4),!,
+        (
+          (OE4=:=0, EndReached=1)
+          ;
+          (EndReached=0)
+        )
+      )
+      ;
+      (NR4=R4, OE4=0, EndReached=0)
+    ),
     C6 is C5-1,
-    replace(R3, C6, OE4, NR3, OE3),
+    (
+      (EndReached=:=1, NR3=R3)
+      ;
+      ( C6 =< S, replace(R3, C6, OE4, NR3, OE3),!,
+        (
+          (OE3=:=0, EndReached=1)
+          ;
+          (EndReached=0)
+        )
+      )
+      ;
+      (NR3=R3, OE3=0, EndReached=0)
+    ),
     C7 is C6-1,
-    replace(R2, C7, OE3, NR2, OE2),
+    (
+      (EndReached=:=1, NR2=R2)
+      ;
+      ( C7 =< S, replace(R2, C7, OE3, NR2, OE2),!,
+        (
+          (OE2=:=0, EndReached=1)
+          ;
+          (EndReached=0)
+        )
+      )
+      ;
+      (NR2=R2, OE2=0, EndReached=0)
+    ),
     C8 is C7-1,
-    replace(R1, C8, OE2, NR1, _),
+    (
+      (EndReached=:=1, NR1=R1)
+      ;
+      (C8 =< S, replace(R1, C8, OE2, NR1, _))
+      ;
+      (NR1=R1)
+    ),
     RM=[NR1,NR2,NR3,NR4,NR5,NR6,NR7,NR8,NR9].
 
 %
@@ -214,7 +417,8 @@ moveMarbles(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % Diag move pos
         ;
         (Xf<Yf, D is Yf-1) % On est sur une diagonale du triangle sup.
     ),
-    shiftDiagTTB(OldBoard, D, TmpBoard),
+    S is Yf-1,
+    shiftDiagTTB(OldBoard, S, D, TmpBoard),
     rebuildEmptyCells(TmpBoard, NewBoard).
 %
 moveMarbles(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % Diag move neg
@@ -226,7 +430,8 @@ moveMarbles(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % Diag move neg
         ;
         (Xf<Yf, D is Yf-1) % On est sur une diagonale du triangle sup.
     ),
-    shiftDiagBTT(OldBoard, D, TmpBoard),
+    S is Yf-1,
+    shiftDiagBTT(OldBoard, S, D, TmpBoard),
     rebuildEmptyCells(TmpBoard, NewBoard).
 %
 moveMarbles(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % Vert move pos  
