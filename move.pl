@@ -69,20 +69,19 @@ replace([H|T], I, X, [H|R], O):-
     !.
 replace(L, _, _, L, _).
 % 
-% Bouge les éléments de la ligne vers la droite
-% et réalise le padding avec un 0
-%
-shiftRight(L,R) :-
-    L=[H|T],
-    append(T,[0],R).
-%
 % Bouge les éléments de la ligne vers la gauche
 % et réalise le padding avec un 0
+%
+shiftLeft(L,R) :-
+    L=[_|T],
+    append(T,[0],R).
+%
+% Bouge les éléments de la ligne vers la droite
+% et réalise le padding avec un 0
 % 
-shiftLeft(L, R) :- 
+shiftRight(L, R) :- 
     reverse(L, RL),
-    RL=[H|T],
-    append(T,[0],RLS),
+    shiftLeft(RL, RLS),
     reverse(RLS, R).
 %
 % Bouge les éléments de la colonne C vers le haut
