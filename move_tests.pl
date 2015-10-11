@@ -30,11 +30,13 @@ runTests(Result) :-
     % Test : Affiche la grille de jeu
     print(' ----------- Tests -----------'),
     (
-        (   %print(' ------- shiftUp colonne 2'),
-            %move:shiftUp(Board, 2, NB1),
+        (   print(' ------- shiftUp colonne 2'),
+            move:shiftUp(Board, 7, 2, NB1),
+            print(NB1),
             %display:displayBoard(NB1),
-            %print(' ------- shiftDown colonne 2'),
-            %move:shiftDown(Board, 2, NB2),
+            print(' ------- shiftDown colonne 2'),
+            move:shiftDown(Board, 2, 2, NB2),
+            print(NB2),
             %display:displayBoard(NB2),
             print(' ------- shiftDiagTTB 0-1'),
             move:shiftDiagTTB(Board, 1, 0, NB3),
