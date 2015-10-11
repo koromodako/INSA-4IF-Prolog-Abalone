@@ -25,31 +25,31 @@ initTestBoard(
 
 runTests(Result) :-
     initTestBoard(Board),
-    print('Initial board'),
+    print('Initial board'),nl,
     display:displayMatrix(Board),
     % Test : Affiche la grille de jeu
-    print(' ----------- Tests -----------'),
+    print(' ----------- Tests -----------'),nl,
     (
-        (   print(' ------- shiftUp colonne 2'),
+        (   print(' ------- shiftUp colonne 2'),nl,nl,
             move:shiftUp(Board, 7, 2, NB1),
-            print(NB1),
-            display:displayMatrix(NB1),
-            print(' ------- shiftDown colonne 2'),
+            print(NB1),nl,nl,
+            display:displayBoard(NB1),
+            print(' ------- shiftDown colonne 2'),nl,nl,
             move:shiftDown(Board, 2, 2, NB2),
-            print(NB2),
+            print(NB2),nl,nl,
             display:displayMatrix(NB2),
-            print(' ------- shiftDiagTTB 0-1'),
+            print(' ------- shiftDiagTTB 0-1'),nl,nl,
             move:shiftDiagTTB(Board, 1, 0, NB3),
-            print(NB3),
+            print(NB3),nl,nl,
             display:displayMatrix(NB3),
-            print(' ------- shiftDiagBTT 0-1'),
+            print(' ------- shiftDiagBTT 0-1'),nl,nl,
             move:shiftDiagBTT(Board, 1, 0, NB4),
-            print(NB4),
+            print(NB4),nl,nl,
             display:displayMatrix(NB4),
-            print('SUCCESS\n'), 
+            print('SUCCESS\n'),nl,
             !)
         ;
-        (print('...FAIL\n'))
+        (print('...FAIL\n'),nl)
     ),
     Result is 0.
     
