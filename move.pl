@@ -1,8 +1,18 @@
 %% -----------------------------------------------------------------------------
 %% Module contenant les prédicats permettant de générer un nouveau board après un mouvement
-:- module(move, [isDiagMovePos/4, isDiagMoveNeg/4, isVertMovePos/4, 
-                 isVertMoveNeg/4, isHoriMovePos/4, isHoriMoveNeg/4,
-                 moveMarbles/6]).
+:- module(move, [isDiagMovePos/4, 
+                 isDiagMoveNeg/4, 
+                 isVertMoveUp/4, 
+                 isVertMoveDown/4, 
+                 isHoriMoveRight/4, 
+                 isHoriMoveLeft/4,
+                 moveMarbles/6, 
+                 shiftLeft/2, 
+                 shiftUp/3,
+                 shiftRight/2,
+                 shiftDown/3,
+                 shiftDiagTTB/3,
+                 shiftDiagBTT/3]).
 %% -----------------------------------------------------------------------------
 
 %% -----------------------------------------------------------
@@ -16,16 +26,16 @@ isDiagMoveNeg(Xfrom, Yfrom, Xto, Yto) :- % Diag mov neg
   Xto = Xfrom - 1, 
   Yto = Yfrom - 1.
 %
-isVertMovePos(Xfrom, Yfrom, Xto, Yto) :- % vert mov pos 
+isVertMoveDown(_, Yfrom, _, Yto) :- % vert mov pos 
   Yto = Yfrom + 1.
 %
-isVertMoveNeg(Xfrom, Yfrom, Xto, Yto) :- % vert mov neg 
+isVertMoveUp(_, Yfrom, _, Yto) :- % vert mov neg 
   Yto = Yfrom - 1.
 %
-isHoriMovePos(Xfrom, Yfrom, Xto, Yto) :- % horizontal mov pos 
+isHoriMoveRight(Xfrom, _, Xto, _) :- % horizontal mov pos 
   Xto = Xfrom + 1.
 %
-isHoriMoveNeg(Xfrom, Yfrom, Xto, Yto) :- % horizontal mov neg 
+isHoriMoveLeft(Xfrom, _, Xto, _) :- % horizontal mov neg 
   Xto = Xfrom - 1.
 %
 isForbiddenMove(Xfrom, Yfrom, Xto, Yto) :- % mouvement interdit (diagonale inverse)
@@ -53,6 +63,11 @@ reverse([X|Xs],YsX) :- reverse(Xs,Ys), append(Ys,[X],YsX).
 %
 % Remplace le I-eme element de la liste
 % index demarre a 0
+% Usage :
+%     replace([a,b,c], 1, x, NewList, OldElem).
+%     NewList = [a,x,c]
+%     OldElem = b
+% Note : si l'index est "out of bounds" renvoie la liste inchangée 
 %
 replace([O|T], 0, X, [X|T], O).
 replace([H|T], I, X, [H|R], O):- 
@@ -177,27 +192,63 @@ shiftDiagBTT(M, D, RM) :-
     replace(R1, C8, OE2, NR1, _),
     RM=[NR1,NR2,NR3,NR4,NR5,NR6,NR7,NR8,NR9].
 
+%
+% Remet des cases vides aux bons endroits
+%
+rebuildEmptyCells(OldBoard, NewBoard) :-
+  OldBoard = NewBoard. % TODO : implementer ici
+
 %% -----------------------------------------------------------
 %% Les fonctions suivantes permettent de réaliser le mouvement
 %% -----------------------------------------------------------
-moveMarbles(OldBoard, Xf; Yf, Xt, Yt, NewBoard) :- % mouvement interdit, le board n'est pas modifié
+moveMarbles(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % mouvement interdit, le board n'est pas modifié
     isForbiddenMove(Xf, Yf, Xt, Yt),
     OldBoard = NewBoard.
 %    
 moveMarbles(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % Diag move pos
-    isDiagMovePos(Xf, Yf, Xt, Yt).
+    isDiagMovePos(Xf, Yf, Xt, Yt),
+    (
+        (Xf=Yf, D=0) % On est sur la diagonale principale
+        ;
+        (Xf>Yf, D is Xf-1) % On est sur une diagonale du triangle inf.
+        ;
+        (Xf<Yf, D is Yf-1) % On est sur une diagonale du triangle sup.
+    ),
+    shiftDiagTTB(OldBoard, D, TmpBoard),
+    rebuildEmptyCells(TmpBoard, NewBoard).
 %
 moveMarbles(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % Diag move neg
-    isDiagMoveNeg(Xf, Yf, Xt, Yt).   
+    isDiagMoveNeg(Xf, Yf, Xt, Yt),
+    (
+        (Xf=Yf, D=0) % On est sur la diagonale principale
+        ;
+        (Xf>Yf, D is Xf-1) % On est sur une diagonale du triangle inf.
+        ;
+        (Xf<Yf, D is Yf-1) % On est sur une diagonale du triangle sup.
+    ),
+    shiftDiagBTT(OldBoard, D, TmpBoard),
+    rebuildEmptyCells(TmpBoard, NewBoard).
 %
 moveMarbles(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % Vert move pos  
-    isVertMovePos(Xf, Yf, Xt, Yt).    
+    isVertMoveDown(Xf, Yf, Xt, Yt),
+    C is Xf-1,
+    shiftDown(OldBoard, C, TmpBoard),
+    rebuildEmptyCells(TmpBoard, NewBoard).
 %
 moveMarbles(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % Vert move neg
-    isVertMoveNeg(Xf, Yf, Xt, Yt).    
+    isVertMoveUp(Xf, Yf, Xt, Yt),
+    C is Xf-1,
+    shiftUp(OldBoard, C, TmpBoard),
+    rebuildEmptyCells(TmpBoard, NewBoard).
 %
 moveMarbles(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % Hori move pos
-    isHoriMovePos(Xf, Yf, Xt, Yt).    
+    isHoriMoveRight(Xf, Yf, Xt, Yt),
+    %R is Yf-1,
+    %shiftRight(OldBoard, R, TmpBoard),
+    rebuildEmptyCells(TmpBoard, NewBoard).
 %
 moveMarbles(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % Hori move neg
-    isHoriMoveNeg(Xf, Yf, Xt, Yt).
+    isHoriMoveLeft(Xf, Yf, Xt, Yt),
+    %R is Yf-1,
+    %shiftLeft(OldBoard, R, TmpBoard),
+    rebuildEmptyCells(TmpBoard, NewBoard). 
