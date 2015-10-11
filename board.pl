@@ -1,6 +1,6 @@
 %% -----------------------------------------------------------------------------
 %% Module contenant les prédicats utilitaires concernant le plateau de jeu
-:- module(board, [squareContains/4, isOut/3, count/3]).
+:- module(board, [squareContains/4, isOut/3, count/3, initBoard/1]).
 %% -----------------------------------------------------------------------------
 
 %% Vérifie si le plateau "Board" contient la valeur "Value" à l'emplacement
@@ -34,3 +34,17 @@ count(X, [X|T], N) :- /* if X is in the head of the list */
 count(X, [Y|T], N) :- 
     X \= Y,          /* if X is not in the head */
     count(X, T, N).  /* just count the rest */
+    
+%% Initiale le plateau
+initBoard(
+[
+[1,1,0,0,0,-1,-1,-1,-1],
+[1,1,0,0,0,0,-1,-1,-1],
+[1,1,1,0,0,0,0,-1,-1],
+[1,1,1,0,0,0,0,2,-1],
+[1,1,1,0,0,0,2,2,2],
+[-1,1,0,0,0,0,2,2,2],
+[-1,-1,0,0,0,0,2,2,2],
+[-1,-1,-1,0,0,0,0,2,2],
+[-1,-1,-1,-1,0,0,0,2,2]
+]).

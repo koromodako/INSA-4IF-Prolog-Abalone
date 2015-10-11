@@ -12,7 +12,8 @@ checkStrength(Strength) :-
 	Strength =< 3. 
 
 %% Vérifie que la direction du déplacement est autorisée.
-%% Seule la diagonale (x, y) -> (x+1, y+1) est interdite.
+%% Seule les diagonales (x, y) -> (x+1, y-1) et (x-1, y+1) 
+%% sont interdites.
 %% @param Line La ligne (basée 1) de la case de départ
 %% @param Col La colonne (basée 1) de la case de départ
 %% @param LineDest La ligne (basée 1) de la case d'arrivée
@@ -94,7 +95,7 @@ isMovableInsideBoard(Board, InitialSquareContent, PrevSquareContent, LineDest, C
 		                        
 		    Strength > 0
 		)
-).
+	).
 
 %% Teste si un déplacement est autorisé sur le plateau "Board".
 %% @param Board Plateau de jeu
