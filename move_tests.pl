@@ -3,6 +3,7 @@
 :- module(moveTests, []).
 %% -----------------------------------------------------------------------------
 
+:- use_module('display.pl').
 :- use_module('move.pl').
 
 %% Initialisation du plateau de test -------------------------------------------
@@ -24,19 +25,24 @@ initTestBoard(
 
 runTests(Result) :-
     initTestBoard(Board),
+    print('Initial board'),
+    display:displayBoard(Board),
     % Test : Affiche la grille de jeu
     print('Test move:1.............'),
     (
         (   move:shiftUp(Board, 2, NB1),
-            print(NB1),
+            display:displayBoard(NB1),
             move:shiftDown(Board, 2, NB2),
-            print(NB2),
+            display:displayBoard(NB2),
+            move:shiftDiagTTB(Board, 0, NB3),
+            display:displayBoard(NB3),
+            move:shiftDiagBTT(Board, 0, NB4),
+            display:displayBoard(NB4),
             print('SUCCESS\n'), 
             !)
         ;
         (print('...FAIL\n'))
     ),
-
     Result is 0.
     
 
