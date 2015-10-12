@@ -12,7 +12,9 @@
                  shiftUp/4,
                  shiftDown/4,
                  shiftDiagTTB/4,
-                 shiftDiagBTT/4]).
+                 shiftDiagBTT/4,
+                 changeLineUp/8,
+                 changeLineDown/8]).
 %% -----------------------------------------------------------------------------
 
 %% -----------------------------------------------------------
@@ -98,143 +100,79 @@ shiftRight(L, R) :-
     reverse(L, RL),
     shiftLeft(RL, RLS),
     reverse(RLS, R).
+
+%
+% Factorisation du code de shiftUp et diag
+%
+changeLineUp(StartIndex, Limit, ColumnIndex, Row, NewRow, OldElement, NewOldElement, EndReached) :-
+  (
+      (EndReached=:=1, NewRow=Row) % Si on a fini on garde la meme ligne
+      ;
+      ( StartIndex >= Limit, 
+        replace(Row, ColumnIndex, OldElement, NewRow, NewOldElement),!,
+        (
+          (NewOldElement=:=0, EndReached=1)
+          ;
+          (EndReached=0)
+          )
+        )
+      ;
+      (NewRow=Row, NewOldElement=0, EndReached=0)
+  ).
+%
+% Factorisation du code de shiftDown
+%
+changeLineDown(StartIndex, Limit, ColumnIndex, Row, NewRow, OldElement, NewOldElement, EndReached) :-
+  (
+    (EndReached=:=1, NewRow=Row) % Si on a fini on garde la meme ligne
+    ;
+    ( StartIndex =< Limit, 
+      replace(Row, ColumnIndex, OldElement, NewRow, NewOldElement),!,
+      (
+        (NewOldElement=:=0, EndReached=1)
+        ;
+        (EndReached=0)
+      )
+    )
+    ;
+    (NewRow=Row, NewOldElement=0, EndReached=0)
+  ).
+
 %
 % Bouge les éléments de la colonne C vers le haut
 % et réalise le padding avec un 0
 %
-shiftUp(M, S, C, RM) :-
-    M=[R1,R2,R3,R4,R5,R6,R7,R8,R9],
-    (
-      (S >= 9 , replace(R9, C, 0, NR9, OE9),!,((OE9=:=0, EndReached=1);(EndReached=0)))
-      ;
-      (NR9=R9, OE9=0, EndReached=0)
-    ),
-    (
-      (EndReached=:=1, NR8=R8) % Si on a fini on garde la meme ligne
-      ;
-      (S >= 8 , replace(R8, C, OE9, NR8, OE8),!,((OE8=:=0, EndReached=1);(EndReached=0)))
-      ;
-      (NR8=R8, OE8=0, EndReached=0)
-    ),
-    (
-      (EndReached=:=1, NR7=R7) % Si on a fini on garde la meme ligne
-      ;
-      (S >= 7 , replace(R7, C, OE8, NR7, OE7),!,((OE7=:=0, EndReached=1);(EndReached=0)))
-      ;
-      (NR7=R7, OE7=0, EndReached=0)
-    ),
-    (
-      (EndReached=:=1, NR6=R6) % Si on a fini on garde la meme ligne
-      ;
-      (S >= 6 , replace(R6, C, OE7, NR6, OE6),!,((OE6=:=0, EndReached=1);(EndReached=0)))
-      ;
-      (NR6=R6, OE6=0, EndReached=0)
-    ),
-    (
-      (EndReached=:=1, NR5=R5) % Si on a fini on garde la meme ligne
-      ;
-      (S >= 5 , replace(R5, C, OE6, NR5, OE5),!,((OE5=:=0, EndReached=1);(EndReached=0)))
-      ;
-      (NR5=R5, OE5=0, EndReached=0)
-    ),
-    (
-      (EndReached=:=1, NR4=R4) % Si on a fini on garde la meme ligne
-      ;
-      (S >= 4 , replace(R4, C, OE5, NR4, OE4),!,((OE4=:=0, EndReached=1);(EndReached=0)))
-      ;
-      (NR4=R4, OE4=0, EndReached=0)
-    ),
-    (
-      (EndReached=:=1, NR3=R3) % Si on a fini on garde la meme ligne
-      ;
-      (S >= 3 , replace(R3, C, OE4, NR3, OE3),!,((OE3=:=0, EndReached=1);(EndReached=0)))
-      ;
-      (NR3=R3, OE3=0, EndReached=0)
-    ),
-    (
-      (EndReached=:=1, NR2=R2) % Si on a fini on garde la meme ligne
-      ;
-      (S >= 2 , replace(R2, C, OE3, NR2, OE2),!,((OE2=:=0, EndReached=1);(EndReached=0)))
-      ;
-      (NR2=R2, OE2=0, EndReached=0)
-    ),
-    (
-      (EndReached=:=1, NR1=R1) % Si on a fini on garde la meme ligne
-      ;
-      (S >= 1 , replace(R1, C, OE2, NR1, _))
-      ;
-      (NR1=R1, EndReached=0)
-    ),
-    RM=[NR1,NR2,NR3,NR4,NR5,NR6,NR7,NR8,NR9].
+shiftUp(Matrix, StartIndex, ColumnIndex, ResultMatrix) :-
+    Matrix=[R1,R2,R3,R4,R5,R6,R7,R8,R9], % Decoupage du board en lignes
+    EndReached=0, % Initialisation de EndReached
+    changeLineUp(StartIndex, 9, ColumnIndex, R9, NR9, 0, OE9, EndReached),!,
+    changeLineUp(StartIndex, 8, ColumnIndex, R8, NR8, OE9, OE8, EndReached),!,
+    changeLineUp(StartIndex, 7, ColumnIndex, R7, NR7, OE8, OE7, EndReached),!,
+    changeLineUp(StartIndex, 6, ColumnIndex, R6, NR6, OE7, OE6, EndReached),!,
+    changeLineUp(StartIndex, 5, ColumnIndex, R5, NR5, OE6, OE5, EndReached),!,
+    changeLineUp(StartIndex, 4, ColumnIndex, R4, NR4, OE5, OE4, EndReached),!,
+    changeLineUp(StartIndex, 3, ColumnIndex, R3, NR3, OE4, OE3, EndReached),!,
+    changeLineUp(StartIndex, 2, ColumnIndex, R2, NR2, OE3, OE2, EndReached),!,
+    changeLineUp(StartIndex, 1, ColumnIndex, R1, NR1, OE2, _, EndReached),!,
+    ResultMatrix=[NR1,NR2,NR3,NR4,NR5,NR6,NR7,NR8,NR9].
 
 %
 % Bouge les éléments de la colonne C vers le bas
 % et réalise le padding avec un 0
 %
-shiftDown(M, S, C, RM) :-
-    M=[R1,R2,R3,R4,R5,R6,R7,R8,R9],
-    (
-      (S =< 1 , replace(R1, C, 0, NR1, OE1),!,((OE1=:=0, EndReached=1);(EndReached=0)))
-      ;
-      (NR1=R1, OE1=0, EndReached=0)
-    ),
-    (
-      (EndReached=:=1, NR2=R2) % Si on a fini on garde la meme ligne
-      ;
-      (S =< 2 , replace(R2, C, OE1, NR2, OE2),!,((OE2=:=0, EndReached=1);(EndReached=0)))
-      ;
-      (NR2=R2, OE2=0, EndReached=0)
-    ),
-    (
-      (EndReached=:=1, NR3=R3) % Si on a fini on garde la meme ligne
-      ;
-      (S =< 3 , replace(R3, C, OE2, NR3, OE3),!,((OE3=:=0, EndReached=1);(EndReached=0)))
-      ;
-      (NR3=R3, OE3=0, EndReached=0)
-    ),
-    (
-      (EndReached=:=1, NR4=R4) % Si on a fini on garde la meme ligne
-      ;
-      (S =< 4 , replace(R4, C, OE3, NR4, OE4),!,((OE4=:=0, EndReached=1);(EndReached=0)))
-      ;
-      (NR4=R4, OE4=0, EndReached=0)
-    ),
-    (
-      (EndReached=:=1, NR5=R5) % Si on a fini on garde la meme ligne
-      ;
-      (S =< 5 , replace(R5, C, OE4, NR5, OE5),!,((OE5=:=0, EndReached=1);(EndReached=0)))
-      ;
-      (NR5=R5, OE5=0, EndReached=0)
-    ),
-    (
-      (EndReached=:=1, NR6=R6) % Si on a fini on garde la meme ligne
-      ;
-      (S =< 6 , replace(R6, C, OE5, NR6, OE6),!,((OE6=:=0, EndReached=1);(EndReached=0)))
-      ;
-      (NR6=R6, OE6=0, EndReached=0)
-    ),
-    (
-      (EndReached=:=1, NR7=R7) % Si on a fini on garde la meme ligne
-      ;
-      (S =< 7 , replace(R7, C, OE6, NR7, OE7),!,((OE7=:=0, EndReached=1);(EndReached=0)))
-      ;
-      (NR7=R7, OE7=0, EndReached=0)
-    ),
-    (
-      (EndReached=:=1, NR8=R8) % Si on a fini on garde la meme ligne
-      ;
-      (S =< 8 , replace(R8, C, OE7, NR8, OE8),!,((OE8=:=0, EndReached=1);(EndReached=0)))
-      ;
-      (NR8=R8, OE8=0, EndReached=0)
-    ),
-    (
-      (EndReached=:=1, NR9=R9) % Si on a fini on garde la meme ligne
-      ;
-      (S =< 9 , replace(R9, C, OE8, NR9, _))
-      ;
-      (NR9=R9, EndReached=0)
-    ),
-    RM=[NR1,NR2,NR3,NR4,NR5,NR6,NR7,NR8,NR9].
+shiftDown(Matrix, StartIndex, ColumnIndex, ResultMatrix) :-
+    Matrix=[R1,R2,R3,R4,R5,R6,R7,R8,R9],
+    EndReached=0,
+    changeLineDown(StartIndex, 1, ColumnIndex, R1, NR1, 0, OE1, EndReached),
+    changeLineDown(StartIndex, 2, ColumnIndex, R2, NR2, OE1, OE2, EndReached),
+    changeLineDown(StartIndex, 3, ColumnIndex, R3, NR3, OE2, OE3, EndReached),
+    changeLineDown(StartIndex, 4, ColumnIndex, R4, NR4, OE3, OE4, EndReached),
+    changeLineDown(StartIndex, 5, ColumnIndex, R5, NR5, OE4, OE5, EndReached),
+    changeLineDown(StartIndex, 6, ColumnIndex, R6, NR6, OE5, OE6, EndReached),
+    changeLineDown(StartIndex, 7, ColumnIndex, R7, NR7, OE6, OE7, EndReached),
+    changeLineDown(StartIndex, 8, ColumnIndex, R8, NR8, OE7, OE8, EndReached),
+    changeLineDown(StartIndex, 9, ColumnIndex, R9, NR9, OE8, _, EndReached),
+    ResultMatrix=[NR1,NR2,NR3,NR4,NR5,NR6,NR7,NR8,NR9].
 
 %
 % Bouge les éléments de la diagonale D
@@ -246,86 +184,28 @@ shiftDown(M, S, C, RM) :-
 %
 % On teste l'egalite avec =:=
 %
-shiftDiagTTB(M, S, D, RM) :-
-    M=[R1,R2,R3,R4,R5,R6,R7,R8,R9],
-    C0 is D,!,
-    (
-      ( C0 >= S,  % si compteur >= start,
-        replace(R1, C0, 0, NR1, OE1),!, % On bouge
-        (
-          (OE1=:=0, EndReached=1) % Si on a enlevé un 0, alors on a fini
-          ;
-          (EndReached=0) % Sinon on a pas fini
-        )
-      ) 
-      ;
-      (NR1=R1, OE1=0, EndReached=0) % sinon garde la meme ligne et place 0 dans l'element enleve
-    ),
-    C1 is C0+1,!, % On incrémente
-    (
-      (EndReached=:=1, NR2=R2) % Si on a fini on garde la meme ligne
-      ;
-      (C1 >= S, replace(R2, C1, OE1, NR2, OE2),!,((OE2=:=0, EndReached=1);(EndReached=0)))
-      ;
-      (NR2=R2, OE2=0, EndReached=0)
-    ),
-    C2 is C1+1,!,
-    (
-      (EndReached=:=1, NR3=R3)
-      ;
-      (C2 >= S, replace(R3, C2, OE2, NR3, OE3),!,((OE3=:=0, EndReached=1);(EndReached=0)))
-      ;
-      (NR3=R3, OE3=0, EndReached=0)
-    ),
-    C3 is C2+1,!,
-    (
-      (EndReached=:=1, NR4=R4)
-      ;
-      (C3 >= S, replace(R4, C3, OE3, NR4, OE4),!,((OE4=:=0, EndReached=1);(EndReached=0)))
-      ;
-      (NR4=R4, OE4=0, EndReached=0)
-    ),
-    C4 is C3+1,!,
-    (
-      (EndReached=:=1, NR5=R5)
-      ;
-      (C4 >= S, replace(R5, C4, OE4, NR5, OE5),!,((OE5=:=0, EndReached=1);(EndReached=0)))
-      ;
-      (NR5=R5, OE5=0, EndReached=0)
-    ),
-    C5 is C4+1,!,
-    (
-      (EndReached=:=1, NR6=R6)
-      ;
-      (C5 >= S, replace(R6, C5, OE5, NR6, OE6),!,((OE6=:=0, EndReached=1);(EndReached=0)))
-      ;
-      (NR6=R6, OE6=0, EndReached=0)
-    ),
-    C6 is C5+1,!,
-    (
-      (EndReached=:=1, NR7=R7)
-      ;
-      (C6 >= S, replace(R7, C6, OE6, NR7, OE7),!,((OE7=:=0, EndReached=1);(EndReached=0)))
-      ;
-      (NR7=R7, OE7=0, EndReached=0)
-    ),
-    C7 is C6+1,!,
-    (
-      (EndReached=:=1, NR8=R8)
-      ;
-      (C7 >= S, replace(R8, C7, OE7, NR8, OE8),!,((OE8=:=0, EndReached=1);(EndReached=0)))
-      ;
-      (NR8=R8, OE8=0, EndReached=0)
-    ),
-    C8 is C7+1,!,
-    (
-      (EndReached=:=1, NR9=R9)
-      ;
-      (C8 >= S, replace(R9, C8, OE8, NR9, _))
-      ;
-      (NR9=R9)
-    ),
-    RM=[NR1,NR2,NR3,NR4,NR5,NR6,NR7,NR8,NR9].
+shiftDiagTTB(Matrix, StartIndex, DiagNum, ResultMatrix) :-
+    Matrix=[R1,R2,R3,R4,R5,R6,R7,R8,R9],
+    EndReached=0,
+    C0 is DiagNum,
+    changeLineUp(C0, StartIndex, C0, R1, NR1, 0, OE1, EndReached),
+    C1 is C0+1,
+    changeLineUp(C1, StartIndex, C1, R2, NR2, OE1, OE2, EndReached),
+    C2 is C1+1,
+    changeLineUp(C2, StartIndex, C2, R3, NR3, OE2, OE3, EndReached),
+    C3 is C2+1,
+    changeLineUp(C3, StartIndex, C3, R4, NR4, OE3, OE4, EndReached),
+    C4 is C3+1,
+    changeLineUp(C4, StartIndex, C4, R5, NR5, OE4, OE5, EndReached),
+    C5 is C4+1,
+    changeLineUp(C5, StartIndex, C5, R6, NR6, OE5, OE6, EndReached),
+    C6 is C5+1,
+    changeLineUp(C6, StartIndex, C6, R7, NR7, OE6, OE7, EndReached),
+    C7 is C6+1,
+    changeLineUp(C7, StartIndex, C7, R8, NR8, OE7, OE8, EndReached),
+    C8 is C7+1,
+    changeLineUp(C8, StartIndex, C8, R9, NR9, OE8, _, EndReached),
+    ResultMatrix=[NR1,NR2,NR3,NR4,NR5,NR6,NR7,NR8,NR9].
     
 %
 % Bouge les éléments de la diagonale D
@@ -335,79 +215,28 @@ shiftDiagTTB(M, S, D, RM) :-
 % en bas a gauche au coin en haut a droite
 % NB : BTT <=> Bottom To Top 
 %
-shiftDiagBTT(M, S, D, RM) :-
-    M=[R1,R2,R3,R4,R5,R6,R7,R8,R9],
-    C0 is 8+D,
-    (
-      ( C0 =< S, replace(R9, C0, 0, NR9, OE9),!,((OE9=:=0, EndReached=1);(EndReached=0)) )
-      ;
-      ( NR9=R9, OE9=0, EndReached=0 )
-    ),
+shiftDiagBTT(Matrix, StartIndex, DiagNum, ResultMatrix) :-
+    Matrix=[R1,R2,R3,R4,R5,R6,R7,R8,R9],
+    EndReached=0,
+    C0 is 8+DiagNum,
+    changeLineDown(C0, StartIndex, C0, R9, NR9, 0, OE9, EndReached),
     C1 is C0-1,
-    (
-      ( EndReached=:=1, NR8=R8 )
-      ;
-      ( C1 =< S, replace(R8, C1, OE9, NR8, OE8),!,((OE8=:=0, EndReached=1);(EndReached=0)) )
-      ;
-      ( NR8=R8, OE8=0, EndReached=0 )
-    ),
+    changeLineDown(C1, StartIndex, C1, R8, NR8, OE9, OE8, EndReached),
     C2 is C1-1,
-    (
-      ( EndReached=:=1, NR7=R7 )
-      ;
-      ( C2 =< S, replace(R7, C2, OE8, NR7, OE7),!,((OE7=:=0, EndReached=1);(EndReached=0)) )
-      ;
-      ( NR7=R7, OE7=0, EndReached=0 )
-    ),
+    changeLineDown(C2, StartIndex, C2, R7, NR7, OE8, OE7, EndReached),
     C3 is C2-1,
-    (
-      ( EndReached=:=1, NR6=R6 )
-      ;
-      ( C3 =< S, replace(R6, C3, OE7, NR6, OE6),!,((OE6=:=0, EndReached=1);(EndReached=0)) )
-      ;
-      ( NR6=R6, OE6=0, EndReached=0 )
-    ),
+    changeLineDown(C3, StartIndex, C3, R6, NR6, OE7, OE6, EndReached),
     C4 is C3-1,
-    (
-      ( EndReached=:=1, NR5=R5 )
-      ;
-      ( C4 =< S, replace(R5, C4, OE6, NR5, OE5),!,((OE5=:=0, EndReached=1);(EndReached=0)) )
-      ;
-      ( NR5=R5, OE5=0, EndReached=0 )
-    ),
+    changeLineDown(C4, StartIndex, C4, R5, NR5, OE6, OE5, EndReached),
     C5 is C4-1,
-    (
-      ( EndReached=:=1, NR4=R4 )
-      ;
-      ( C5 =< S, replace(R4, C5, OE5, NR4, OE4),!,((OE4=:=0, EndReached=1);(EndReached=0)) )
-      ;
-      ( NR4=R4, OE4=0, EndReached=0 )
-    ),
+    changeLineDown(C5, StartIndex, C5, R4, NR4, OE5, OE4, EndReached),
     C6 is C5-1,
-    (
-      ( EndReached=:=1, NR3=R3 )
-      ;
-      ( C6 =< S, replace(R3, C6, OE4, NR3, OE3),!,((OE3=:=0, EndReached=1);(EndReached=0)) )
-      ;
-      ( NR3=R3, OE3=0, EndReached=0 )
-    ),
+    changeLineDown(C6, StartIndex, C6, R3, NR3, OE4, OE3, EndReached),
     C7 is C6-1,
-    (
-      ( EndReached=:=1, NR2=R2 )
-      ;
-      ( C7 =< S, replace(R2, C7, OE3, NR2, OE2),!,((OE2=:=0, EndReached=1);(EndReached=0)) )
-      ;
-      ( NR2=R2, OE2=0, EndReached=0 )
-    ),
+    changeLineDown(C7, StartIndex, C7, R2, NR2, OE3, OE2, EndReached),
     C8 is C7-1,
-    (
-      ( EndReached=:=1, NR1=R1 )
-      ;
-      ( C8 =< S, replace(R1, C8, OE2, NR1, _) )
-      ;
-      ( NR1=R1 )
-    ),
-    RM=[NR1,NR2,NR3,NR4,NR5,NR6,NR7,NR8,NR9].
+    changeLineDown(C8, StartIndex, C8, R1, NR1, OE2, _, EndReached),
+    ResultMatrix=[NR1,NR2,NR3,NR4,NR5,NR6,NR7,NR8,NR9].
 
 %
 % Remet des cases vides aux bons endroits
