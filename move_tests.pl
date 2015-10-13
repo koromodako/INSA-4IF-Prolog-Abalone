@@ -40,7 +40,8 @@ runTests(Result) :-
     initTestBoard(Board),
     initTestBoard2(Board2),
     print('Initial board'),nl,
-    %display:displayMatrix(Board),
+    display:displayMatrix(Board),
+    display:displayMatrix(Board2),
     % Test : Affiche la grille de jeu
     print(' ----------- Tests Unitaires -----------'),nl,
     (
@@ -74,13 +75,13 @@ runTests(Result) :-
             move:shiftDiagTTB(Board2, 3, 0, NB23),
             display:displayMatrix(NB23),nl,
             print(' ------- shiftDiagBTT'),nl,nl,
-            move:shiftDiagBTT(Board2, 6, 0, NB24),
+            move:shiftDiagBTT(Board2, 5, 0, NB24),
             display:displayMatrix(NB24),nl,
             print(' ------- shiftRight'),nl,nl,
             move:shiftRight(Board2, 4, 4, NB25),
             display:displayMatrix(NB25),nl,
             print(' ------- shiftLeft'),nl,nl,
-            move:shiftLeft(Board2, 6, 4, NB26),
+            move:shiftLeft(Board2, 5, 4, NB26),
             display:displayMatrix(NB26),nl,
             print('SUCCESS\n'),nl,
             !)
