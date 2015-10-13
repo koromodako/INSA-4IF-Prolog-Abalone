@@ -368,7 +368,8 @@ shiftDiagBTT(Matrix, StartIndex, DiagNum, ResultMatrix) :-
 %% -----------------------------------------------------------
 moveMarbles(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % mouvement interdit, le board n'est pas modifié
     isForbiddenMove(Xf, Yf, Xt, Yt),
-    OldBoard = NewBoard.
+    OldBoard = NewBoard,
+    !.
 %    
 moveMarbles(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % Diag move pos
     isDiagMovePos(Xf, Yf, Xt, Yt),
@@ -378,7 +379,8 @@ moveMarbles(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % Diag move pos
         (DiagNum is Yf-Xf) % On est sur un des deux triangles
     ),
     StartIndex is Yf-1,
-    shiftDiagTTB(OldBoard, StartIndex, DiagNum, NewBoard).
+    shiftDiagTTB(OldBoard, StartIndex, DiagNum, NewBoard),
+    !.
 %
 moveMarbles(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % Diag move neg
     isDiagMoveNeg(Xf, Yf, Xt, Yt),
@@ -388,29 +390,34 @@ moveMarbles(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % Diag move neg
         (DiagNum is Yf-Xf) % On est sur un des deux triangles
     ),
     StartIndex is Yf-1,
-    shiftDiagBTT(OldBoard, StartIndex, DiagNum, NewBoard).
+    shiftDiagBTT(OldBoard, StartIndex, DiagNum, NewBoard),
+    !.
 %
 moveMarbles(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % Vert move pos  
     isVertMoveDown(Xf, Yf, Xt, Yt),
     ColumnIndex is Xf-1,
     StartIndex is Yf-1,
-    shiftDown(OldBoard, StartIndex, ColumnIndex, NewBoard).
+    shiftDown(OldBoard, StartIndex, ColumnIndex, NewBoard),
+    !.
 %
 moveMarbles(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % Vert move neg
     isVertMoveUp(Xf, Yf, Xt, Yt),
     ColumnIndex is Xf-1,
     StartIndex is Yf-1,
-    shiftUp(OldBoard, StartIndex, ColumnIndex, NewBoard).
+    shiftUp(OldBoard, StartIndex, ColumnIndex, NewBoard),
+    !.
 %
 moveMarbles(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % Hori move pos
     isHoriMoveRight(Xf, Yf, Xt, Yt),
     RowIndex is Yf-1,
     StartIndex is Xf-1,
-    shiftRight(OldBoard, StartIndex, RowIndex, NewBoard).
+    shiftRight(OldBoard, StartIndex, RowIndex, NewBoard),
+    !.
 %
 moveMarbles(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % Hori move neg
     isHoriMoveLeft(Xf, Yf, Xt, Yt),
     RowIndex is Yf-1,
     StartIndex is Xf-1,
-    shiftLeft(OldBoard, StartIndex, RowIndex, NewBoard).
+    shiftLeft(OldBoard, StartIndex, RowIndex, NewBoard),
+    !.
  
