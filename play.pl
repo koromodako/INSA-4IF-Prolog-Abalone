@@ -36,6 +36,7 @@ play(Board, Player, I) :-
 	.
 
 %% Lance le jeu après avoir initialisé le plateau
-play() :-
+play :-
 	board:initBoard(Board),
-	play(Board, 1).
+	play(Board, 1, 1)
+	.
