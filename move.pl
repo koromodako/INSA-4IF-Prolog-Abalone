@@ -17,6 +17,11 @@
                  shiftDiagBTT/4]).
 %% -----------------------------------------------------------------------------
 
+%
+% predicat de parametrage de la valeur vide pour une case
+%
+emptyValue(X) :- X=:=(-1).
+
 %% -----------------------------------------------------------
 %% Les fonctions suivantes permettent de déterminer le sens du mouvement
 %% -----------------------------------------------------------
@@ -109,13 +114,13 @@ moveRightOneInRow(StartIndex, ColumnIndex, Row, NewRow, OldElement, NewOldElemen
     ;
     (
       ColumnIndex >= StartIndex,
-      replace(Row, ColumnIndex, OldElement, NewRow, NewOldElement),
+      replace(Row, ColumnIndex, OldElement, NewRowToValid, NewOldElement),
       (
-        (NewOldElement=:=(-1), replace(Row, ColumnIndex, -1, NewRow, NewOldElement), NewEndReached=1)
+        (emptyValue(NewOldElement), replace(NewRowToValid, ColumnIndex, NewOldElement, NewRow, _), NewEndReached=1)
         ;
-        (NewOldElement=:=0, NewEndReached=1)
+        (NewOldElement=:=0, NewEndReached=1, NewRow=NewRowToValid)
         ;
-        (NewEndReached=0)
+        (NewEndReached=0, NewRow=NewRowToValid)
       )
     )
     ;
@@ -128,13 +133,13 @@ moveLeftOneInRow(StartIndex, ColumnIndex, Row, NewRow, OldElement, NewOldElement
     ;
     (
       ColumnIndex =< StartIndex,
-      replace(Row, ColumnIndex, OldElement, NewRow, NewOldElement),
+      replace(Row, ColumnIndex, OldElement, NewRowToValid, NewOldElement),
       (
-        (NewOldElement=:=(-1), replace(Row, ColumnIndex, -1, NewRow, NewOldElement), NewEndReached=1)
+        (emptyValue(NewOldElement), replace(NewRowToValid, ColumnIndex, NewOldElement, NewRow, _), NewEndReached=1)
         ;
-        (NewOldElement=:=0, NewEndReached=1)
+        (NewOldElement=:=0, NewEndReached=1, NewRow=NewRowToValid)
         ;
-        (NewEndReached=0)
+        (NewEndReached=0, NewRow=NewRowToValid)
       )
     )
     ;
@@ -142,22 +147,22 @@ moveLeftOneInRow(StartIndex, ColumnIndex, Row, NewRow, OldElement, NewOldElement
   ).
 
 shiftInRowLeft(Row, NewRow, StartIndex) :-
-  C0 = 8, EndReached = 0,
-  moveLeftOneInRow(StartIndex, C0, Row, NR0, 0, OE0, EndReached, NER0),
+  C0 = 8, EndReached = 0,!,
+  moveLeftOneInRow(StartIndex, C0, Row, NR0, 0, OE0, EndReached, NER0),!,
   C1 is C0-1,
-  moveLeftOneInRow(StartIndex, C1, NR0, NR1, OE0, OE1, NER0, NER1),
+  moveLeftOneInRow(StartIndex, C1, NR0, NR1, OE0, OE1, NER0, NER1),!,
   C2 is C1-1,
-  moveLeftOneInRow(StartIndex, C2, NR1, NR2, OE1, OE2, NER1, NER2),
+  moveLeftOneInRow(StartIndex, C2, NR1, NR2, OE1, OE2, NER1, NER2),!,
   C3 is C2-1,
-  moveLeftOneInRow(StartIndex, C3, NR2, NR3, OE2, OE3, NER2, NER3),
+  moveLeftOneInRow(StartIndex, C3, NR2, NR3, OE2, OE3, NER2, NER3),!,
   C4 is C3-1,
-  moveLeftOneInRow(StartIndex, C4, NR3, NR4, OE3, OE4, NER3, NER4),
+  moveLeftOneInRow(StartIndex, C4, NR3, NR4, OE3, OE4, NER3, NER4),!,
   C5 is C4-1,
-  moveLeftOneInRow(StartIndex, C5, NR4, NR5, OE4, OE5, NER4, NER5),
+  moveLeftOneInRow(StartIndex, C5, NR4, NR5, OE4, OE5, NER4, NER5),!,
   C6 is C5-1,
-  moveLeftOneInRow(StartIndex, C6, NR5, NR6, OE5, OE6, NER5, NER6),
+  moveLeftOneInRow(StartIndex, C6, NR5, NR6, OE5, OE6, NER5, NER6),!,
   C7 is C6-1,
-  moveLeftOneInRow(StartIndex, C7, NR6, NR7, OE6, OE7, NER6, NER7),
+  moveLeftOneInRow(StartIndex, C7, NR6, NR7, OE6, OE7, NER6, NER7),!,
   C8 is C7-1,
   moveLeftOneInRow(StartIndex, C8, NR7, NewRow, OE7, _, NER7, _).
 
@@ -166,22 +171,22 @@ shiftInRowLeft(Row, NewRow, StartIndex) :-
 % et réalise le padding avec un 0
 %
 shiftInRowRight(Row, NewRow, StartIndex) :-
-  C0 = 0, EndReached = 0,
-  moveRightOneInRow(StartIndex, C0, Row, NR0, 0, OE0, EndReached, NER0),
+  C0 = 0, EndReached = 0,!,
+  moveRightOneInRow(StartIndex, C0, Row, NR0, 0, OE0, EndReached, NER0),!,
   C1 is C0+1,
-  moveRightOneInRow(StartIndex, C1, NR0, NR1, OE0, OE1, NER0, NER1),
+  moveRightOneInRow(StartIndex, C1, NR0, NR1, OE0, OE1, NER0, NER1),!,
   C2 is C1+1,
-  moveRightOneInRow(StartIndex, C2, NR1, NR2, OE1, OE2, NER1, NER2),
+  moveRightOneInRow(StartIndex, C2, NR1, NR2, OE1, OE2, NER1, NER2),!,
   C3 is C2+1,
-  moveRightOneInRow(StartIndex, C3, NR2, NR3, OE2, OE3, NER2, NER3),
+  moveRightOneInRow(StartIndex, C3, NR2, NR3, OE2, OE3, NER2, NER3),!,
   C4 is C3+1,
-  moveRightOneInRow(StartIndex, C4, NR3, NR4, OE3, OE4, NER3, NER4),
+  moveRightOneInRow(StartIndex, C4, NR3, NR4, OE3, OE4, NER3, NER4),!,
   C5 is C4+1,
-  moveRightOneInRow(StartIndex, C5, NR4, NR5, OE4, OE5, NER4, NER5),
+  moveRightOneInRow(StartIndex, C5, NR4, NR5, OE4, OE5, NER4, NER5),!,
   C6 is C5+1,
-  moveRightOneInRow(StartIndex, C6, NR5, NR6, OE5, OE6, NER5, NER6),
+  moveRightOneInRow(StartIndex, C6, NR5, NR6, OE5, OE6, NER5, NER6),!,
   C7 is C6+1,
-  moveRightOneInRow(StartIndex, C7, NR6, NR7, OE6, OE7, NER6, NER7),
+  moveRightOneInRow(StartIndex, C7, NR6, NR7, OE6, OE7, NER6, NER7),!,
   C8 is C7+1,
   moveRightOneInRow(StartIndex, C8, NR7, NewRow, OE7, _, NER7, _).
 
@@ -190,32 +195,32 @@ shiftInRowRight(Row, NewRow, StartIndex) :-
 % et réalise le padding avec un 0
 %
 shiftLeft(Matrix, StartIndex, RowIndex, ResultMatrix) :-
-  Matrix=[R1,R2,R3,R4,R5,R6,R7,R8,R9], % Decoupage du board en lignes
-  ((RowIndex=:=0, shiftInRowLeft(R1, NR1, StartIndex));(NR1=R1)),
-  ((RowIndex=:=1, shiftInRowLeft(R2, NR2, StartIndex));(NR2=R2)),
-  ((RowIndex=:=2, shiftInRowLeft(R3, NR3, StartIndex));(NR3=R3)),
-  ((RowIndex=:=3, shiftInRowLeft(R4, NR4, StartIndex));(NR4=R4)),
-  ((RowIndex=:=4, shiftInRowLeft(R5, NR5, StartIndex));(NR5=R5)),
-  ((RowIndex=:=5, shiftInRowLeft(R6, NR6, StartIndex));(NR6=R6)),
-  ((RowIndex=:=6, shiftInRowLeft(R7, NR7, StartIndex));(NR7=R7)),
-  ((RowIndex=:=7, shiftInRowLeft(R8, NR8, StartIndex));(NR8=R8)),
-  ((RowIndex=:=8, shiftInRowLeft(R9, NR9, StartIndex));(NR9=R9)),
+  Matrix=[R1,R2,R3,R4,R5,R6,R7,R8,R9],!, % Decoupage du board en lignes
+  ((RowIndex=:=0, shiftInRowLeft(R1, NR1, StartIndex));(NR1=R1)),!,
+  ((RowIndex=:=1, shiftInRowLeft(R2, NR2, StartIndex));(NR2=R2)),!,
+  ((RowIndex=:=2, shiftInRowLeft(R3, NR3, StartIndex));(NR3=R3)),!,
+  ((RowIndex=:=3, shiftInRowLeft(R4, NR4, StartIndex));(NR4=R4)),!,
+  ((RowIndex=:=4, shiftInRowLeft(R5, NR5, StartIndex));(NR5=R5)),!,
+  ((RowIndex=:=5, shiftInRowLeft(R6, NR6, StartIndex));(NR6=R6)),!,
+  ((RowIndex=:=6, shiftInRowLeft(R7, NR7, StartIndex));(NR7=R7)),!,
+  ((RowIndex=:=7, shiftInRowLeft(R8, NR8, StartIndex));(NR8=R8)),!,
+  ((RowIndex=:=8, shiftInRowLeft(R9, NR9, StartIndex));(NR9=R9)),!,
   ResultMatrix=[NR1,NR2,NR3,NR4,NR5,NR6,NR7,NR8,NR9].
 %
 % Bouge les éléments de la colonne C vers le haut
 % et réalise le padding avec un 0
 %
 shiftRight(Matrix, StartIndex, RowIndex, ResultMatrix) :-
-  Matrix=[R1,R2,R3,R4,R5,R6,R7,R8,R9], % Decoupage du board en lignes
-  ((RowIndex=:=0, shiftInRowRight(R1, NR1, StartIndex));(NR1=R1)),
-  ((RowIndex=:=1, shiftInRowRight(R2, NR2, StartIndex));(NR2=R2)),
-  ((RowIndex=:=2, shiftInRowRight(R3, NR3, StartIndex));(NR3=R3)),
-  ((RowIndex=:=3, shiftInRowRight(R4, NR4, StartIndex));(NR4=R4)),
-  ((RowIndex=:=4, shiftInRowRight(R5, NR5, StartIndex));(NR5=R5)),
-  ((RowIndex=:=5, shiftInRowRight(R6, NR6, StartIndex));(NR6=R6)),
-  ((RowIndex=:=6, shiftInRowRight(R7, NR7, StartIndex));(NR7=R7)),
-  ((RowIndex=:=7, shiftInRowRight(R8, NR8, StartIndex));(NR8=R8)),
-  ((RowIndex=:=8, shiftInRowRight(R9, NR9, StartIndex));(NR9=R9)),
+  Matrix=[R1,R2,R3,R4,R5,R6,R7,R8,R9],!, % Decoupage du board en lignes
+  ((RowIndex=:=0, shiftInRowRight(R1, NR1, StartIndex));(NR1=R1)),!,
+  ((RowIndex=:=1, shiftInRowRight(R2, NR2, StartIndex));(NR2=R2)),!,
+  ((RowIndex=:=2, shiftInRowRight(R3, NR3, StartIndex));(NR3=R3)),!,
+  ((RowIndex=:=3, shiftInRowRight(R4, NR4, StartIndex));(NR4=R4)),!,
+  ((RowIndex=:=4, shiftInRowRight(R5, NR5, StartIndex));(NR5=R5)),!,
+  ((RowIndex=:=5, shiftInRowRight(R6, NR6, StartIndex));(NR6=R6)),!,
+  ((RowIndex=:=6, shiftInRowRight(R7, NR7, StartIndex));(NR7=R7)),!,
+  ((RowIndex=:=7, shiftInRowRight(R8, NR8, StartIndex));(NR8=R8)),!,
+  ((RowIndex=:=8, shiftInRowRight(R9, NR9, StartIndex));(NR9=R9)),!,
   ResultMatrix=[NR1,NR2,NR3,NR4,NR5,NR6,NR7,NR8,NR9].
 
 %
@@ -226,15 +231,15 @@ changeLineUp(StartIndex, Limit, ColumnIndex, Row, NewRow, OldElement, NewOldElem
       (EndReached=:=1, NewRow=Row, NewEndReached=1) % Si on a fini on garde la meme ligne
       ;
       ( StartIndex >= Limit, 
-        replace(Row, ColumnIndex, OldElement, NewRow, NewOldElement),!,
+        replace(Row, ColumnIndex, OldElement, NewRowToValid, NewOldElement),!,
         (
-          (var(NewOldElement), NewOldElement=0, NewEndReached=0) % Cas ou replace n'a pas change la ligne
+          (var(NewOldElement), NewOldElement=0, NewEndReached=0, NewRow=NewRowToValid) % Cas ou replace n'a pas change la ligne
           ;
-          (NewOldElement=:=(-1), replace(Row, ColumnIndex, -1, NewRow, NewOldElement), NewEndReached=1)
+          (emptyValue(NewOldElement), replace(NewRowToValid, ColumnIndex, NewOldElement, NewRow, _), NewEndReached=1)
           ;
-          (NewOldElement=:=0, NewEndReached=1)
+          (NewOldElement=:=0, NewEndReached=1, NewRow=NewRowToValid)
           ;
-          (NewEndReached=0)
+          (NewEndReached=0, NewRow=NewRowToValid)
           )
         )
       ;
@@ -248,15 +253,15 @@ changeLineDown(StartIndex, Limit, ColumnIndex, Row, NewRow, OldElement, NewOldEl
     (EndReached=:=1, NewRow=Row, NewEndReached=1) % Si on a fini on garde la meme ligne
     ;
     ( StartIndex =< Limit, 
-      replace(Row, ColumnIndex, OldElement, NewRow, NewOldElement),!,
+      replace(Row, ColumnIndex, OldElement, NewRowToValid, NewOldElement),!,
       (
-        (var(NewOldElement), NewOldElement=0, NewEndReached=0) % Cas ou replace n'a pas change la ligne
+        (var(NewOldElement), NewOldElement=0, NewEndReached=0, NewRow=NewRowToValid) % Cas ou replace n'a pas change la ligne
         ;
-        (NewOldElement=:=(-1), replace(Row, ColumnIndex, -1, NewRow, NewOldElement), NewEndReached=1)
+        (emptyValue(NewOldElement), replace(NewRowToValid, ColumnIndex, NewOldElement, NewRow, _), NewEndReached=1)
         ;
-        (NewOldElement=:=0, NewEndReached=1)
+        (NewOldElement=:=0, NewEndReached=1, NewRow=NewRowToValid)
         ;
-        (NewEndReached=0)
+        (NewEndReached=0, NewRow=NewRowToValid)
       )
     )
     ;
@@ -288,15 +293,15 @@ shiftUp(Matrix, StartIndex, ColumnIndex, ResultMatrix) :-
 shiftDown(Matrix, StartIndex, ColumnIndex, ResultMatrix) :-
     Matrix=[R1,R2,R3,R4,R5,R6,R7,R8,R9],
     EndReached=0,
-    changeLineDown(StartIndex, 0, ColumnIndex, R1, NR1, 0, OE1, EndReached, NER1),
-    changeLineDown(StartIndex, 1, ColumnIndex, R2, NR2, OE1, OE2, NER1, NER2),
-    changeLineDown(StartIndex, 2, ColumnIndex, R3, NR3, OE2, OE3, NER2, NER3),
-    changeLineDown(StartIndex, 3, ColumnIndex, R4, NR4, OE3, OE4, NER3, NER4),
-    changeLineDown(StartIndex, 4, ColumnIndex, R5, NR5, OE4, OE5, NER4, NER5),
-    changeLineDown(StartIndex, 5, ColumnIndex, R6, NR6, OE5, OE6, NER5, NER6),
-    changeLineDown(StartIndex, 6, ColumnIndex, R7, NR7, OE6, OE7, NER6, NER7),
-    changeLineDown(StartIndex, 7, ColumnIndex, R8, NR8, OE7, OE8, NER7, NER8),
-    changeLineDown(StartIndex, 8, ColumnIndex, R9, NR9, OE8, _, NER8, _),
+    changeLineDown(StartIndex, 0, ColumnIndex, R1, NR1, 0, OE1, EndReached, NER1),!,
+    changeLineDown(StartIndex, 1, ColumnIndex, R2, NR2, OE1, OE2, NER1, NER2),!,
+    changeLineDown(StartIndex, 2, ColumnIndex, R3, NR3, OE2, OE3, NER2, NER3),!,
+    changeLineDown(StartIndex, 3, ColumnIndex, R4, NR4, OE3, OE4, NER3, NER4),!,
+    changeLineDown(StartIndex, 4, ColumnIndex, R5, NR5, OE4, OE5, NER4, NER5),!,
+    changeLineDown(StartIndex, 5, ColumnIndex, R6, NR6, OE5, OE6, NER5, NER6),!,
+    changeLineDown(StartIndex, 6, ColumnIndex, R7, NR7, OE6, OE7, NER6, NER7),!,
+    changeLineDown(StartIndex, 7, ColumnIndex, R8, NR8, OE7, OE8, NER7, NER8),!,
+    changeLineDown(StartIndex, 8, ColumnIndex, R9, NR9, OE8, _, NER8, _),!,
     ResultMatrix=[NR1,NR2,NR3,NR4,NR5,NR6,NR7,NR8,NR9].
 
 %

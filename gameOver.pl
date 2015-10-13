@@ -11,6 +11,7 @@
 gameOver(Joueur, Board) :- 
 	flatten(Board, InlineBoard),
 	count(Joueur, InlineBoard, N), 
-	N =< 8.	
+	N =< 8,
+    print('Le joueur '), print(Joueur), print(' a perdu !'), nl.	
 
 % -------------------------------------------------------------------------------
