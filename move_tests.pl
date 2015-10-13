@@ -21,31 +21,67 @@ initTestBoard(
         [91,92,93,94,95,96,97,98,99]   
     ]).
 
+initTestBoard2(
+    [
+        [-1,-1,-1,-1,-1,-1,-1,-1,-1],
+        [-1,0,0,0,0,0,0,0,-1],
+        [-1,0,0,0,0,0,0,0,-1],
+        [-1,0,0,1,1,1,0,0,-1],
+        [-1,0,0,1,1,1,0,0,-1],
+        [-1,0,0,1,1,1,0,0,-1],
+        [-1,0,0,0,0,0,0,0,-1],
+        [-1,0,0,0,0,0,0,0,-1],
+        [-1,-1,-1,-1,-1,-1,-1,-1,-1]
+    ]).
+
 %% Lancement des tests ---------------------------------------------------------
 
 runTests(Result) :-
     initTestBoard(Board),
+    initTestBoard2(Board2),
     print('Initial board'),nl,
-    display:displayMatrix(Board),
+    %display:displayMatrix(Board),
     % Test : Affiche la grille de jeu
-    print(' ----------- Tests -----------'),nl,
+    print(' ----------- Tests Unitaires -----------'),nl,
     (
-        (   print(' ------- shiftUp colonne 2'),nl,nl,
+        (   print(' ------- Condition de depart respectee ---------'), nl,nl,
+            print(' ------- shiftUp'),nl,nl,
             move:shiftUp(Board, 7, 2, NB1),
-            %print(NB1),nl,nl,
-            display:displayBoard(NB1),
-            print(' ------- shiftDown colonne 2'),nl,nl,
+            display:displayMatrix(NB1),nl,
+            print(' ------- shiftDown'),nl,nl,
             move:shiftDown(Board, 2, 2, NB2),
-            %print(NB2),nl,nl,
-            display:displayBoard(NB2),
-            print(' ------- shiftDiagTTB 0-1'),nl,nl,
+            display:displayMatrix(NB2),nl,
+            print(' ------- shiftDiagTTB'),nl,nl,
             move:shiftDiagTTB(Board, 1, 0, NB3),
-            %print(NB3),nl,nl,
-            display:displayBoard(NB3),
-            print(' ------- shiftDiagBTT 0-1'),nl,nl,
+            display:displayMatrix(NB3),nl,
+            print(' ------- shiftDiagBTT'),nl,nl,
             move:shiftDiagBTT(Board, 1, 0, NB4),
-            %print(NB4),nl,nl,
-            display:displayBoard(NB4),
+            display:displayMatrix(NB4),nl,
+            print(' ------- shiftRight'),nl,nl,
+            move:shiftRight(Board, 2, 2, NB5),
+            display:displayMatrix(NB5),nl,
+            print(' ------- shiftLeft'),nl,nl,
+            move:shiftLeft(Board, 2, 2, NB6),
+            display:displayMatrix(NB6),nl,
+            print(' ------- Condition de fin respectee ---------'), nl,nl,
+            print(' ------- shiftUp'),nl,nl,
+            move:shiftUp(Board2, 4, 3, NB21),
+            display:displayMatrix(NB21),nl,
+            print(' ------- shiftDown'),nl,nl,
+            move:shiftDown(Board2, 5, 3, NB22),
+            display:displayMatrix(NB22),nl,
+            print(' ------- shiftDiagTTB'),nl,nl,
+            move:shiftDiagTTB(Board2, 3, 0, NB23),
+            display:displayMatrix(NB23),nl,
+            print(' ------- shiftDiagBTT'),nl,nl,
+            move:shiftDiagBTT(Board2, 6, 0, NB24),
+            display:displayMatrix(NB24),nl,
+            print(' ------- shiftRight'),nl,nl,
+            move:shiftRight(Board2, 4, 4, NB25),
+            display:displayMatrix(NB25),nl,
+            print(' ------- shiftLeft'),nl,nl,
+            move:shiftLeft(Board2, 6, 4, NB26),
+            display:displayMatrix(NB26),nl,
             print('SUCCESS\n'),nl,
             !)
         ;
