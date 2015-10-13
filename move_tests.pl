@@ -34,18 +34,35 @@ initTestBoard2(
         [-1,-1,-1,-1,-1,-1,-1,-1,-1]
     ]).
 
+initTestBoard3(
+    [
+        [1,0,0,0,0,-1,-1,-1,-1],
+        [0,1,0,0,0,0,-1,-1,-1],
+        [0,0,0,0,0,1,1,-1,-1],
+        [0,0,0,0,2,1,1,0,-1],
+        [0,0,0,2,2,2,0,0,0],
+        [-1,0,1,1,2,0,0,0,0],
+        [-1,-1,1,1,0,0,0,0,0],
+        [-1,-1,-1,0,0,0,0,1,0],
+        [-1,-1,-1,-1,0,0,0,0,1]
+    ]).
+
 %% Lancement des tests ---------------------------------------------------------
 
 runTests(Result) :-
     initTestBoard(Board),
     initTestBoard2(Board2),
+    initTestBoard3(Board3),
     print('Initial board'),nl,
-    display:displayMatrix(Board),
-    display:displayMatrix(Board2),
+    %display:displayMatrix(Board),
+    %display:displayMatrix(Board2),
+    %display:displayMatrix(Board3),
     % Test : Affiche la grille de jeu
     print(' ----------- Tests Unitaires -----------'),nl,
     (
-        (   print(' ------- Condition de depart respectee ---------'), nl,nl,
+        (   
+            print(' ------- Condition de depart respectee ---------'), nl,nl,
+            
             print(' ------- shiftUp'),nl,nl,
             move:shiftUp(Board, 7, 2, NB1),
             display:displayMatrix(NB1),nl,
@@ -64,7 +81,9 @@ runTests(Result) :-
             print(' ------- shiftLeft'),nl,nl,
             move:shiftLeft(Board, 2, 2, NB6),
             display:displayMatrix(NB6),nl,
+            
             print(' ------- Condition de fin respectee ---------'), nl,nl,
+            
             print(' ------- shiftUp'),nl,nl,
             move:shiftUp(Board2, 4, 3, NB21),
             display:displayMatrix(NB21),nl,
@@ -83,6 +102,28 @@ runTests(Result) :-
             print(' ------- shiftLeft'),nl,nl,
             move:shiftLeft(Board2, 5, 4, NB26),
             display:displayMatrix(NB26),nl,
+
+            print(' ------- moveMarbles ---------'), nl,nl,
+
+            print(' ------- shiftUp'),nl,nl,
+            move:moveMarbles(Board3, 7, 4, 7, 3, NB31),
+            display:displayMatrix(NB31),nl,
+            print(' ------- shiftDown'),nl,nl,
+            move:moveMarbles(Board3, 3, 6, 3, 7, NB32),
+            display:displayMatrix(NB32),nl,
+            print(' ------- shiftDiagTTB'),nl,nl,
+            move:moveMarbles(Board3, 8, 8, 9, 9, NB33),
+            display:displayMatrix(NB33),nl,
+            print(' ------- shiftDiagBTT'),nl,nl,
+            move:moveMarbles(Board3, 2, 2, 1, 1, NB34),
+            display:displayMatrix(NB34),nl,
+            print(' ------- shiftRight'),nl,nl,
+            move:moveMarbles(Board3, 6, 3, 7, 3, NB35),
+            display:displayMatrix(NB35),nl,
+            print(' ------- shiftLeft'),nl,nl,
+            move:moveMarbles(Board3, 4, 7, 3, 7, NB36),
+            display:displayMatrix(NB36),nl,
+
             print('SUCCESS\n'),nl,
             !)
         ;
