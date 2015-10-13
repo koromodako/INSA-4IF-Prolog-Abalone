@@ -266,15 +266,15 @@ changeLineDown(StartIndex, Limit, ColumnIndex, Row, NewRow, OldElement, NewOldEl
 shiftUp(Matrix, StartIndex, ColumnIndex, ResultMatrix) :-
     Matrix=[R1,R2,R3,R4,R5,R6,R7,R8,R9], % Decoupage du board en lignes
     EndReached=0, % Initialisation de EndReached
-    changeLineUp(StartIndex, 9, ColumnIndex, R9, NR9, 0, OE9, EndReached, NER9),!,
-    changeLineUp(StartIndex, 8, ColumnIndex, R8, NR8, OE9, OE8, NER9, NER8),!,
-    changeLineUp(StartIndex, 7, ColumnIndex, R7, NR7, OE8, OE7, NER8, NER7),!,
-    changeLineUp(StartIndex, 6, ColumnIndex, R6, NR6, OE7, OE6, NER7, NER6),!,
-    changeLineUp(StartIndex, 5, ColumnIndex, R5, NR5, OE6, OE5, NER6, NER5),!,
-    changeLineUp(StartIndex, 4, ColumnIndex, R4, NR4, OE5, OE4, NER5, NER4),!,
-    changeLineUp(StartIndex, 3, ColumnIndex, R3, NR3, OE4, OE3, NER4, NER3),!,
-    changeLineUp(StartIndex, 2, ColumnIndex, R2, NR2, OE3, OE2, NER3, NER2),!,
-    changeLineUp(StartIndex, 1, ColumnIndex, R1, NR1, OE2, _, NER2, _),!,
+    changeLineUp(StartIndex, 8, ColumnIndex, R9, NR9, 0, OE9, EndReached, NER9),!,
+    changeLineUp(StartIndex, 7, ColumnIndex, R8, NR8, OE9, OE8, NER9, NER8),!,
+    changeLineUp(StartIndex, 6, ColumnIndex, R7, NR7, OE8, OE7, NER8, NER7),!,
+    changeLineUp(StartIndex, 5, ColumnIndex, R6, NR6, OE7, OE6, NER7, NER6),!,
+    changeLineUp(StartIndex, 4, ColumnIndex, R5, NR5, OE6, OE5, NER6, NER5),!,
+    changeLineUp(StartIndex, 3, ColumnIndex, R4, NR4, OE5, OE4, NER5, NER4),!,
+    changeLineUp(StartIndex, 2, ColumnIndex, R3, NR3, OE4, OE3, NER4, NER3),!,
+    changeLineUp(StartIndex, 1, ColumnIndex, R2, NR2, OE3, OE2, NER3, NER2),!,
+    changeLineUp(StartIndex, 0, ColumnIndex, R1, NR1, OE2, _, NER2, _),!,
     ResultMatrix=[NR1,NR2,NR3,NR4,NR5,NR6,NR7,NR8,NR9].
 
 %
@@ -284,15 +284,15 @@ shiftUp(Matrix, StartIndex, ColumnIndex, ResultMatrix) :-
 shiftDown(Matrix, StartIndex, ColumnIndex, ResultMatrix) :-
     Matrix=[R1,R2,R3,R4,R5,R6,R7,R8,R9],
     EndReached=0,
-    changeLineDown(StartIndex, 1, ColumnIndex, R1, NR1, 0, OE1, EndReached, NER1),
-    changeLineDown(StartIndex, 2, ColumnIndex, R2, NR2, OE1, OE2, NER1, NER2),
-    changeLineDown(StartIndex, 3, ColumnIndex, R3, NR3, OE2, OE3, NER2, NER3),
-    changeLineDown(StartIndex, 4, ColumnIndex, R4, NR4, OE3, OE4, NER3, NER4),
-    changeLineDown(StartIndex, 5, ColumnIndex, R5, NR5, OE4, OE5, NER4, NER5),
-    changeLineDown(StartIndex, 6, ColumnIndex, R6, NR6, OE5, OE6, NER5, NER6),
-    changeLineDown(StartIndex, 7, ColumnIndex, R7, NR7, OE6, OE7, NER6, NER7),
-    changeLineDown(StartIndex, 8, ColumnIndex, R8, NR8, OE7, OE8, NER7, NER8),
-    changeLineDown(StartIndex, 9, ColumnIndex, R9, NR9, OE8, _, NER8, _),
+    changeLineDown(StartIndex, 0, ColumnIndex, R1, NR1, 0, OE1, EndReached, NER1),
+    changeLineDown(StartIndex, 1, ColumnIndex, R2, NR2, OE1, OE2, NER1, NER2),
+    changeLineDown(StartIndex, 2, ColumnIndex, R3, NR3, OE2, OE3, NER2, NER3),
+    changeLineDown(StartIndex, 3, ColumnIndex, R4, NR4, OE3, OE4, NER3, NER4),
+    changeLineDown(StartIndex, 4, ColumnIndex, R5, NR5, OE4, OE5, NER4, NER5),
+    changeLineDown(StartIndex, 5, ColumnIndex, R6, NR6, OE5, OE6, NER5, NER6),
+    changeLineDown(StartIndex, 6, ColumnIndex, R7, NR7, OE6, OE7, NER6, NER7),
+    changeLineDown(StartIndex, 7, ColumnIndex, R8, NR8, OE7, OE8, NER7, NER8),
+    changeLineDown(StartIndex, 8, ColumnIndex, R9, NR9, OE8, _, NER8, _),
     ResultMatrix=[NR1,NR2,NR3,NR4,NR5,NR6,NR7,NR8,NR9].
 
 %
