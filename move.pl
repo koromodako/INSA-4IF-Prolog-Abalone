@@ -228,6 +228,8 @@ changeLineUp(StartIndex, Limit, ColumnIndex, Row, NewRow, OldElement, NewOldElem
       ( StartIndex >= Limit, 
         replace(Row, ColumnIndex, OldElement, NewRow, NewOldElement),!,
         (
+          (var(NewOldElement), NewOldElement=0, NewEndReached=0) % Cas ou replace n'a pas change la ligne
+          ;
           (NewOldElement=:=(-1), replace(Row, ColumnIndex, -1, NewRow, NewOldElement), NewEndReached=1)
           ;
           (NewOldElement=:=0, NewEndReached=1)
@@ -248,6 +250,8 @@ changeLineDown(StartIndex, Limit, ColumnIndex, Row, NewRow, OldElement, NewOldEl
     ( StartIndex =< Limit, 
       replace(Row, ColumnIndex, OldElement, NewRow, NewOldElement),!,
       (
+        (var(NewOldElement), NewOldElement=0, NewEndReached=0) % Cas ou replace n'a pas change la ligne
+        ;
         (NewOldElement=:=(-1), replace(Row, ColumnIndex, -1, NewRow, NewOldElement), NewEndReached=1)
         ;
         (NewOldElement=:=0, NewEndReached=1)
