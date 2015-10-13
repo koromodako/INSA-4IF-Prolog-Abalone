@@ -1,7 +1,7 @@
 %% -----------------------------------------------------------------------------
 %% Module contenant les prédicats permettant de vérifier si un déplacement est
 %% valide.
-:- module(movable, [isMovable/5]).
+:- module(movable, [isMovable/5,playerMovements/6]).
 %% -----------------------------------------------------------------------------
 
 :- use_module('board.pl').
@@ -107,6 +107,8 @@ isMovableInsideBoard(Board, InitialSquareContent, PrevSquareContent, LineDest, C
 %% @param Strength La force accumulée pour le déplacement
 isMovable(Board, InitialSquareContent, Line, Col, LineDest, ColDest, Strength) :- 
 
+	not(board:isOut(Board, Line, Col)),
+
 	% On vérifie que la Strength courante est bien autorisée
 	checkStrength(Strength),
 
@@ -156,9 +158,30 @@ isMovable(Board, Line, Col, LineDest, ColDest) :-
 	% Vérifie le déplacement avec une force initiale de 1
 	isMovable(Board, InitialSquareContent, Line, Col, LineDest, ColDest, 1). 
 
+%indexOf([Element|_], Element, 0). % We found the element
+%indexOf([_|Tail], Element, Index):-
+ % indexOf(Tail, Element, Index1), % Check in the tail of the list
+  %Index is Index1+1.  % and increment the resulting index
+
+%% Permet de récupérer les 
+playerMovements(Board, Player, Line, Col, NextLine, NextCol) :-
+	% Pour chaque case du plateau
+	between(1,9,Line), between(1,9,Col),
+	board:squareContains(Board, Line, Col, Player),
 	
+	% Les différentes directions (sauf x+0, y+0)
+	between(-1,1,DiffLine), between(-1,1,DiffCol),
+	not((DiffLine == 0, DiffCol == 0)),
+	
+	NextLine is Line + DiffLine, NextCol is Col + DiffCol,
+	
+	% On regarde si le déplacement est possible
+	movable:isMovable(Board, Line, Col, NextLine, NextCol).
 
 
+% board:initBoard(Board),between(1,10,Line),between(1,10,Col),board:squareContains(Board, Line, Col, 1).
+% board:initBoard(Board),flatten(Board,BoardList),findall(Index, movable:indexOf(BoardList, 1, Index), R).
 
+% board:initBoard(Board),between(1,9,Line),between(1,9,Col),board:squareContains(Board, Line, Col, 1),between(-1,1,DiffLine),between(-1,1,DiffCol),not((DiffLine==0,DiffCol==0)).
 
 

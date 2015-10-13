@@ -134,6 +134,18 @@ runTests(Result) :-
 		;
 		(print('...FAIL'),nl)
 	),
+	
+	
+	% Test : playerMovements
+	%board:initBoard(BoardInit),
+	
+	%(
+	%	movable:playerMovements(BoardInit, 1, Line, Col, NextLine, NextCol),
+	%	Line == 
+		
+	%),
 
 	Result is 0.
+	
+
 	
