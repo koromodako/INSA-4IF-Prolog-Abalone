@@ -191,15 +191,15 @@ shiftInRowRight(Row, NewRow, StartIndex) :-
 %
 shiftLeft(Matrix, StartIndex, RowIndex, ResultMatrix) :-
   Matrix=[R1,R2,R3,R4,R5,R6,R7,R8,R9], % Decoupage du board en lignes
-  ((RowIndex=:=1, shiftInRowLeft(R1, NR1, StartIndex));(NR1=R1)),
-  ((RowIndex=:=2, shiftInRowLeft(R2, NR2, StartIndex));(NR2=R2)),
-  ((RowIndex=:=3, shiftInRowLeft(R3, NR3, StartIndex));(NR3=R3)),
-  ((RowIndex=:=4, shiftInRowLeft(R4, NR4, StartIndex));(NR4=R4)),
-  ((RowIndex=:=5, shiftInRowLeft(R5, NR5, StartIndex));(NR5=R5)),
-  ((RowIndex=:=6, shiftInRowLeft(R6, NR6, StartIndex));(NR6=R6)),
-  ((RowIndex=:=7, shiftInRowLeft(R7, NR7, StartIndex));(NR7=R7)),
-  ((RowIndex=:=8, shiftInRowLeft(R8, NR8, StartIndex));(NR8=R8)),
-  ((RowIndex=:=9, shiftInRowLeft(R9, NR9, StartIndex));(NR9=R9)),
+  ((RowIndex=:=0, shiftInRowLeft(R1, NR1, StartIndex));(NR1=R1)),
+  ((RowIndex=:=1, shiftInRowLeft(R2, NR2, StartIndex));(NR2=R2)),
+  ((RowIndex=:=2, shiftInRowLeft(R3, NR3, StartIndex));(NR3=R3)),
+  ((RowIndex=:=3, shiftInRowLeft(R4, NR4, StartIndex));(NR4=R4)),
+  ((RowIndex=:=4, shiftInRowLeft(R5, NR5, StartIndex));(NR5=R5)),
+  ((RowIndex=:=5, shiftInRowLeft(R6, NR6, StartIndex));(NR6=R6)),
+  ((RowIndex=:=6, shiftInRowLeft(R7, NR7, StartIndex));(NR7=R7)),
+  ((RowIndex=:=7, shiftInRowLeft(R8, NR8, StartIndex));(NR8=R8)),
+  ((RowIndex=:=8, shiftInRowLeft(R9, NR9, StartIndex));(NR9=R9)),
   ResultMatrix=[NR1,NR2,NR3,NR4,NR5,NR6,NR7,NR8,NR9].
 %
 % Bouge les éléments de la colonne C vers le haut
@@ -207,15 +207,15 @@ shiftLeft(Matrix, StartIndex, RowIndex, ResultMatrix) :-
 %
 shiftRight(Matrix, StartIndex, RowIndex, ResultMatrix) :-
   Matrix=[R1,R2,R3,R4,R5,R6,R7,R8,R9], % Decoupage du board en lignes
-  ((RowIndex=:=1, shiftInRowRight(R1, NR1, StartIndex));(NR1=R1)),
-  ((RowIndex=:=2, shiftInRowRight(R2, NR2, StartIndex));(NR2=R2)),
-  ((RowIndex=:=3, shiftInRowRight(R3, NR3, StartIndex));(NR3=R3)),
-  ((RowIndex=:=4, shiftInRowRight(R4, NR4, StartIndex));(NR4=R4)),
-  ((RowIndex=:=5, shiftInRowRight(R5, NR5, StartIndex));(NR5=R5)),
-  ((RowIndex=:=6, shiftInRowRight(R6, NR6, StartIndex));(NR6=R6)),
-  ((RowIndex=:=7, shiftInRowRight(R7, NR7, StartIndex));(NR7=R7)),
-  ((RowIndex=:=8, shiftInRowRight(R8, NR8, StartIndex));(NR8=R8)),
-  ((RowIndex=:=9, shiftInRowLeft(R9, NR9, StartIndex));(NR9=R9)),
+  ((RowIndex=:=0, shiftInRowRight(R1, NR1, StartIndex));(NR1=R1)),
+  ((RowIndex=:=1, shiftInRowRight(R2, NR2, StartIndex));(NR2=R2)),
+  ((RowIndex=:=2, shiftInRowRight(R3, NR3, StartIndex));(NR3=R3)),
+  ((RowIndex=:=3, shiftInRowRight(R4, NR4, StartIndex));(NR4=R4)),
+  ((RowIndex=:=4, shiftInRowRight(R5, NR5, StartIndex));(NR5=R5)),
+  ((RowIndex=:=5, shiftInRowRight(R6, NR6, StartIndex));(NR6=R6)),
+  ((RowIndex=:=6, shiftInRowRight(R7, NR7, StartIndex));(NR7=R7)),
+  ((RowIndex=:=7, shiftInRowRight(R8, NR8, StartIndex));(NR8=R8)),
+  ((RowIndex=:=8, shiftInRowLeft(R9, NR9, StartIndex));(NR9=R9)),
   ResultMatrix=[NR1,NR2,NR3,NR4,NR5,NR6,NR7,NR8,NR9].
 
 %
@@ -369,48 +369,48 @@ moveMarbles(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % mouvement interdit, le boar
 moveMarbles(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % Diag move pos
     isDiagMovePos(Xf, Yf, Xt, Yt),
     (
-        (Xf=Yf, D=0) % On est sur la diagonale principale
+        (Xf=Yf, DiagNum=0) % On est sur la diagonale principale
         ;
-        (Xf>Yf, D is Xf-1) % On est sur une diagonale du triangle inf.
+        (Xf>Yf, DiagNum is Xf-1) % On est sur une diagonale du triangle inf.
         ;
-        (Xf<Yf, D is Yf-1) % On est sur une diagonale du triangle sup.
+        (Xf<Yf, DiagNum is Yf-1) % On est sur une diagonale du triangle sup.
     ),
-    S is Yf-1,
-    shiftDiagTTB(OldBoard, S, D, NewBoard).
+    StartIndex is Yf-1,
+    shiftDiagTTB(OldBoard, StartIndex, DiagNum, NewBoard).
 %
 moveMarbles(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % Diag move neg
     isDiagMoveNeg(Xf, Yf, Xt, Yt),
     (
-        (Xf=Yf, D=0) % On est sur la diagonale principale
+        (Xf=Yf, DiagNum=0) % On est sur la diagonale principale
         ;
-        (Xf>Yf, D is Xf-1) % On est sur une diagonale du triangle inf.
+        (Xf>Yf, DiagNum is Xf-1) % On est sur une diagonale du triangle inf.
         ;
-        (Xf<Yf, D is Yf-1) % On est sur une diagonale du triangle sup.
+        (Xf<Yf, DiagNum is Yf-1) % On est sur une diagonale du triangle sup.
     ),
-    S is Yf-1,
-    shiftDiagBTT(OldBoard, S, D, NewBoard).
+    StartIndex is Yf-1,
+    shiftDiagBTT(OldBoard, StartIndex, DiagNum, NewBoard).
 %
 moveMarbles(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % Vert move pos  
     isVertMoveDown(Xf, Yf, Xt, Yt),
-    C is Xf-1,
-    S is Yf-1,
-    shiftDown(OldBoard, S, C, NewBoard).
+    ColumnIndex is Xf-1,
+    StartIndex is Yf-1,
+    shiftDown(OldBoard, StartIndex, ColumnIndex, NewBoard).
 %
 moveMarbles(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % Vert move neg
     isVertMoveUp(Xf, Yf, Xt, Yt),
-    C is Xf-1,
-    S is Yf-1,
-    shiftUp(OldBoard, S, C, NewBoard).
+    ColumnIndex is Xf-1,
+    StartIndex is Yf-1,
+    shiftUp(OldBoard, StartIndex, ColumnIndex, NewBoard).
 %
 moveMarbles(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % Hori move pos
     isHoriMoveRight(Xf, Yf, Xt, Yt),
-    R is Yf-1,
-    S is Xf-1,
-    shiftRight(OldBoard, S, R, NewBoard).
+    RowIndex is Yf-1,
+    StartIndex is Xf-1,
+    shiftRight(OldBoard, StartIndex, RowIndex, NewBoard).
 %
 moveMarbles(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % Hori move neg
     isHoriMoveLeft(Xf, Yf, Xt, Yt),
-    R is Yf-1,
-    S is Xf-1,
-    shiftLeft(OldBoard, S, R, NewBoard).
+    RowIndex is Yf-1,
+    StartIndex is Xf-1,
+    shiftLeft(OldBoard, StartIndex, RowIndex, NewBoard).
  
