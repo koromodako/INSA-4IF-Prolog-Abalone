@@ -215,7 +215,7 @@ shiftRight(Matrix, StartIndex, RowIndex, ResultMatrix) :-
   ((RowIndex=:=5, shiftInRowRight(R6, NR6, StartIndex));(NR6=R6)),
   ((RowIndex=:=6, shiftInRowRight(R7, NR7, StartIndex));(NR7=R7)),
   ((RowIndex=:=7, shiftInRowRight(R8, NR8, StartIndex));(NR8=R8)),
-  ((RowIndex=:=8, shiftInRowLeft(R9, NR9, StartIndex));(NR9=R9)),
+  ((RowIndex=:=8, shiftInRowRight(R9, NR9, StartIndex));(NR9=R9)),
   ResultMatrix=[NR1,NR2,NR3,NR4,NR5,NR6,NR7,NR8,NR9].
 
 %
