@@ -21,32 +21,32 @@
 %% Les fonctions suivantes permettent de déterminer le sens du mouvement
 %% -----------------------------------------------------------
 isDiagMovePos(Xfrom, Yfrom, Xto, Yto) :- % Diag mov pos
-  Xto = Xfrom + 1, 
-  Yto = Yfrom + 1.
+  Xto =:= Xfrom + 1, 
+  Yto =:= Yfrom + 1.
 %
 isDiagMoveNeg(Xfrom, Yfrom, Xto, Yto) :- % Diag mov neg
-  Xto = Xfrom - 1, 
-  Yto = Yfrom - 1.
+  Xto =:= Xfrom - 1, 
+  Yto =:= Yfrom - 1.
 %
 isVertMoveDown(_, Yfrom, _, Yto) :- % vert mov pos 
-  Yto = Yfrom + 1.
+  Yto =:= Yfrom + 1.
 %
 isVertMoveUp(_, Yfrom, _, Yto) :- % vert mov neg 
-  Yto = Yfrom - 1.
+  Yto =:= Yfrom - 1.
 %
 isHoriMoveRight(Xfrom, _, Xto, _) :- % horizontal mov pos 
-  Xto = Xfrom + 1.
+  Xto =:= Xfrom + 1.
 %
 isHoriMoveLeft(Xfrom, _, Xto, _) :- % horizontal mov neg 
-  Xto = Xfrom - 1.
+  Xto =:= Xfrom - 1.
 %
 isForbiddenMove(Xfrom, Yfrom, Xto, Yto) :- % mouvement interdit (diagonale inverse)
-  Xto = Xfrom - 1,
-  Yto = Yfrom + 1.  
+  Xto =:= Xfrom - 1,
+  Yto =:= Yfrom + 1.  
 %
 isForbiddenMove(Xfrom, Yfrom, Xto, Yto) :- % mouvement interdit (diagonale inverse)
-  Xto = Xfrom + 1,
-  Yto = Yfrom - 1.
+  Xto =:= Xfrom + 1,
+  Yto =:= Yfrom - 1.
 
 %% -----------------------------------------------------------
 %% Les fonctions utiles à la réalisation du mouvement
