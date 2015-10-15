@@ -17,33 +17,83 @@
                  shiftDiagBTT/4]).
 %% -----------------------------------------------------------------------------
 
+%%  Format attendu pour Matrix : certaines coordonnees sont interdites 
+%%  Y <=> {a(0),b(1),c(2),d(3),e(4),f(5),g(6),h(7),i(8)}  
+%%  X <=> {1,2,3,4,5,6,7,8}
+%%  Les mouvements autorisés sont les mouvements en ligne vers droite et gauche
+%%  Les mouvements autorisés sont les mouvements en colonne vers haut et bas
+%%  Les mouvements autorisés sont les mouvements selon la diagonale naturelle 
+%%    de la matrice (1a <-> 9i)
+%%
+%%  Notation pour chaque element de la matrice rc(d), avec r : RowIndex, c : ColumnIndex, d : DiagNumber
+%%
+%%  [
+%%    [1a(0),1b(1),1c(2),1d(3),1e(4),1f(5),1g(6),1h(7),1i(8)],
+%%    [2a(-1),2b(0),2c(1),2d(2),2e(3),2f(4),2g(5),2h(6),2i(7)],
+%%    [3a(-2),3b(-1),3c(0),3d(1),3e(2),3f(3),3g(4),3h(5),3i(6)],
+%%    [4a(-3),4b(-2),4c(-1),4d(0),4e(1),4f(2),4g(3),4h(4),4i(5)],
+%%    [5a(-4),5b(-3),5c(-2),5d(-1),5e(0),5f(1),5g(2),5h(3),5i(4)],
+%%    [6a(-5),6b(-4),6c(-3),6d(-2),6e(-1),6f(0),6g(1),6h(2),6i(3)],
+%%    [7a(-6),7b(-5),7c(-4),7d(-3),7e(-2),7f(-1),7g(0),7h(1),7i(2)],
+%%    [8a(-7),8b(-6),8c(-5),8d(-4),8e(-3),8f(-2),8g(-1),8h(0),8i(1)],
+%%    [9a(-8),9b(-7),9c(-6),9d(-5),9e(-4),9f(-3),9g(-2),9h(-1),9i(0)]
+%%  ]
+%%
+%%  Remarque : la plupart des predicats on ete construit pour repondre au probleme 
+%%              uniquement et n'accepte donc qu'une matrice 9x9 en parametre.
+%%
+
 %
-% predicat de parametrage de la valeur vide pour une case
+% predicat de parametrage de la valeur vide pour une cellule de la matrice
 %
 emptyValue(X) :- X=:=(-1).
 
 %% -----------------------------------------------------------
 %% Les fonctions suivantes permettent de déterminer le sens du mouvement
 %% -----------------------------------------------------------
-isDiagMovePos(Xfrom, Yfrom, Xto, Yto) :- % Diag mov pos
+%
+% Pour tous les predicats qui suivent Xfrom et Yfrom sont les coordonnees du point de depart
+% et Xto Yto sont les coordonnees du point d'arrivee.
+%
+% @brief Ce predicat retourne vrai si les coordonnees correspondent a
+%         un mouvement en diagonale vers le bas (1a -> 9i)
+%
+isDiagMoveTTB(Xfrom, Yfrom, Xto, Yto) :- % Diag mov pos
   Xto =:= Xfrom + 1, 
   Yto =:= Yfrom + 1.
 %
-isDiagMoveNeg(Xfrom, Yfrom, Xto, Yto) :- % Diag mov neg
+% @brief Ce predicat retourne vrai si les coordonnees correspondent a
+%         un mouvement en diagonale vers le haut (9i -> 1a)
+%
+isDiagMoveBTT(Xfrom, Yfrom, Xto, Yto) :- % Diag mov neg
   Xto =:= Xfrom - 1, 
   Yto =:= Yfrom - 1.
+%
+% @brief Ce predicat retourne vrai si les coordonnees correspondent a
+%         un mouvement en colonne vers le bas
 %
 isVertMoveDown(_, Yfrom, _, Yto) :- % vert mov pos 
   Yto =:= Yfrom + 1.
 %
+% @brief Ce predicat retourne vrai si les coordonnees correspondent a
+%         un mouvement en colonne vers le haut
+%
 isVertMoveUp(_, Yfrom, _, Yto) :- % vert mov neg 
   Yto =:= Yfrom - 1.
+%
+% @brief Ce predicat retourne vrai si les coordonnees correspondent a
+%         un mouvement en ligne vers la gauche
 %
 isHoriMoveRight(Xfrom, _, Xto, _) :- % horizontal mov pos 
   Xto =:= Xfrom + 1.
 %
+% @brief Ce predicat retourne vrai si les coordonnees correspondent a
+%         un mouvement en ligne vers la droite
+%
 isHoriMoveLeft(Xfrom, _, Xto, _) :- % horizontal mov neg 
   Xto =:= Xfrom - 1.
+%
+% @brief Ce predicat retourne vrai si le mouvement est interdit
 %
 isForbiddenMove(Xfrom, Yfrom, Xto, Yto) :- % mouvement interdit (diagonale inverse)
   Xto =:= Xfrom - 1,
@@ -93,14 +143,14 @@ replace(L, _, _, L, _).
 
 
 % 
-% Bouge les éléments de la ligne vers la gauche
+% Déplace les éléments de toute d'une liste vers la gauche
 % et réalise le padding avec un 0
 %
 moveLeft(L, R) :-
     L=[_|T],
     append(T,[0],R).
 %
-% Bouge les éléments de la ligne vers la droite
+% Déplace les éléments de toute d'une liste vers la droite
 % et réalise le padding avec un 0
 % 
 moveRight(L, R) :- 
@@ -108,25 +158,30 @@ moveRight(L, R) :-
     moveLeft(RL, RLS),
     reverse(RLS, R).
 
+%
+% Fonction de deplacement d'un element dans la ligne en fonction du contexte de deplacement (cf. shiftInRowRight)
+%
 moveRightOneInRow(StartIndex, ColumnIndex, Row, NewRow, OldElement, NewOldElement, EndReached, NewEndReached) :-
   ( 
-    (EndReached=:=1, NewRow=Row, NewEndReached=1)
+    (EndReached=:=1, NewRow=Row, NewEndReached=1) % Si la fin a été atteinte dans un appel précédent, on conserve la ligne et on place le nouveau flag de fin
     ;
     (
-      ColumnIndex >= StartIndex,
-      replace(Row, ColumnIndex, OldElement, NewRowToValid, NewOldElement),
-      (
+      ColumnIndex >= StartIndex, % Sinon si l'index de la colonne courante est supérieur à l'index de départ on doit effectuer le changement
+      replace(Row, ColumnIndex, OldElement, NewRowToValid, NewOldElement), % On remplace donc l'element courant par celui passe en parametre
+      (  % Si l'element renvoye correspond a une cellule hors jeu, on replace la cellule hors jeu a sa place
         (emptyValue(NewOldElement), replace(NewRowToValid, ColumnIndex, NewOldElement, NewRow, _), NewEndReached=1)
         ;
-        (NewOldElement=:=0, NewEndReached=1, NewRow=NewRowToValid)
+        (NewOldElement=:=0, NewEndReached=1, NewRow=NewRowToValid) % Sinon si l'element enleve correspond a une cellule vide, on leve le flag de fin de ligne
         ;
-        (NewEndReached=0, NewRow=NewRowToValid)
+        (NewEndReached=0, NewRow=NewRowToValid) % Sinon on baisse le flag de fin de ligne
       )
     )
     ;
-    (NewRow=Row, NewOldElement=0, NewEndReached=0)
+    (NewRow=Row, NewOldElement=0, NewEndReached=0) % Sinon on renvoie la ligne non modifiee
   ).
-
+%
+% Fonction de deplacement d'un element dans la ligne en fonction du contexte de deplacement (cf. shiftInRowLeft)
+%
 moveLeftOneInRow(StartIndex, ColumnIndex, Row, NewRow, OldElement, NewOldElement, EndReached, NewEndReached) :-
   ( 
     (EndReached=:=1, NewRow=Row, NewEndReached=1)
@@ -146,6 +201,10 @@ moveLeftOneInRow(StartIndex, ColumnIndex, Row, NewRow, OldElement, NewOldElement
     (NewRow=Row, NewOldElement=0, NewEndReached=0)
   ).
 
+%
+% Fait la même chose que moveRightOneInRow, sauf que le deplacement est realise vers la gauche
+% pour les details voir moveRightOneInRow
+%
 shiftInRowLeft(Row, NewRow, StartIndex) :-
   C0 = 8, EndReached = 0,!,
   moveLeftOneInRow(StartIndex, C0, Row, NR0, 0, OE0, EndReached, NER0),!,
@@ -167,8 +226,7 @@ shiftInRowLeft(Row, NewRow, StartIndex) :-
   moveLeftOneInRow(StartIndex, C8, NR7, NewRow, OE7, _, NER7, _).
 
 %
-% Bouge les éléments de la colonne C vers le haut
-% et réalise le padding avec un 0
+% Déplace les éléments à partir de StartIndex (basé 0) vers la droite jusqu'a trouver une cellule vide (0) ou une cellule hors jeu (-1) 
 %
 shiftInRowRight(Row, NewRow, StartIndex) :-
   C0 = 0, EndReached = 0,!,
@@ -191,8 +249,7 @@ shiftInRowRight(Row, NewRow, StartIndex) :-
   moveRightOneInRow(StartIndex, C8, NR7, NewRow, OE7, _, NER7, _).
 
 %
-% Bouge les éléments de la colonne C vers le haut
-% et réalise le padding avec un 0
+% Déplace les elements de la ligne RowIndex (base 0) vers la gauche a partir de StartIndex (base 0) 
 %
 shiftLeft(Matrix, StartIndex, RowIndex, ResultMatrix) :-
   Matrix=[R1,R2,R3,R4,R5,R6,R7,R8,R9],!, % Decoupage du board en lignes
@@ -207,8 +264,7 @@ shiftLeft(Matrix, StartIndex, RowIndex, ResultMatrix) :-
   ((RowIndex=:=8, shiftInRowLeft(R9, NR9, StartIndex));(NR9=R9)),!,
   ResultMatrix=[NR1,NR2,NR3,NR4,NR5,NR6,NR7,NR8,NR9].
 %
-% Bouge les éléments de la colonne C vers le haut
-% et réalise le padding avec un 0
+% Déplace les elements de la ligne RowIndex (base 0) vers la droite a partir de StartIndex (base 0)
 %
 shiftRight(Matrix, StartIndex, RowIndex, ResultMatrix) :-
   Matrix=[R1,R2,R3,R4,R5,R6,R7,R8,R9],!, % Decoupage du board en lignes
@@ -224,7 +280,7 @@ shiftRight(Matrix, StartIndex, RowIndex, ResultMatrix) :-
   ResultMatrix=[NR1,NR2,NR3,NR4,NR5,NR6,NR7,NR8,NR9].
 
 %
-% Factorisation du code de shiftUp et diag
+% Deplace vers le haut un element d'une ligne appartenant a la colonne indiquee par ColumnIndex
 %
 changeLineUp(StartIndex, Limit, ColumnIndex, Row, NewRow, OldElement, NewOldElement, EndReached, NewEndReached) :-
   (
@@ -233,6 +289,7 @@ changeLineUp(StartIndex, Limit, ColumnIndex, Row, NewRow, OldElement, NewOldElem
       ( StartIndex >= Limit, 
         replace(Row, ColumnIndex, OldElement, NewRowToValid, NewOldElement),!,
         (
+          % Si l'element enleve n'est pas instancie alors cela signifie que la ligne Row n'est pas affectee par le mouvement
           (var(NewOldElement), NewOldElement=0, NewEndReached=0, NewRow=NewRowToValid) % Cas ou replace n'a pas change la ligne
           ;
           (emptyValue(NewOldElement), replace(NewRowToValid, ColumnIndex, NewOldElement, NewRow, _), NewEndReached=1)
@@ -246,7 +303,7 @@ changeLineUp(StartIndex, Limit, ColumnIndex, Row, NewRow, OldElement, NewOldElem
       (NewRow=Row, NewOldElement=0, NewEndReached=0)
   ).
 %
-% Factorisation du code de shiftDown
+% Deplace vers le bas un element d'une ligne appartenant a la colonne indiquee par ColumnIndex
 %
 changeLineDown(StartIndex, Limit, ColumnIndex, Row, NewRow, OldElement, NewOldElement, EndReached, NewEndReached) :-
   (
@@ -269,8 +326,7 @@ changeLineDown(StartIndex, Limit, ColumnIndex, Row, NewRow, OldElement, NewOldEl
   ).
 
 %
-% Bouge les éléments de la colonne C vers le haut
-% et réalise le padding avec un 0
+% Deplace vers le haut tous les elements de la colonne ColumnIndex (base 0) a partir de StartIndex (base 0)
 %
 shiftUp(Matrix, StartIndex, ColumnIndex, ResultMatrix) :-
     Matrix=[R1,R2,R3,R4,R5,R6,R7,R8,R9], % Decoupage du board en lignes
@@ -287,8 +343,7 @@ shiftUp(Matrix, StartIndex, ColumnIndex, ResultMatrix) :-
     ResultMatrix=[NR1,NR2,NR3,NR4,NR5,NR6,NR7,NR8,NR9].
 
 %
-% Bouge les éléments de la colonne C vers le bas
-% et réalise le padding avec un 0
+% Deplace vers le haut tous les elements de la colonne ColumnIndex (base 0) a partir de StartIndex (base 0)
 %
 shiftDown(Matrix, StartIndex, ColumnIndex, ResultMatrix) :-
     Matrix=[R1,R2,R3,R4,R5,R6,R7,R8,R9],
