@@ -65,6 +65,31 @@ getAimPoint(BaryLineBlack, BaryColBlack, BaryLineWhite, BaryColWhite, AimPointLi
 	AimPointCol is (BaryColBlack + BaryColWhite + 4.5)/3.
 	
 %% Calcul de la distance de Manhattan entre une bille et le point visé	
+%%
+%% @param Line0 : coordonnées du point 0 en ligne
+%% @param Col0 : coordonnées du point 0 en colonnes
+%% @param Line1 : coordonnées du point 1 en colonnes
+%% @param Col1 : coordonnées du point 1 en colonnes
+%%
+%% EXPLICATION DE L'ALGO
+%%
+%% Si les deux points sont sur la même ligne, alors la différence sur
+%% les colonnes donne la distance
+%% Sinon Si ils sont sur la même colonne, alors on compte le nombre de lignes
+%% Sinon, si ils sont sur la même diagonale, alors on compte le nombre 
+%% de cases qui les sépare en ligne ou en colonne
+%% Sinon, on regarde la postion du poit par rapport à l'autre
+%% 3 cas : 
+%% 		le pt1 est en bas à droite par rapport au pt0
+%%       --> On refait appel à computeDistance en déplaçant le point de départ
+%%           et en incrémentant OldResult
+%% 		le pt1 est en haut à gauche par rapport au pt0
+%%       --> On refait appel à computeDistance en déplaçant le point de départ
+%%           et en incrémentant OldResult
+%% 		le pt1 est en haut à droite ou en bas à droite (diagonale interdite)
+%%        par rapport au pt0
+%%       --> on calcule la distance qui les sépare en faisant
+%%            D = |x1 - x0| + |y1 - y0|
 computeDistance(Line0, Col0, Line1, Col1, OldResult, NewResult):- 
 	(
 		(
