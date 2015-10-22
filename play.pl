@@ -5,15 +5,16 @@
 
 :- use_module('board.pl').
 :- use_module('gameOver.pl').
-:- use_module('iaRandom.pl').
+:- use_module('ia.pl').
 
 %% Joue le tour du joueur passé en argument
 %% @param Board Plateau de jeu
 %% @param Player Le joueur qui doit jouer son tour
 %% @param I Variable temporaire, pour limiter le nombre de boucles (dev)
 play(Board, Player, I) :-
-	I =< 1000,
-	print('Iteration : '), print(I),nl, % DEBUG
+	I =< 150,
+	print('------------------------------'), nl,
+	print('Iteration : '), print(I), nl, % DEBUG
 	% On s'arrête si game over (todo : afficher msg...)
 	not(gameOver:gameOver(Player, Board)),
 	
@@ -21,7 +22,8 @@ play(Board, Player, I) :-
 	
 	display:displayBoard(Board),
 	
-	iaRandom:playTurn(Board, Player, NewBoard),
+	%iaRandom:playTurn(Board, Player, NewBoard),
+	ia:playTurn(Board, Player, NewBoard),
 	
 	display:displayBoard(NewBoard),
 	

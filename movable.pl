@@ -163,10 +163,11 @@ isMovable(Board, Line, Col, LineDest, ColDest) :-
  % indexOf(Tail, Element, Index1), % Check in the tail of the list
   %Index is Index1+1.  % and increment the resulting index
 
-%% Permet de récupérer les 
+
+%% Permet de récupérer les mouvements possibles pour le joueur
 playerMovements(Board, Player, Line, Col, NextLine, NextCol) :-
 	% Pour chaque case du plateau
-	between(1,9,Line), between(1,9,Col),
+	between(1, 9, Line), between(1, 9, Col),
 	board:squareContains(Board, Line, Col, Player),
 	
 	% Les différentes directions (sauf x+0, y+0)
