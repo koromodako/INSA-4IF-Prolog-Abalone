@@ -46,6 +46,32 @@ initTestBoard3(
         [-1,-1,-1,0,0,0,0,1,0],
         [-1,-1,-1,-1,0,0,0,0,1]
     ]).
+    
+initTestBoardError1(
+    [
+        [1,1,0,   0,0,-1,-1,-1,-1],
+        [0,1,0,   0,0, 0,-1,-1,-1],
+        [0,0,1,   1,1, 0,0,-1,-1],
+        [1,1,1,   0,2, 0,0,2,-1],
+        [1,1,1,   1,2, 2,2,2,2],
+        [-1,1,  0,0,0, 2,2,2,2],
+        [-1,-1, 0,0,0, 0,0,2,2],
+        [-1,-1,-1,0,0, 0,0,0,0],
+        [-1,-1,-1,-1,0,0,0,2,0]
+    ]).
+    
+initTestBoardError1Expected(
+    [
+        [1,1,0,   0,0,-1,-1,-1,-1],
+        [0,1,0,   0,0, 0,-1,-1,-1],
+        [0,0,1,   1,1, 0,0,-1,-1],
+        [1,1,1,   0,2, 0,0,2,-1],
+        [1,1,1,   0,2, 2,2,2,2],
+        [-1,1,  0,0,1, 2,2,2,2],
+        [-1,-1, 0,0,0, 0,0,2,2],
+        [-1,-1,-1,0,0, 0,0,0,0],
+        [-1,-1,-1,-1,0,0,0,2,0]
+    ]).
 
 %% Lancement des tests ---------------------------------------------------------
 
@@ -53,6 +79,8 @@ runTests(Result) :-
     initTestBoard(Board),
     initTestBoard2(Board2),
     initTestBoard3(Board3),
+    initTestBoardError1(BoardError1),
+    initTestBoardError1Expected(BoardError1Expected),
     print('Initial board'),nl,
     %display:displayMatrix(Board),
     %display:displayMatrix(Board2),
@@ -123,6 +151,15 @@ runTests(Result) :-
             print(' ------- shiftLeft'),nl,nl,
             move:moveMarbles(Board3, 4, 7, 3, 7, NB36),
             display:displayMatrix(NB36),nl,
+            
+            print(' ------- Erreurs résolues ---------'), nl,nl,
+            display:displayMatrix(BoardError1),
+            display:displayBoard(BoardError1),
+            move:moveMarbles(BoardError1, 4, 5, 5, 6, NewBoardError1), !,
+            display:displayMatrix(NewBoardError1),
+            display:displayBoard(NewBoardError1),
+            display:displayBoard(BoardError1Expected),
+            BoardError1Expected = NewBoardError1,
 
             print('SUCCESS\n'),nl,
             !)
