@@ -6,9 +6,8 @@
 %% Vérifie si le plateau "Board" contient la valeur "Value" à l'emplacement
 %% (Line, Col).
 squareContains(Board, Line, Col, Value) :-
-	flatten(Board, BoardList),
-	I is (Line - 1) * 9 + Col,
-	nth1(I, BoardList, Value).
+	nth1(Line, Board, Lines),
+	nth1(Col, Lines, Value).
 
 %% Vérifie si la case (Line, Col) correspond à un emplacement en dehors du 
 %% plateau de jeu.
