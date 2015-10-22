@@ -1,7 +1,7 @@
 %% -----------------------------------------------------------------------------
 %% Module contenant les prédicats permettant de générer un nouveau board après un mouvement
-:- module(move, [isDiagMovePos/4, 
-                 isDiagMoveNeg/4, 
+:- module(move, [isDiagMoveTTB/4, 
+                 isDiagMoveBTT/4, 
                  isVertMoveUp/4, 
                  isVertMoveDown/4, 
                  isHoriMoveRight/4, 
@@ -432,7 +432,7 @@ moveMarbles(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % mouvement interdit, le boar
     !.
 %    
 moveMarbles(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % Diag move pos
-    isDiagMovePos(Xf, Yf, Xt, Yt),
+    isDiagMoveTTB(Xf, Yf, Xt, Yt),
     (
         (Xf=:=Yf, DiagNum=0) % On est sur la diagonale principale
         ;
@@ -443,7 +443,7 @@ moveMarbles(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % Diag move pos
     !.
 %
 moveMarbles(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % Diag move neg
-    isDiagMoveNeg(Xf, Yf, Xt, Yt),
+    isDiagMoveBTT(Xf, Yf, Xt, Yt),
     (
         (Xf=:=Yf, DiagNum=0) % On est sur la diagonale principale
         ;
