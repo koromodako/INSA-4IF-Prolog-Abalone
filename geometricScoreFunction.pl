@@ -187,7 +187,6 @@ compareScore(Player, ScoreWhite, ScoreBlack, FinalScore):-
 %% Trouve le score calculé selon l'heuristique
 %% @param Board le plateau de jeu à analyser
 geometricScore(Board, Player, FinalScore) :-
-	board:initBoard(Board),
 	
 	%% 1/ Calcul du centre de masse des deux couleurs BaryLine/ColBlack et BaryLine/ColWhite
 	getBarycenter(1, Board, BaryLineBlack, BaryColBlack),
@@ -201,7 +200,9 @@ geometricScore(Board, Player, FinalScore) :-
 	computeTotalScoreDistance(2, Board, AimPointLine, AimPointCol, ScoreDistanceWhite),
 	
 	%% 4/ Comparaison des deux scores
-	compareScore(Player, ScoreDistanceWhite, ScoreDistanceBlack, FinalScore).
+	compareScore(Player, ScoreDistanceWhite, ScoreDistanceBlack, FinalScore), 
+	
+	!.
 
 	
 	
