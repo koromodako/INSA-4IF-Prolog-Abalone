@@ -436,9 +436,9 @@ moveMarbles(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % Diag move pos
     (
         (Xf=:=Yf, DiagNum=0) % On est sur la diagonale principale
         ;
-        (DiagNum is Yf-Xf) % On est sur un des deux triangles
+        (DiagNum is Xf-Yf) % On est sur un des deux triangles
     ),
-    StartIndex is Yf-1,
+    StartIndex is Xf-1,
     shiftDiagTTB(OldBoard, StartIndex, DiagNum, NewBoard),
     !.
 %
@@ -447,9 +447,9 @@ moveMarbles(OldBoard, Xf, Yf, Xt, Yt, NewBoard) :- % Diag move neg
     (
         (Xf=:=Yf, DiagNum=0) % On est sur la diagonale principale
         ;
-        (DiagNum is Yf-Xf) % On est sur un des deux triangles
+        (DiagNum is Xf-Yf) % On est sur un des deux triangles
     ),
-    StartIndex is Yf-1,
+    StartIndex is Xf-1,
     shiftDiagBTT(OldBoard, StartIndex, DiagNum, NewBoard),
     !.
 %
