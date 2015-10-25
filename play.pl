@@ -13,7 +13,7 @@
 %% @param Player Le joueur qui doit jouer son tour
 %% @param I Variable temporaire, pour limiter le nombre de boucles (dev)
 play(Board, Player, I) :-
-    I =< 150,
+    I =< 10,
     print('------------------------------'), nl,
 
     print('Iteration : '), print(I), nl, % DEBUG
@@ -21,14 +21,15 @@ play(Board, Player, I) :-
     % On s'arrête si game over
     not(gameOver:gameOver(Player, Board)),
 
-    print('Tour du joueur '), print(Player), nl,
+    print('Tour du joueur '), print(Player),
+    print(' ( '), display:displayBoardPosition(Player),  print(')'), nl,
 
     display:displayBoard(Board),
 
     %iaRandom:playTurn(Board, Player, NewBoard),
     (
         (
-            player(Player, human), ia:playTurn(Board, Player, NewBoard) % Remplacer par le mode interactif
+            player(Player, human), playTurnManually(Board, Player, NewBoard)
         )
         ;
         (
@@ -40,7 +41,7 @@ play(Board, Player, I) :-
 
     NextI is I+1,
     % Tour suivant en changeant de joueur
-    %sleep(1),
+    sleep(1),
     (
         (
             Player == 1, play(NewBoard, 2, NextI)
@@ -79,3 +80,24 @@ gameType:-
 possiblTypeOfGame(49,human,computer):- print('Humain VS Ordinateur').
 possiblTypeOfGame(50,human,human):- print('Humain VS Humain').
 possiblTypeOfGame(51,computer,computer):- print('Ordinateur VS Ordinateur').
+
+%% Joue le tour en interactif du joueur passé en argument.
+%% @param Board Plateau de jeu
+%% @param Player Le joueur qui doit jouer son tour
+playTurnManually(Board, Player, NewBoard):-
+    print('Sélection une bille à déplacer, donner la ligne (ex. 3) '),
+    repeat, get_code(ChoiceLine), ChoiceLine>=49, ChoiceLine=<57, Line is ChoiceLine-48,
+    print('Donner la colonne (ex. D) '),
+    repeat, get_code(ChoiceCol), ChoiceCol>=65, ChoiceCol=<73, Col is ChoiceCol-64,
+    print('Liste des déplacements possibles :'), nl,
+    findall(
+       [NextLine, NextCol], 
+       (
+           movable:playerMovements(Board, Player, Line, Col, NextLine, NextCol)
+       ),
+       NewMovements
+    ),
+    NewBoard is Board, % A supprimer
+    print(NewMovements) % A supprimer
+    % Afficher toutes les possibilités
+.
