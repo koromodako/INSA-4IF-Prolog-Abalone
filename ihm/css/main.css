@@ -64,11 +64,15 @@ text {
     font-size: 16px;
 }
 
-.tile polygon, #diagram-map-storage-array rect {
+.tile polygon, .unselected, #diagram-map-storage-array rect {
     pointer-events: visiblePainted;
     fill: rgb(246, 246, 246);
     stroke: hsl(0, 0%, 70%);
     stroke-width: 0.3;
+}
+
+.selected {
+    fill: #66CCFF;
 }
 
 .tile .emptyTile {
@@ -77,13 +81,17 @@ text {
     stroke-width: 0.5;
 }
 
-.tile polygon:hover { fill: rgb(195,225,227); }
+.tile polygon:hover { fill: rgb(195,225,227) !important; }
 .tile circle {
     background: -moz-linear-gradient(top bottom, black, white);
 }
 
 .tile.active polygon {
     fill: #C3E1E3;
+}
+
+#selectable .tile polygon {
+    fill: rgb(195,225,227);
 }
 
 /* Some of these classes are used for both svg ("stroke") and html ("color") */
