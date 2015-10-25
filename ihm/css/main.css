@@ -82,6 +82,10 @@ text {
     background: -moz-linear-gradient(top bottom, black, white);
 }
 
+.tile.active polygon {
+    fill: #C3E1E3;
+}
+
 /* Some of these classes are used for both svg ("stroke") and html ("color") */
 .x-axis, .q-axis { color: hsl(90, 100%, 25%); stroke: hsl( 90, 100%, 35%); stroke-width: 2px; }
 .y-axis { color: hsl(300, 80%, 40%); stroke: hsl(300,  80%, 50%); stroke-width: 2px; }
