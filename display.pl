@@ -1,6 +1,6 @@
 %% -----------------------------------------------------------------------------
 %% Module contenant les prédicats permettant d'afficher la grille de jeu
-:- module(display, [displayBoard/1, displayMatrix/1]).
+:- module(display, [displayBoard/1, displayMatrix/1, displayBoardPosition/1]).
 %% -----------------------------------------------------------------------------
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Display Board
