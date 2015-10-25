@@ -27,13 +27,15 @@ play(Board, Player, I) :-
     display:displayBoard(Board),
 
     %iaRandom:playTurn(Board, Player, NewBoard),
+    % Reconstruction de la clé pour le joueur courant
+    atom_concat('player_type_', Player, PlayerTypeKey),
     (
         (
-            player(Player, human), playTurnManually(Board, Player, NewBoard)
+            recorded(PlayerTypeKey, human), playTurnManually(Board, Player, NewBoard)
         )
         ;
         (
-            player(Player, computer), ia:playTurn(Board, Player, NewBoard)
+            recorded(PlayerTypeKey, computer), ia:playTurn(Board, Player, NewBoard)
         )
     ),
 
@@ -41,7 +43,7 @@ play(Board, Player, I) :-
 
     NextI is I+1,
     % Tour suivant en changeant de joueur
-    sleep(1),
+    %sleep(1),
     (
         (
             Player == 1, play(NewBoard, 2, NextI)
@@ -63,15 +65,21 @@ play :-
 
 %% Demande à l'utilisateur quel mode jeu doit être lancé
 gameType:-
+		% Réinitialisation des clé/valeur sur le type de joueur.
+        foreach(recorded('player_type_1', _, Ref1), erase(Ref1)),
+        foreach(recorded('player_type_2', _, Ref2), erase(Ref2)),
+        
         print('------------------------------'), nl,
         print('Sélection du type de jeu :'), nl,
         print('  1: '), possiblTypeOfGame(49,_,_), nl,
         print('  2: '), possiblTypeOfGame(50,_,_), nl,
         print('  3: '), possiblTypeOfGame(51,_,_), nl,
         print('Choix '),
-        repeat, get_code(Choice), Choice>=49, Choice=<51,
-        print('Lancement du mode : '), possiblTypeOfGame(Choice,Player1,Player2), nl,
-        assert(player(1,Player1)), assert(player(2,Player2)).
+        repeat, get_code(Choice), Choice >= 49, Choice =< 51, 
+        print('Lancement du mode : '), possiblTypeOfGame(Choice, Player1, Player2), nl,
+        
+        % Enregistrement du type de chaque joueur
+        recorda(player_type_1, Player1), recorda(player_type_2, Player2).
 
 %% Choix possible pour le mode de jeu
 %% @param Choice Valeur ASCII donnée par l'utilisateur
@@ -86,9 +94,9 @@ possiblTypeOfGame(51,computer,computer):- print('Ordinateur VS Ordinateur').
 %% @param Player Le joueur qui doit jouer son tour
 playTurnManually(Board, Player, NewBoard):-
     print('Sélection une bille à déplacer, donner la ligne (ex. 3) '),
-    repeat, get_code(ChoiceLine), ChoiceLine>=49, ChoiceLine=<57, Line is ChoiceLine-48,
+    repeat, get_code(ChoiceLine), ChoiceLine >= 49, ChoiceLine =< 57, Line is ChoiceLine-48, 
     print('Donner la colonne (ex. D) '),
-    repeat, get_code(ChoiceCol), ChoiceCol>=65, ChoiceCol=<73, Col is ChoiceCol-64,
+    repeat, get_code(ChoiceCol), ChoiceCol >= 65, ChoiceCol =< 73, Col is ChoiceCol-64, 
     print('Liste des déplacements possibles :'), nl,
     findall(
        [NextLine, NextCol], 
@@ -97,7 +105,7 @@ playTurnManually(Board, Player, NewBoard):-
        ),
        NewMovements
     ),
-    NewBoard is Board, % A supprimer
+    NewBoard = Board, % A supprimer
     print(NewMovements) % A supprimer
     % Afficher toutes les possibilités
 .
