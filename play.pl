@@ -7,6 +7,7 @@
 :- use_module('gameOver.pl').
 :- use_module('ia.pl').
 :- use_module('display.pl').
+:- use_module('move.pl').
 
 %% Joue le tour du joueur passé en argument
 %% @param Board Plateau de jeu
@@ -105,7 +106,10 @@ playTurnManually(Board, Player, NewBoard):-
        ),
        NewMovements
     ),
-    NewBoard = Board, % A supprimer
-    print(NewMovements) % A supprimer
-    % Afficher toutes les possibilités
-.
+    display:displayMovements(Line, Col, NewMovements),
+    print('Sélection le déplacement '), length(NewMovements, NumberOfMovements),
+    MaxChoiceMovement is NumberOfMovements + 48,
+    repeat, get_code(ChoiceMovement), ChoiceMovement >= 49, ChoiceMovement =< MaxChoiceMovement,
+    nth1(ChoiceMovement,NewMovements,NextLineCol),
+    nth1(1, NextLineCol, NextLine), nth1(2, NextLineCol, NextCol),
+    move:moveMarbles(Board, Col, Line, NextCol, NextLine, NewBoard).
