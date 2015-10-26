@@ -100,7 +100,13 @@ displaySpaces(NbSpace):-
     NbSpaceLeft is NbSpace-1,
     displaySpaces(NbSpaceLeft).
 
-
+%% Affiche une liste de mouvement
+%% @param Line Numéro de ligne de départ
+%% @param Col Numéro de colonne de départ
+%% @param NextLine Numéro de ligne de destination pour un des mouvements
+%% @param NextCol Numéro de colonne de destination pour un des mouvements
+%% @param NextMouvement Autres mouvements
+%% @param Num Numéro du mouvement actuellement affiché
 displayMovements(Line, Col, [[NextLine,NextCol]|NextMouvement]):-
     displayMovements(Line, Col, [[NextLine,NextCol]|NextMouvement], 1).
 
@@ -110,11 +116,18 @@ displayMovements(Line, Col, [[NextLine,NextCol]|NextMouvement], Num):-
     NextNum is Num +1,
     displayMovements(Line, Col, NextMouvement, NextNum).
 
+%% Affiche un mouvement
+%% @param Line Numéro de ligne de départ
+%% @param Col Numéro de colonne de départ
+%% @param NextLine Numéro de ligne de destination 
+%% @param NextCol Numéro de colonne de destination
 displayMovement(Line, Col, NextLine, NextCol):-
     print(Line), displayLetter(Col),
     print(' -> '),
     print(NextLine), displayLetter(NextCol), nl.
 
+%% Affiche en lettre un numéro de colonne
+%% @param NumCol Numéro de colonne à afficher
 displayLetter(1):- print('A').
 displayLetter(2):- print('B').
 displayLetter(3):- print('C').
