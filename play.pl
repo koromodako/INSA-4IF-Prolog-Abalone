@@ -75,7 +75,7 @@ gameType:-
         print('  2: '), possiblTypeOfGame(50,_,_), nl,
         print('  3: '), possiblTypeOfGame(51,_,_), nl,
         print('Choix '),
-        repeat, get_code(Choice), Choice >= 49, Choice =< 51, 
+        repeat, get_code(Choice), Choice >= 49, Choice =< 51, !,
         print('Lancement du mode : '), possiblTypeOfGame(Choice, Player1, Player2), nl,
         
         % Enregistrement du type de chaque joueur
