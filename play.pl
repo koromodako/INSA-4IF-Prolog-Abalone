@@ -6,15 +6,14 @@
 :- use_module('board.pl').
 :- use_module('gameOver.pl').
 :- use_module('ia.pl').
-:- use_module('display.pl').
-:- use_module('move.pl').
+:- use_module('playManual.pl').
 
 %% Joue le tour du joueur passé en argument
 %% @param Board Plateau de jeu
 %% @param Player Le joueur qui doit jouer son tour
 %% @param I Variable temporaire, pour limiter le nombre de boucles (dev)
 play(Board, Player, I) :-
-    I =< 10,
+    I =< 10, % DEBUG
     print('------------------------------'), nl,
 
     print('Iteration : '), print(I), nl, % DEBUG
@@ -32,7 +31,7 @@ play(Board, Player, I) :-
     atom_concat('player_type_', Player, PlayerTypeKey),
     (
         (
-            recorded(PlayerTypeKey, human), playTurnManually(Board, Player, NewBoard)
+            recorded(PlayerTypeKey, human), playManual:playTurnManually(Board, Player, NewBoard)
         )
         ;
         (
@@ -89,27 +88,3 @@ gameType:-
 possiblTypeOfGame(49,human,computer):- print('Humain VS Ordinateur').
 possiblTypeOfGame(50,human,human):- print('Humain VS Humain').
 possiblTypeOfGame(51,computer,computer):- print('Ordinateur VS Ordinateur').
-
-%% Joue le tour en interactif du joueur passé en argument.
-%% @param Board Plateau de jeu
-%% @param Player Le joueur qui doit jouer son tour
-playTurnManually(Board, Player, NewBoard):-
-    print('Sélection une bille à déplacer, donner la ligne (ex. 3) '),
-    repeat, get_code(ChoiceLine), ChoiceLine >= 49, ChoiceLine =< 57, Line is ChoiceLine-48, 
-    print('Donner la colonne (ex. D) '),
-    repeat, get_code(ChoiceCol), ChoiceCol >= 65, ChoiceCol =< 73, Col is ChoiceCol-64, 
-    print('Liste des déplacements possibles :'), nl,
-    findall(
-       [NextLine, NextCol], 
-       (
-           movable:playerMovements(Board, Player, Line, Col, NextLine, NextCol)
-       ),
-       NewMovements
-    ),
-    display:displayMovements(Line, Col, NewMovements),
-    print('Sélection le déplacement '), length(NewMovements, NumberOfMovements),
-    MaxChoiceMovement is NumberOfMovements + 48,
-    repeat, get_code(ChoiceMovement), ChoiceMovement >= 49, ChoiceMovement =< MaxChoiceMovement,
-    nth1(ChoiceMovement,NewMovements,NextLineCol),
-    nth1(1, NextLineCol, NextLine), nth1(2, NextLineCol, NextCol),
-    move:moveMarbles(Board, Col, Line, NextCol, NextLine, NewBoard).
