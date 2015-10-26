@@ -12,30 +12,51 @@ $(function() {
     });
 
     function isNextTo(currentTile, selectedTile) {
-        var dCx = $(selectedTile).children("circle.emptyTile").attr("cx") - $(currentTile).children("circle.emptyTile").attr("cx");
-        var dCy = $(selectedTile).children("circle.emptyTile").attr("cy") - $(currentTile).children("circle.emptyTile").attr("cy");
+        var dCx = parseFloat($(selectedTile).children("circle.emptyTile").attr("cx") - $(currentTile).children("circle.emptyTile").attr("cx"));
+        var dCy = parseFloat($(selectedTile).children("circle.emptyTile").attr("cy") - $(currentTile).children("circle.emptyTile").attr("cy"));
         var distance = Math.sqrt(Math.pow(dCx,2)+Math.pow(dCy,2));
         return distance<(20*2);
     };
 
-    function move(currentTile, nextTile) {
-        if($(nextTile).children("circle.marble").length == 0) {
-            // if no marble -> empty tile
+    function moveMarble(currentTile, nextTile) {
+        // move the xml object to the right tile
+        var nCx = $(nextTile).children("circle.emptyTile").attr("cx");
+        var nCy = $(nextTile).children("circle.emptyTile").attr("cy");
+        var marble = $(currentTile).children("circle.marble");
+        $(nextTile).append(marble);
+        $(marble).attr("cx", nCx);
+        $(marble).attr("cy", nCy);
+    }
 
-            // move the xml object to the right tile
-            var marble = $(currentTile).children("circle.marble");
-            $(nextTile).append(marble);
-            var cx = $(nextTile).children("circle.emptyTile").attr("cx");
-            var cy = $(nextTile).children("circle.emptyTile").attr("cy");
-            $(marble).attr("cx", cx);
-            $(marble).attr("cy", cy);
+    function move(currentTile, nextTile) {
+        var cCx = $(currentTile).children("circle.emptyTile").attr("cx");
+        var cCy = $(currentTile).children("circle.emptyTile").attr("cy");
+        var nCx = $(nextTile).children("circle.emptyTile").attr("cx");
+        var nCy = $(nextTile).children("circle.emptyTile").attr("cy");
+        if($(nextTile).children("circle.marble").length == 0) {// if no marble -> empty tile
+            moveMarble(currentTile, nextTile);
+        } else {
+            // find the next next tile
+            var dx = Math.round((nCx - cCx) * 1000) / 1000;
+            var dy = Math.round((nCy - cCy) * 1000) / 1000;
+            var nextnCx = parseFloat(nCx) + parseFloat(dx);
+            var nextnCy = parseFloat(nCy) + parseFloat(dy);
+            var nextNextTile = $('circle.emptyTile').filter(function () {
+                return (Math.abs($(this).attr("cx") - nextnCx) < 0.5) 
+                                    && (Math.abs($(this).attr("cy") - nextnCy) < 0.5);
+            }).parent();
+
+            // recursive call to move the next marble
+            move(nextTile, nextNextTile);
+
+            moveMarble(currentTile, nextTile);
         }
     }
 
     var currentSelectedTile = null;
     $('g.tile').click( function(){
         if (currentSelectedTile) {
-            if($(currentSelectedTile).children("circle.marble") && isNextTo(currentSelectedTile, this)) {
+            if($(currentSelectedTile).children("circle.marble").length > 0 && isNextTo(currentSelectedTile, this)) {
                 move(currentSelectedTile, this);
             }
             currentSelectedTile.removeClass('active');
