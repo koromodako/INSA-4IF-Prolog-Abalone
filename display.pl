@@ -1,6 +1,7 @@
 %% -----------------------------------------------------------------------------
 %% Module contenant les prédicats permettant d'afficher la grille de jeu
-:- module(display, [displayBoard/1, displayMatrix/1, displayBoardPosition/1]).
+:- module(display, [displayBoard/1, displayMatrix/1, displayBoardPosition/1,
+                    displayMovements/3, displayMovement/4]).
 %% -----------------------------------------------------------------------------
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Display Board
@@ -98,3 +99,28 @@ displaySpaces(NbSpace):-
     write(' '),
     NbSpaceLeft is NbSpace-1,
     displaySpaces(NbSpaceLeft).
+
+
+displayMovements(Line, Col, [[NextLine,NextCol]|NextMouvement]):-
+    displayMovements(Line, Col, [[NextLine,NextCol]|NextMouvement], 1).
+
+displayMovements(_, _, [], _).
+displayMovements(Line, Col, [[NextLine,NextCol]|NextMouvement], Num):-
+    print(' '), print(Num), print(': '), displayMovement(Line, Col, NextLine, NextCol),
+    NextNum is Num +1,
+    displayMovements(Line, Col, NextMouvement, NextNum).
+
+displayMovement(Line, Col, NextLine, NextCol):-
+    print(Line), displayLetter(Col),
+    print(' -> '),
+    print(NextLine), displayLetter(NextCol), nl.
+
+displayLetter(1):- print('A').
+displayLetter(2):- print('B').
+displayLetter(3):- print('C').
+displayLetter(4):- print('D').
+displayLetter(5):- print('E').
+displayLetter(6):- print('F').
+displayLetter(7):- print('G').
+displayLetter(8):- print('H').
+displayLetter(9):- print('I').
