@@ -81,23 +81,16 @@ $(function() {
 
     });
 
-    $('#transfert').click( function(){
-        var MonTableau = new Array("1", "2");
-        var tmp = $.param({
-                x:5,
-                y:8,
-                tab:MonTableau
-            });
+    var board = null;
+
+    $('#get-board').click( function(){
         $.ajax({
             method: "POST",
-            url: "http://localhost:8000/transfert",
-            data: $.param({
-                x:5,
-                y:8,
-                tab:MonTableau
-            }),
+            url: "http://localhost:8080/get/init/board",
             success: function(json, statut){
-                console.log("success");
+                board = json;
+                console.log(json);
+                console.log("success with statut :" + statut);
             },
             error: function (resultat, statut, erreur) {
                 console.log("error");

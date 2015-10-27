@@ -15,6 +15,7 @@
 :- use_module(library(http/http_json)).         % for json
 :- use_module(library(http/json_convert)).
 
+% Chargement de la configuration serveur
 :- consult(configuration).
 
 %%%%%%%%%%%%%%%%
@@ -25,23 +26,35 @@
 :- http_handler('/css', http_reply_from_files(css(.), []), [prefix]).
 :- http_handler('/js', http_reply_from_files(js(.), []), [prefix]).
 :- http_handler('/game', http_reply_from_files(web(.), []), [prefix]).
-:- http_handler('/transfert', transfertAction, []).
+:- http_handler('/get/init/board', getInitBoardAction, []).
 
 %%%%%%%%%%%%%%%%
 %%  Actions   %%
 %%%%%%%%%%%%%%%%
 
 server(Port) :-
-        http_server(http_dispatch, [port(Port)]),
-        cors_enable(_, [method([get, post])]).
+    http_server(http_dispatch, [port(Port)]),
+    cors_enable(_, [method([get, post])]).
 
 % say hello, to test if server is running
 helloAction(_) :-
     format('Content-type: text/plain~n~n'),
     format('Hello world ! Server is running').
 
-transfertAction(Request) :-
-    http_parameters(Request, [ x(X, []),
-          y(Y, []), tab(T, [])
-        ]),
-    reply_json(json{x:X, y:Y, tab:T}).
+initBoard(
+[
+[1,1,0,0,0,-1,-1,-1,-1],
+[1,1,0,0,0,0,-1,-1,-1],
+[1,1,1,0,0,0,0,-1,-1],
+[1,1,1,0,0,0,0,2,-1],
+[1,1,1,0,0,0,2,2,2],
+[-1,1,0,0,0,0,2,2,2],
+[-1,-1,0,0,0,0,2,2,2],
+[-1,-1,-1,0,0,0,0,2,2],
+[-1,-1,-1,-1,0,0,0,2,2]
+]).
+
+getInitBoardAction(Request) :-
+      initBoard(PrologOut),
+      prolog_to_json(PrologOut, JSONOut),
+      reply_json(JSONOut).
