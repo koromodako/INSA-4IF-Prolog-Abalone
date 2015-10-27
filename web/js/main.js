@@ -3,12 +3,10 @@ $(function() {
     var DEBUG = 1;
 
     $( document ).ready(function(){
-
         // hide debug section if not in debug mode
         if(!DEBUG){
             $( "#debug" ).hide();
         }
-
     });
 
     function isNextTo(currentTile, selectedTile) {
@@ -77,8 +75,6 @@ $(function() {
                 $( "#printColor" ).text("Empty tile");
             }
         }
-
-
     });
 
     var board = null;
@@ -91,6 +87,7 @@ $(function() {
                 board = json;
                 console.log(json);
                 console.log("success with statut :" + statut);
+                updateBoard(board);
             },
             error: function (resultat, statut, erreur) {
                 console.log("error");
@@ -103,5 +100,54 @@ $(function() {
         });
     });
 
+    function updateBoard($board) {
+
+        var whiteMarble = $('<circle class="marble whiteMarble" cx="0" cy="0" r="14" fill="url(#whiteMarble)"></circle>');
+        var blackMarble = $('<circle class="marble blackMarble" cx="0" cy="0" r="14" fill="url(#blackMarble)"></circle>');
+
+        var line;
+        for (line = 0; line < $board.length; ++line) {
+            var col;
+            var realCol;
+            var realLine = line + 1;
+            for (col = 0, realCol = 1; col < $board[line].length; ++col) {
+
+                var color = $board[line][col];
+                console.log("Couleur : " + color);
+                if (color < 0) {
+                    continue;
+                }
+
+                var tile = $('g.tile.col-' + realCol + '.line-' + realLine).first();
+                console.log("Ligne : " + realLine + " - Colonne : " + realCol);
+                if (color == 1 && tile.find('circle.marble.whiteMarble').length == 0) {
+                    console.log("Ajout d'une bille blanche !");
+                    var emptyTile = tile.find('circle.emptyTile').first();
+                    console.log(emptyTile);
+                    var whiteMarbleToAppend = whiteMarble;
+                    whiteMarbleToAppend.attr('cx', emptyTile.attr('cx'));
+                    whiteMarbleToAppend.attr('cy', emptyTile.attr('cy'));
+                    tile.append(whiteMarbleToAppend);
+                    console.log(whiteMarbleToAppend);
+                    //tile.find('circle.marble.blackMarble').remove();
+
+                } else if (color == 2 && tile.find('circle.marble.blackMarble').length == 0) {
+                    console.log("Ajout d'une bille noir !");
+                    var emptyTile = tile.find('circle.emptyTile').first();
+                    var blackMarbleToAppend = blackMarble;
+                    blackMarbleToAppend.attr('cx', emptyTile.attr('cx'));
+                    blackMarbleToAppend.attr('cy', emptyTile.attr('cy'));
+                    tile.append(blackMarbleToAppend);
+                    //tile.find('circle.marble.whiteMarble').remove();
+
+                } else if (color == 0) {
+                    console.log("Suppression de toutes les billes !");
+                    tile.find('circle.marble').remove();
+
+                }
+                ++realCol;
+            }
+        }
+    }
 });
 
