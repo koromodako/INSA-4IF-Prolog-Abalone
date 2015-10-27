@@ -1,4 +1,7 @@
-%%%%%%%%%%%% webserver.pl %%%%%%%%%%%%
+%% -----------------------------------------------------------------------------
+%% Module permettant de présenter une interface web pour le jeu abalone
+:- module(webserver, [server/1]).
+%% -----------------------------------------------------------------------------
 
 %%%%%%%%%%%%%%%%
 %% Inclusions %%
@@ -9,14 +12,23 @@
 :- use_module(library(http/http_error)).
 :- use_module(library(http/http_client)).
 :- use_module(library(http/html_write)).
-:- use_module(library(http/http_parameters)).   % to read Request parameters
+:- use_module(library(http/http_parameters)).
 :- use_module(library(http/http_cors)).
 :- use_module(library(http/http_files)).
-:- use_module(library(http/http_json)).         % for json
+:- use_module(library(http/http_json)).
 :- use_module(library(http/json_convert)).
+
+%%%%%%%%%%%%%%%%%%%
+%% Configuration %%
+%%%%%%%%%%%%%%%%%%%
 
 % Chargement de la configuration serveur
 :- consult(configuration).
+
+% Chemins ouverts dans le serveur web
+user:file_search_path(web, projectRoot('web')).
+user:file_search_path(css, projectRoot('web/css')).
+user:file_search_path(js, projectRoot('web/js')).
 
 %%%%%%%%%%%%%%%%
 %%  Routing   %%
