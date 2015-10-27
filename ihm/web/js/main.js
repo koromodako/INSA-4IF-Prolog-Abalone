@@ -56,10 +56,10 @@ $(function() {
     var currentSelectedTile = null;
     $('g.tile').click( function(){
         if (currentSelectedTile) {
+            currentSelectedTile.removeClass('active');
             if($(currentSelectedTile).children("circle.marble").length > 0 && isNextTo(currentSelectedTile, this)) {
                 move(currentSelectedTile, this);
             }
-            currentSelectedTile.removeClass('active');
         }
         $(this).addClass('active');
         currentSelectedTile = $(this);
@@ -79,6 +79,35 @@ $(function() {
         }
 
 
+    });
+
+    $('#transfert').click( function(){
+        var MonTableau = new Array("1", "2");
+        var tmp = $.param({
+                x:5,
+                y:8,
+                tab:MonTableau
+            });
+        $.ajax({
+            method: "POST",
+            url: "http://localhost:8000/transfert",
+            data: $.param({
+                x:5,
+                y:8,
+                tab:MonTableau
+            }),
+            success: function(json, statut){
+                console.log("success");
+            },
+            error: function (resultat, statut, erreur) {
+                console.log("error");
+                alert("Erreur lors de l'appel");
+                console.log(resultat, statut, erreur);
+            },
+            complete: function(response){
+                console.log(response.responseJSON);
+            }
+        });
     });
 
 });
