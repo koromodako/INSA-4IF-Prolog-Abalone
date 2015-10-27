@@ -21,9 +21,10 @@
 %%  Routing   %%
 %%%%%%%%%%%%%%%%
 
-:- http_handler('/', http_reply_from_files(web(.), []), [prefix]).
+:- http_handler('/', helloAction, []).
 :- http_handler('/css', http_reply_from_files(css(.), []), [prefix]).
 :- http_handler('/js', http_reply_from_files(js(.), []), [prefix]).
+:- http_handler('/game', http_reply_from_files(web(.), []), [prefix]).
 :- http_handler('/transfert', transfertAction, []).
 
 %%%%%%%%%%%%%%%%
@@ -32,8 +33,12 @@
 
 server(Port) :-
         http_server(http_dispatch, [port(Port)]),
-        cors_enable(Request, [method([get, post])]).
+        cors_enable(_, [method([get, post])]).
 
+% say hello, to test if server is running
+helloAction(_) :-
+    format('Content-type: text/plain~n~n'),
+    format('Hello world ! Server is running').
 
 transfertAction(Request) :-
     http_parameters(Request, [ x(X, []),

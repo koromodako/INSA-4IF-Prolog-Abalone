@@ -13,5 +13,5 @@ Les fichiers `test.xml` et `test2.xml` sont des sorties obtenues avec le script 
 
 - Ouvrir `configuration.pl` et mettre le chemin absolu du projet à la place de celui présent : `user:file_search_path(projectRoot, '/path/to/root/project').`
 - Ouvrir dans prolog `webserver.pl` puis entrer `server(Port)`, où `Port` est le numéro du port sur lequel le serveur peut écouter (exemple `8080`).
-- Ouvrir un navigateur à l'adresse `http://localhost:8080/` (changer `8080` par le port précédemment choisi)
+- Ouvrir un navigateur à l'adresse `http://localhost:8080/game` (changer `8080` par le port précédemment choisi)
 - Cliquer sur Transfert ! pour effectuer un test de requête (visible dans web/js/main.js). Cette dernière ne fait que retourner les paramètres qui lui sont envoyés
