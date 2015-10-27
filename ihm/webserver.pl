@@ -13,42 +13,30 @@
 :- use_module(library(http/http_cors)).
 :- use_module(library(http/http_files)).
 :- use_module(library(http/http_json)).         % for json
-:- use_module(library(http/json_convert)).      
-%%%% insert here game modules
+:- use_module(library(http/json_convert)).
 
-
+:- consult(configuration).
 
 %%%%%%%%%%%%%%%%
 %%  Routing   %%
 %%%%%%%%%%%%%%%%
 
-:- http_handler('/', helloAction, []).
+:- http_handler('/', http_reply_from_files(web(.), []), [prefix]).
+:- http_handler('/css', http_reply_from_files(css(.), []), [prefix]).
+:- http_handler('/js', http_reply_from_files(js(.), []), [prefix]).
 :- http_handler('/transfert', transfertAction, []).
 
-:- http_handler('/public', fichierAction, [prefix]).
-:- http_handler('/game', fichierAction, []).
+%%%%%%%%%%%%%%%%
+%%  Actions   %%
+%%%%%%%%%%%%%%%%
 
 server(Port) :-
         http_server(http_dispatch, [port(Port)]),
         cors_enable(Request, [method([get, post])]).
 
 
-
-% ACTIONS %
-% return the html page of the game
-% serve any file from 'web' directory
-fichierAction(Request) :-
-    http_reply_from_files('web', [], Request).
-fichierAction(Request) :-
-    http_404([], Request).
-
-% say hello, to test if server is running
-helloAction(_) :-
-    format('Content-type: text/plain~n~n'),
-    format('Hello world ! Server is running').
-
 transfertAction(Request) :-
-	http_parameters(Request, [ x(X, []),
+    http_parameters(Request, [ x(X, []),
           y(Y, []), tab(T, [])
         ]),
-	reply_json(json{x:X, y:Y, tab:T}).
+    reply_json(json{x:X, y:Y, tab:T}).
