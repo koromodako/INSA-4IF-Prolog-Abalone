@@ -114,7 +114,13 @@ $(function() {
             method: 'POST',
             url: baseUrl + '/get/player/movements',
             dataType: 'json',
-            data: [board, playerTurn, position.line, position.col],
+            data: JSON.stringify({
+                Board: board,
+                Player: playerTurn,
+                Line: position.line,
+                Col: position.col
+            }),
+            contentType: "application/json",
             success: $success,
             error: function (resultat, statut, erreur) {
                 alert("Erreur lors de l'appel pour récupérer les mouvements possibles.");

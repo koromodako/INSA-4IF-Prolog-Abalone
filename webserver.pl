@@ -17,6 +17,7 @@
 :- use_module(library(http/http_files)).
 :- use_module(library(http/http_json)).
 :- use_module(library(http/json_convert)).
+:- use_module(library(http/http_mime_plugin)).
 
 :- use_module(board).
 
@@ -64,13 +65,13 @@ getInitBoardAction(_) :-
 getPlayerMovementsAction(Request) :-
     member(method(post), Request), !,
     http_read_json(Request, JSONIn),
-    json_to_prolog(JSONIn, [Board, Player, Line, Col]),
-    findall(
-        [NextLine, NextCol],
-        (
-           movable:playerMovements(Board, Player, Line, Col, NextLine, NextCol)
-        ),
-        NewMovements
-    ),
-    prolog_to_json(NewMovements, JSONOut),
+    json_to_prolog(JSONIn, PrologIn),
+    %findall(
+    %    [NextLine, NextCol],
+    %    (
+    %       movable:playerMovements(Board, Player, Line, Col, NextLine, NextCol)
+    %    ),
+    %    NewMovements
+    %),
+    prolog_to_json(PrologIn, JSONOut),
     reply_json(JSONOut).
