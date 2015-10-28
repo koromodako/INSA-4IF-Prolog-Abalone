@@ -62,10 +62,26 @@ getInitBoardAction(_) :-
       prolog_to_json(Board, BoardJSON),
       reply_json(BoardJSON).
 
+%json(['Board'=[[],[],[],[],[],[],[],[],[]],'Player'=1,'Line'='3','Col'='3'])
+
+json_object row(a, b, c, d, e, f, g, h, i).
+json_object matrix(ra:row/9,
+                   rb:row/9,
+                   rc:row/9,
+                   rd:row/9,
+                   re:row/9,
+                   rf:row/9,
+                   rg:row/9,
+                   rh:row/9,
+                   ri:row/9).
+json_object data_struct(board:matrix/9, player:int, line:int, col:int).
+
 getPlayerMovementsAction(Request) :-
     member(method(post), Request), !,
     http_read_json(Request, JSONIn),
-    json_to_prolog(JSONIn, PrologIn),
+    json_to_prolog(JSONIn, DataStruct),
+    DataStruct=json(['Board'=Board,'Player'=Player,'Line'=Line,'Col'=Col]),
+    Out=json(['Board'=Board]),
     %findall(
     %    [NextLine, NextCol],
     %    (
@@ -73,5 +89,5 @@ getPlayerMovementsAction(Request) :-
     %    ),
     %    NewMovements
     %),
-    prolog_to_json(PrologIn, JSONOut),
+    prolog_to_json(Out, JSONOut),
     reply_json(JSONOut).
