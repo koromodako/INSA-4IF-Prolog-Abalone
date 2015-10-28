@@ -20,6 +20,8 @@
 :- use_module(library(http/http_mime_plugin)).
 
 :- use_module(board).
+:- use_module(movable).
+:- use_module(move).
 
 %%%%%%%%%%%%%%%%%%%
 %% Configuration %%
@@ -43,6 +45,7 @@ user:file_search_path(js, projectRoot('web/js')).
 :- http_handler('/game', http_reply_from_files(web(.), []), [prefix]).
 :- http_handler('/get/init/board', getInitBoardAction, [prefix]).
 :- http_handler('/get/player/movements', getPlayerMovementsAction, [prefix]).
+:- http_handler('/make/player/movement', makePlayerMovementAction, [prefix]).
 
 %%%%%%%%%%%%%%%%
 %%  Actions   %%
@@ -62,32 +65,43 @@ getInitBoardAction(_) :-
       prolog_to_json(Board, BoardJSON),
       reply_json(BoardJSON).
 
-%json(['Board'=[[],[],[],[],[],[],[],[],[]],'Player'=1,'Line'='3','Col'='3'])
-
-json_object row(a, b, c, d, e, f, g, h, i).
-json_object matrix(ra:row/9,
-                   rb:row/9,
-                   rc:row/9,
-                   rd:row/9,
-                   re:row/9,
-                   rf:row/9,
-                   rg:row/9,
-                   rh:row/9,
-                   ri:row/9).
-json_object data_struct(board:matrix/9, player:int, line:int, col:int).
-
 getPlayerMovementsAction(Request) :-
     member(method(post), Request), !,
     http_read_json(Request, JSONIn),
     json_to_prolog(JSONIn, DataStruct),
     DataStruct=json(['Board'=Board,'Player'=Player,'Line'=Line,'Col'=Col]),
-    Out=json(['Board'=Board]),
-    %findall(
-    %    [NextLine, NextCol],
-    %    (
-    %       movable:playerMovements(Board, Player, Line, Col, NextLine, NextCol)
-    %    ),
-    %    NewMovements
-    %),
-    prolog_to_json(Out, JSONOut),
+    findall(
+        [NextLine, NextCol],
+        (
+           movable:playerMovements(Board, Player, Line, Col, NextLine, NextCol)
+        ),
+        NewMovements
+    ),
+    prolog_to_json(NewMovements, JSONOut),
     reply_json(JSONOut).
+
+makePlayerMovementAction(Request) :-
+    member(method(post), Request), !,
+    http_read_json(Request, JSONIn),
+    json_to_prolog(JSONIn, DataStruct),
+    DataStruct=json(['Board'=Board,'Line'=Line,'Col'=Col,'NextLine'=NextLine,'NextCol'=NextCol]),
+    move:moveMarbles(Board, Col, Line, NextCol, NextLine, NewBoard),
+    prolog_to_json(NewBoard, JSONOut),
+    reply_json(JSONOut).
+
+%%%%%%%%%%%%%%%%%%
+%% JSON Objects %%
+%%%%%%%%%%%%%%%%%%
+
+%json_object row(a, b, c, d, e, f, g, h, i).
+%json_object matrix(ra:row/9,
+%                   rb:row/9,
+%                   rc:row/9,
+%                   rd:row/9,
+%                   re:row/9,
+%                   rf:row/9,
+%                   rg:row/9,
+%                   rh:row/9,
+%                   ri:row/9).
+
+%json_object data_struct(board:matrix/9, player:int, line:int, col:int).

@@ -9,15 +9,26 @@ svg > * {
     pointer-events: none;
 }
 
-.tile polygon,
-.unselected {
+.tile polygon {
     pointer-events: visiblePainted;
     fill: rgb(246, 246, 246);
     stroke: hsl(0, 0%, 70%);
     stroke-width: 0.3;
 }
 
-.selected {
+.tile polygon:hover {
+    fill: rgb(195,225,227);
+}
+
+.tile.selected polygon {
+    fill: #66CCFF;
+}
+
+.tile.movable polygon {
+    fill: rgb(195,225,227);
+}
+
+.tile.movable polygon:hover {
     fill: #66CCFF;
 }
 
@@ -25,13 +36,4 @@ svg > * {
     fill: rgb(255, 255, 255);
     stroke: hsl(0, 0%, 70%);
     stroke-width: 0.5;
-}
-
-.tile polygon:hover { fill: rgb(195,225,227) !important; }
-.tile circle {
-    background: -moz-linear-gradient(top bottom, black, white);
-}
-
-.tile.active polygon {
-    fill: #C3E1E3;
 }
