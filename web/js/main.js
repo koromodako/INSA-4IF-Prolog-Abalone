@@ -206,6 +206,10 @@ $(function() {
             }
         });
 
+        if (line > 5) {
+            col += line - 5;
+        }
+
         return {
             col: col,
             line: line
