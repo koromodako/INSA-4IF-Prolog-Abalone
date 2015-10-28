@@ -17,12 +17,17 @@ $(function() {
     const MARBLE_SELECTED = 2;
     const UPDATE_BOARD = 3;
 
+    /** Player **/
+    const HUMAN = 0;
+    const COMPUTER = 1;
+
     /**** Globals variables ****/
     var DEBUG = 1;
     var currentSelectedTile = null;
     var board = null;
-    var baseUrl = 'http://localhost:8080';
+    var baseUrl = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
     var playerTurn = 1;
+    var playerType = {one:null, two:null};
     var currentState = INIT;
 
     /*****************************************
@@ -30,12 +35,54 @@ $(function() {
      *****************************************/
 
     $('#start-game').click(function() {
-        // TODO Add a loading popup
-        getInitBoard(function(json, statut){
-            board = json;
-            updateBoard(board);
-            currentState = CHOOSE_MARBLE;
+
+        var genericModal = $('#generic-modal');
+        genericModal.find('h4.modal-title').first().text('Choose play mode');
+        genericModal.find('div.modal-body').first().html(
+            '<button id="mode-human-vs-human" type="button" class="btn btn-default" data-dismiss="modal">Human vs Human</button> '
+            + '<button id="mode-human-vs-computer" type="button" class="btn btn-default" data-dismiss="modal">Human vs Computer</button> '
+            + '<button id="mode-computer-vs-computer" type="button" class="btn btn-default" data-dismiss="modal">Computer vs Computer</button>'
+        ).addClass('text-center');
+
+        genericModal.modal('show');
+
+        genericModal.on('hide.bs.modal', function (e) {
+            // TODO Add a loading popup
+            getInitBoard(function(json, statut){
+                board = json;
+                updateBoard(board);
+                currentState = CHOOSE_MARBLE;
+                $('#start-game').text('New Game');
+                currentSelectedTile = null;
+                playerTurn = 1;
+                $('#player').text('player ' + (playerTurn == 1 ? 'white' : 'black'));
+                $('#white-marble-out').text('0');
+                $('#black-marble-out').text('0');
+                $('#stop-game').removeAttr('disabled');
+            });
         });
+
+    });
+
+    $('#mode-human-vs-human').click(function() {
+        playerType.one = HUMAN;
+        playerType.two = HUMAN;
+    });
+
+    $('#mode-human-vs-computer').click(function() {
+        playerType.one = HUMAN;
+        playerType.two = COMPUTER;
+    });
+
+    $('#mode-computer-vs-computer').click(function() {
+        playerType.one = COMPUTER;
+        playerType.two = COMPUTER;
+    });
+
+    $('#stop-game').click(function() {
+        currentState = INIT;
+        $('#player').text('-');
+        $(this).attr('disabled', 'disabled');
     });
 
     $('g.tile').click( function() {
@@ -64,7 +111,7 @@ $(function() {
                     var col = item[1];
                     var line = item[0];
 
-                    if (line > 5) {
+                    if (line > 5) { // Matrix conversion
                         col -= line - 5;
                     }
                     $('g.tile.col-' + col + '.line-' + line).addClass('movable');
@@ -88,7 +135,7 @@ $(function() {
                 makePlayerMovement($(this), function(json, statut) {
                     board = json;
                     updateBoard(board);
-                    playerTurn = playerTurn % 2 ? 2 : 1;
+                    playerTurn = playerTurn == 1 ? 2 : 1;
                     currentState = CHOOSE_MARBLE;
                 });
 
@@ -206,7 +253,7 @@ $(function() {
             }
         });
 
-        if (line > 5) {
+        if (line > 5) { // Matrix conversion
             col += line - 5;
         }
 
