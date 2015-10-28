@@ -18,6 +18,8 @@
 :- use_module(library(http/http_json)).
 :- use_module(library(http/json_convert)).
 
+:- use_module(board).
+
 %%%%%%%%%%%%%%%%%%%
 %% Configuration %%
 %%%%%%%%%%%%%%%%%%%
@@ -38,7 +40,8 @@ user:file_search_path(js, projectRoot('web/js')).
 :- http_handler('/css', http_reply_from_files(css(.), []), [prefix]).
 :- http_handler('/js', http_reply_from_files(js(.), []), [prefix]).
 :- http_handler('/game', http_reply_from_files(web(.), []), [prefix]).
-:- http_handler('/get/init/board', getInitBoardAction, []).
+:- http_handler('/get/init/board', getInitBoardAction, [prefix]).
+:- http_handler('/get/player/movements', getPlayerMovementsAction, [prefix]).
 
 %%%%%%%%%%%%%%%%
 %%  Actions   %%
@@ -53,20 +56,21 @@ helloAction(_) :-
     format('Content-type: text/plain~n~n'),
     format('Hello world ! Server is running').
 
-initBoard(
-[
-[1,1,0,0,0,-1,-1,-1,-1],
-[1,1,0,0,0,0,-1,-1,-1],
-[1,1,1,0,0,0,0,-1,-1],
-[1,1,1,0,0,0,0,2,-1],
-[1,1,1,0,0,0,2,2,2],
-[-1,1,0,0,0,0,2,2,2],
-[-1,-1,0,0,0,0,2,2,2],
-[-1,-1,-1,0,0,0,0,2,2],
-[-1,-1,-1,-1,0,0,0,2,2]
-]).
+getInitBoardAction(_) :-
+      initBoard(Board),
+      prolog_to_json(Board, BoardJSON),
+      reply_json(BoardJSON).
 
-getInitBoardAction(Request) :-
-      initBoard(PrologOut),
-      prolog_to_json(PrologOut, JSONOut),
-      reply_json(JSONOut).
+getPlayerMovementsAction(Request) :-
+    member(method(post), Request), !,
+    http_read_json(Request, JSONIn),
+    json_to_prolog(JSONIn, [Board, Player, Line, Col]),
+    findall(
+        [NextLine, NextCol],
+        (
+           movable:playerMovements(Board, Player, Line, Col, NextLine, NextCol)
+        ),
+        NewMovements
+    ),
+    prolog_to_json(NewMovements, JSONOut),
+    reply_json(JSONOut).
