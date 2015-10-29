@@ -293,10 +293,10 @@ $(function() {
 
                         // Display winner
                         var genericModal = $('#generic-modal');
-                        genericModal.find('h4.modal-title').first().text('Choose play mode');
+                        genericModal.find('h4.modal-title').first().text('Congratulation');
                         genericModal.find('div.modal-body').first().html(
                             '<div class="text-center">' +
-                            '<p>The ' + (playerTurn == 2 ? 'white' : 'black') + ' player win !</p>' +
+                            '<h3>The ' + (playerTurn == 2 ? 'white' : 'black') + ' player win !</h3>' +
                             '</div>'
                         );
                         genericModal.find('div.modal-footer').first().html(

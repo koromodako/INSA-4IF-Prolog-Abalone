@@ -3,10 +3,10 @@
 :- module(play, []).
 %% -----------------------------------------------------------------------------
 
-:- use_module('board.pl').
-:- use_module('gameOver.pl').
-:- use_module('ia.pl').
-:- use_module('playManual.pl').
+:- use_module(board).
+:- use_module(gameOver).
+:- use_module(ia).
+:- use_module(playManual).
 
 %% Joue le tour du joueur passé en argument
 %% @param Board Plateau de jeu
