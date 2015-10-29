@@ -48,10 +48,10 @@ nextMove(Board, Player, Line, Col, NextLine, NextCol) :-
 playTurn(Board, Player, NewBoard) :-
     %display:displayBoard(Board),
     nextMove(Board, Player, Line, Col, NextLine, NextCol),
-    print('Line : '), print(Line),nl,
-    print('Col : '),print(Col),nl,
-    print('NextLine : '),print(NextLine),nl,
-    print('NextCol : '),print(NextCol),nl,
+    write('Line : '), write(Line),nl,
+    write('Col : '),write(Col),nl,
+    write('NextLine : '),write(NextLine),nl,
+    write('NextCol : '),write(NextCol),nl,
     moveMarbles(Board, Col, Line, NextCol, NextLine, NewBoard).
     %display:displayBoard(Board).
     

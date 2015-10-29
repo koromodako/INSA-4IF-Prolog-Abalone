@@ -26,11 +26,11 @@ runTests(Result) :-
     initTestBoard(Board),
     
     % Test : Affiche la grille de jeu
-    print('Test gameOver:1.............'),
+    write('Test gameOver:1.............'),
     (
-        (gameOver:gameOver(1, Board), print('SUCCESS\n'), !)
+        (gameOver:gameOver(1, Board), write('SUCCESS\n'), !)
         ;
-        (print('...FAIL\n'))
+        (write('...FAIL\n'))
     ),
 
     Result is 0.

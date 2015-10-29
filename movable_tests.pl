@@ -27,112 +27,112 @@ runTests(Result) :-
 
     % Test : Essaye de pousser 3 boules adverses dans le vide, avec 2 boules
     % Résultat attendu : faux.
-    print('Test 1.............'),
+    write('Test 1.............'),
     (
-        (not(movable:isMovable(Board, 2, 2, 2, 3)), print('SUCCESS'),nl, !)
+        (not(movable:isMovable(Board, 2, 2, 2, 3)), write('SUCCESS'),nl, !)
         ;
-        (print('...FAIL'),nl)
+        (write('...FAIL'),nl)
     ),
 
     % Test : Essaye de pousser 2 boules adverses sur une case vide, avec 3 boules
     % Résultat attendu : vrai.
-    print('Test 2.............'),
+    write('Test 2.............'),
     (
-        (movable:isMovable(Board, 2, 6, 2, 5), print('SUCCESS'),nl, !)
+        (movable:isMovable(Board, 2, 6, 2, 5), write('SUCCESS'),nl, !)
         ;
-        (print('...FAIL'),nl)
+        (write('...FAIL'),nl)
     ),
 
     % Test : Essaye de pousser 1 boule adverse sur une case vide, avec 2 boules
     % Résultat attendu : vrai.
-    print('Test 3.............'),
+    write('Test 3.............'),
     (
-        (movable:isMovable(Board, 3, 4, 3, 5), print('SUCCESS'),nl, !)
+        (movable:isMovable(Board, 3, 4, 3, 5), write('SUCCESS'),nl, !)
         ;
-        (print('...FAIL'),nl)
+        (write('...FAIL'),nl)
     ),
 
     % Test : Essaye de pousser 1 boule dans le vide (suicide)
     % Résultat attendu : faux.
-    print('Test 4.............'),
+    write('Test 4.............'),
     (
-        (not(movable:isMovable(Board, 4, 8, 3, 8)), print('SUCCESS'),nl, !)
+        (not(movable:isMovable(Board, 4, 8, 3, 8)), write('SUCCESS'),nl, !)
         ;
-        (print('...FAIL'),nl)
+        (write('...FAIL'),nl)
     ),
 
     % Test : Essaye de pousser des boules dans le mauvais sens (mauvaise diag)
     % Résultat attendu : faux.
-    print('Test 5.............'),
+    write('Test 5.............'),
     (
-        (not(movable:isMovable(Board, 4, 8, 5, 7)), print('SUCCESS'),nl, !)
+        (not(movable:isMovable(Board, 4, 8, 5, 7)), write('SUCCESS'),nl, !)
         ;
-        (print('...FAIL'),nl)
+        (write('...FAIL'),nl)
     ),
 
     % Test : Essaye de pousser 2 boules vers une case vide
     % Résultat attendu : vrai.
-    print('Test 6.............'),
+    write('Test 6.............'),
     (
-        (movable:isMovable(Board, 5, 3, 5, 4), print('SUCCESS'),nl, !)
+        (movable:isMovable(Board, 5, 3, 5, 4), write('SUCCESS'),nl, !)
         ;
-        (print('...FAIL'),nl)
+        (write('...FAIL'),nl)
     ),
 
     % Test : Essaye de pousser 1 boule adverse avec 2 boules, vers une case occupée
     % avec une de nos boules.
     % Résultat attendu : faux.
-    print('Test 7.............'),
+    write('Test 7.............'),
     (
-        (not(movable:isMovable(Board, 5, 4, 4, 4)), print('SUCCESS'),nl, !)
+        (not(movable:isMovable(Board, 5, 4, 4, 4)), write('SUCCESS'),nl, !)
         ;
-        (print('...FAIL'),nl)
+        (write('...FAIL'),nl)
     ),
 
     % Test : Essaye de pousser 2 boules vers le vide (suicide)
     % Résultat attendu : faux.
-    print('Test 8.............'),
+    write('Test 8.............'),
     (
-        (not(movable:isMovable(Board, 5, 8, 4, 8)), print('SUCCESS'),nl, !)
+        (not(movable:isMovable(Board, 5, 8, 4, 8)), write('SUCCESS'),nl, !)
         ;
-        (print('...FAIL'),nl)
+        (write('...FAIL'),nl)
     ),
 
     % Test : Essaye de pousser 4 boules
     % Résultat attendu : faux.
-    print('Test 9.............'),
+    write('Test 9.............'),
     (
-        (not(movable:isMovable(Board, 5, 9, 5, 8)), print('SUCCESS'),nl, !)
+        (not(movable:isMovable(Board, 5, 9, 5, 8)), write('SUCCESS'),nl, !)
         ;
-        (print('...FAIL'),nl)
+        (write('...FAIL'),nl)
     ),
 
     % Test : Essaye de pousser 2 boules adverses avec 1 boule vers une case
     % occupée avec une de nos boules.
     % Résultat attendu : faux.
-    print('Test 10............'),
+    write('Test 10............'),
     (
-        (not(movable:isMovable(Board, 6, 4, 7, 5)), print('SUCCESS'),nl, !)
+        (not(movable:isMovable(Board, 6, 4, 7, 5)), write('SUCCESS'),nl, !)
         ;
-        (print('...FAIL'),nl)
+        (write('...FAIL'),nl)
     ),
 
     % Test : Essaye de pousser 2 boules adverses avec 3 boules, dans le vide
     % Résultat attendu : vrai.
-    print('Test 11............'),
+    write('Test 11............'),
     (
-        (movable:isMovable(Board, 6, 6, 5, 6), print('SUCCESS'),nl, !)
+        (movable:isMovable(Board, 6, 6, 5, 6), write('SUCCESS'),nl, !)
         ;
-        (print('...FAIL'),nl)
+        (write('...FAIL'),nl)
     ),
 
     % Test : Essaye de pousser 1 boule adverse avec 2 boules, dans le vide, en diag
     % Résultat attendu : vrai.
-    print('Test 12............'),
+    write('Test 12............'),
     (
-        (movable:isMovable(Board, 7, 5, 8, 6), print('SUCCESS'),nl, !)
+        (movable:isMovable(Board, 7, 5, 8, 6), write('SUCCESS'),nl, !)
         ;
-        (print('...FAIL'),nl)
+        (write('...FAIL'),nl)
     ),
 
 
