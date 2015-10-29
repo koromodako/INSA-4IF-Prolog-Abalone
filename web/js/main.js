@@ -71,6 +71,22 @@ $(function() {
             // Display possibilities
             getPlayerMovementsRequest(function(json) {
 
+                var min = 0, max = 0;
+                if (debug) {
+                    $.each(json, function(index, item) {
+                        if (index == 0) {
+                            min = item[2];
+                            max = item[2];
+                        } else {
+                            if (min > item[2]) {
+                                min = item[2];
+                            } else if (max < item[2]) {
+                                max = item[2];
+                            }
+                        }
+                    });
+                }
+
                 $.each(json, function(index, item) {
 
                     var col = item[1];
@@ -78,8 +94,11 @@ $(function() {
                     var tile = $('g.tile.col-' + col + '.line-' + line);
                     tile.addClass('movable');
 
-                    if (typeof item[2] !== 'undefined') {
+                    if (debug) {
                         tile.find('title.title').first().text('Score : ' + (Math.round(item[2] * 100) / 100));
+                        var scoreNorm = ((( item[2] - min ) / ( max - min )) / 3 ) * 2;
+                        console.log('Min: ' + min + ' - Max: ' + max + ' - Score: ' + item[2] + ' Norm: ' + scoreNorm);
+                        tile.find('polygon').first().css('fill', 'rgba(195,225,227,' + (scoreNorm + 0.33) + ')');
                     }
                 });
             });
@@ -89,8 +108,7 @@ $(function() {
             // Not a movement available
             if (!$(this).hasClass('movable')) {
 
-                $('g.tile.movable').removeClass('movable');
-                $('g.tile.selected').removeClass('selected');
+                removeSelectedAndMovableClass();
                 currentState = CHOOSE_MARBLE;
 
             } else { // Make movement
@@ -402,8 +420,7 @@ $(function() {
 
         $('#player').text('-');
         $('#stop-game').attr('disabled', 'disabled');
-        $('g.tile.movable').removeClass('movable');
-        $('g.tile.selected').removeClass('selected');
+        removeSelectedAndMovableClass();
 
     }
 
@@ -452,6 +469,17 @@ $(function() {
 
         genericModal.modal('show');
 
+    }
+
+    function removeSelectedAndMovableClass() {
+        if (debug) {
+            $('g.tile.movable').each(function() {
+                $(this).find('polygon').css('fill', '');
+            }).removeClass('movable');
+        } else {
+            $('g.tile.movable').removeClass('movable');
+        }
+        $('g.tile.selected').removeClass('selected');
     }
 });
 
