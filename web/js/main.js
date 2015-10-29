@@ -27,7 +27,7 @@ $(function() {
     const numberInitMax = 14;
 
     /**** Globals variables ****/
-    var debug = false;
+    var debug = true;
     var currentSelectedTile = null;
     var board = null;
     var playerTurn = 1;
