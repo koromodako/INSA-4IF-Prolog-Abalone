@@ -24,6 +24,7 @@
 :- use_module(move).
 :- use_module(ia).
 :- use_module(gameOver).
+:- use_module(geometricScoreFunction).
 
 %%%%%%%%%%%%%%%%%%%
 %% Configuration %%
@@ -74,15 +75,33 @@ getPlayerMovementsAction(Request) :-
     member(method(post), Request), !,
     http_read_json(Request, JSONIn),
     json_to_prolog(JSONIn, DataStruct),
-    DataStruct=json(['Board'=Board,'Player'=Player,'Line'=Line,'Col'=Col]),
-    findall(
-        [NextLine, NextCol],
+    DataStruct=json(['Board'=Board,'Player'=Player,'Line'=Line,'Col'=Col,'Debug'=Debug]),
+    (
         (
-           movable:playerMovements(Board, Player, Line, Col, NextLine, NextCol)
-        ),
-        NewMovements
+            Debug == @true,
+            findall(
+                [NextLine, NextCol, NodeValue],
+                (
+                    movable:playerMovements(Board, Player, Line, Col, NextLine, NextCol),
+                    move:moveMarbles(Board, Col, Line, NextCol, NextLine, NewBoard),
+                    geometricScoreFunction:geometricScore(NewBoard, Player, NodeValue)
+                ),
+                NewMovements
+            ),
+            prolog_to_json(NewMovements, JSONOut)
+       )
+       ;
+       (
+           findall(
+               [NextLine, NextCol],
+               (
+                  movable:playerMovements(Board, Player, Line, Col, NextLine, NextCol)
+               ),
+               NewMovements
+           ),
+           prolog_to_json(NewMovements, JSONOut)
+       )
     ),
-    prolog_to_json(NewMovements, JSONOut),
     reply_json(JSONOut).
 
 makePlayerMovementAction(Request) :-

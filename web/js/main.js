@@ -1,7 +1,7 @@
 $(function() {
 
     $( document ).ready(function(){
-        if(DEBUG){
+        if(debug){
             $('#debug').show();
         }
     });
@@ -27,7 +27,7 @@ $(function() {
     const numberInitMax = 14;
 
     /**** Globals variables ****/
-    var DEBUG = 1;
+    var debug = false;
     var currentSelectedTile = null;
     var board = null;
     var playerTurn = 1;
@@ -70,13 +70,17 @@ $(function() {
 
             // Display possibilities
             getPlayerMovementsRequest(function(json) {
-
+                console.log(json);
                 $.each(json, function(index, item) {
 
                     var col = item[1];
                     var line = item[0];
+                    var tile = $('g.tile.col-' + col + '.line-' + line);
+                    tile.addClass('movable');
 
-                    $('g.tile.col-' + col + '.line-' + line).addClass('movable');
+                    if (typeof item[2] !== 'undefined') {
+                        tile.find('title.title').first().text('Score : ' + (Math.round(item[2] * 100) / 100));
+                    }
                 });
             });
 
@@ -112,12 +116,12 @@ $(function() {
      *** Requests                          ***
      *****************************************/
 
-    function getInitBoardRequest($success) {
+    function getInitBoardRequest(success) {
 
         $.ajax({
             method: 'POST',
             url: baseUrl + '/get/init/board',
-            success: $success,
+            success: success,
             error: function (resultat, statut, erreur) {
                 alert("Erreur lors de l'appel de l'initialisation du plateau.");
                 console.log(resultat, statut, erreur);
@@ -126,7 +130,7 @@ $(function() {
 
     }
 
-    function getPlayerMovementsRequest($success) {
+    function getPlayerMovementsRequest(success) {
 
         var position = getPositionOfTile(currentSelectedTile);
 
@@ -138,10 +142,11 @@ $(function() {
                 Board: board,
                 Player: playerTurn,
                 Line: position.line,
-                Col: position.col
+                Col: position.col,
+                Debug: debug
             }),
             contentType: "application/json",
-            success: $success,
+            success: success,
             error: function (resultat, statut, erreur) {
                 alert("Erreur lors de l'appel pour récupérer les mouvements possibles.");
                 console.log(resultat, statut, erreur);
@@ -149,10 +154,10 @@ $(function() {
         });
     }
 
-    function makePlayerMovementRequest($moveToTile, $success) {
+    function makePlayerMovementRequest(moveToTile, success) {
 
         var position = getPositionOfTile(currentSelectedTile);
-        var destination = getPositionOfTile($moveToTile);
+        var destination = getPositionOfTile(moveToTile);
 
         $.ajax({
             method: 'POST',
@@ -166,7 +171,7 @@ $(function() {
                 NextCol: destination.col
             }),
             contentType: "application/json",
-            success: $success,
+            success: success,
             error: function (resultat, statut, erreur) {
                 alert("Erreur lors de l'appel pour effectuer le movement.");
                 console.log(resultat, statut, erreur);
@@ -174,7 +179,7 @@ $(function() {
         });
     }
 
-    function makeIAPlayRequest($success) {
+    function makeIAPlayRequest(success) {
 
         $.ajax({
             method: 'POST',
@@ -185,7 +190,7 @@ $(function() {
                 Player: playerTurn
             }),
             contentType: "application/json",
-            success: $success,
+            success: success,
             error: function (resultat, statut, erreur) {
                 alert("Erreur lors de l'appel pour faire jouer l'IA.");
                 console.log(resultat, statut, erreur);
@@ -193,7 +198,7 @@ $(function() {
         });
     }
 
-    function checkGameIsOverRequest($success) {
+    function checkGameIsOverRequest(success) {
 
         $.ajax({
             method: 'POST',
@@ -204,7 +209,7 @@ $(function() {
                 Player: playerTurn
             }),
             contentType: "application/json",
-            success: $success,
+            success: success,
             error: function (resultat, statut, erreur) {
                 alert("Erreur lors de l'appel pour vérifier si le jeu est terminé.");
                 console.log(resultat, statut, erreur);
@@ -220,10 +225,10 @@ $(function() {
         return elt.attr('class').split(/\s+/);
     }
 
-    function getPositionOfTile($tile) {
+    function getPositionOfTile(tile) {
         var col = null, line = null;
 
-        $.each(getClassArrayOfElement($tile), function(index, item) {
+        $.each(getClassArrayOfElement(tile), function(index, item) {
             if (item.match("^col-")) { // TODO add in the regex the number
                 col = parseInt(item.split('-')[1]);
             } else if (item.match("^line-")) {
@@ -361,11 +366,11 @@ $(function() {
         });
     }
 
-    function updateDebugInfo($tile) {
+    function updateDebugInfo(tile) {
 
-        if(DEBUG) {
+        if(debug) {
 
-            var circleEmptyTitle = $tile.children('circle.emptyTile').first();
+            var circleEmptyTitle = tile.children('circle.emptyTile').first();
 
             $('#printCx').text(circleEmptyTitle.attr('cx'));
             $('#printCy').text(circleEmptyTitle.attr('cy'));
@@ -397,6 +402,8 @@ $(function() {
 
         $('#player').text('-');
         $('#stop-game').attr('disabled', 'disabled');
+        $('g.tile.movable').removeClass('movable');
+        $('g.tile.selected').removeClass('selected');
 
     }
 
