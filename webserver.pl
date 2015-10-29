@@ -23,6 +23,7 @@
 :- use_module(movable).
 :- use_module(move).
 :- use_module(ia).
+:- use_module(gameOver).
 
 %%%%%%%%%%%%%%%%%%%
 %% Configuration %%
@@ -48,6 +49,7 @@ user:file_search_path(js, projectRoot('web/js')).
 :- http_handler('/get/player/movements', getPlayerMovementsAction, [prefix]).
 :- http_handler('/make/player/movement', makePlayerMovementAction, [prefix]).
 :- http_handler('/make/ia/play', makeIAPlayAction, [prefix]).
+:- http_handler('/check/game/is/over', checkGameIsOver, [prefix]).
 
 %%%%%%%%%%%%%%%%
 %%  Actions   %%
@@ -99,6 +101,23 @@ makeIAPlayAction(Request) :-
     ia:playTurn(Board, Player, NewBoard),
     prolog_to_json(NewBoard, JSONOut),
     reply_json(JSONOut).
+
+checkGameIsOver(Request) :-
+       member(method(post), Request), !,
+       http_read_json(Request, JSONIn),
+       json_to_prolog(JSONIn, DataStruct),
+       DataStruct=json(['Board'=Board,'Player'=Player]),
+       (
+           (
+               gameOver:gameOver(Player, Board),
+               JSONOut=json([ 'isOver' = @true ])
+           )
+           ;
+           (
+               JSONOut=json([ 'isOver' = @false ])
+           )
+       ),
+       reply_json(JSONOut).
 
 %%%%%%%%%%%%%%%%%%
 %% JSON Objects %%

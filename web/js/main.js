@@ -26,60 +26,27 @@ $(function() {
     var DEBUG = 1;
     var currentSelectedTile = null;
     var board = null;
-    var baseUrl = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
     var playerTurn = 1;
     var playerType = {1:null, 2:null};
     var currentState = STOP;
     var IAPlayTimeoutID = null;
 
+    /**
+     * URL is the same so nothing needed here
+     * Else it's possible to reconstruct the baseUrl with this :
+     * var baseURL = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
+     */
+    var baseUrl = '';
+
     /*****************************************
      *** Actions                           ***
      *****************************************/
 
-    $('#start-game').click(function() {
+    $('#start-game').click(startGame);
 
-        var genericModal = $('#generic-modal');
-        genericModal.find('h4.modal-title').first().text('Choose play mode');
-        genericModal.find('div.modal-body').first().html(
-            '<button id="mode-human-vs-human" type="button" class="btn btn-default">Human vs Human</button> '
-            + '<button id="mode-human-vs-computer" type="button" class="btn btn-default">Human vs Computer</button> '
-            + '<button id="mode-computer-vs-computer" type="button" class="btn btn-default">Computer vs Computer</button>'
-        ).addClass('text-center');
+    $('#stop-game').click(stopGame);
 
-        $('#mode-human-vs-human').click(function() {
-            playerType[1] = HUMAN;
-            playerType[2] = HUMAN;
-            $('#generic-modal').modal('hide');
-            initGame();
-        });
-
-        $('#mode-human-vs-computer').click(function() {
-            playerType[1] = HUMAN;
-            playerType[2] = COMPUTER;
-            $('#generic-modal').modal('hide');
-            initGame();
-        });
-
-        $('#mode-computer-vs-computer').click(function() {
-            playerType[1] = COMPUTER;
-            playerType[2] = COMPUTER;
-            $('#generic-modal').modal('hide');
-            initGame();
-        });
-
-        genericModal.modal('show');
-
-    });
-
-    $('#stop-game').click(function() {
-        currentState = STOP;
-        clearTimeout(IAPlayTimeoutID); // Stop the last IA Play
-        IAPlayTimeoutID = null;
-        $('#player').text('-');
-        $(this).attr('disabled', 'disabled');
-    });
-
-    $('g.tile').click( function() {
+    $('g.tile').click(function() {
 
         // Action to corresponding state
         if (currentState == CHOOSE_MARBLE) {
@@ -137,7 +104,7 @@ $(function() {
 
         }
 
-        updateDebugInfo();
+        updateDebugInfo($(this));
     });
 
     /*****************************************
@@ -225,8 +192,27 @@ $(function() {
         });
     }
 
+    function checkGameIsOverRequest($success) {
+
+        $.ajax({
+            method: 'POST',
+            url: baseUrl + '/check/game/is/over',
+            dataType: 'json',
+            data: JSON.stringify({
+                Board: board,
+                Player: playerTurn
+            }),
+            contentType: "application/json",
+            success: $success,
+            error: function (resultat, statut, erreur) {
+                alert("Erreur lors de l'appel pour vérifier si le jeu est terminé.");
+                console.log(resultat, statut, erreur);
+            }
+        });
+    }
+
     /*****************************************
-     *** Utils                             ***
+     *** functions                    ***
      *****************************************/
 
     function getClassArrayOfElement($elt) {
@@ -253,10 +239,6 @@ $(function() {
             line: line
         };
     }
-
-    /*****************************************
-     *** Other function                    ***
-     *****************************************/
 
     function updateBoard($board) {
 
@@ -302,20 +284,48 @@ $(function() {
             if (IAPlayTimeoutID != null) { // Wait if the previous turn is not done
                 setTimeout(playTurn, 1000);
             } else {
-                if (playerType[playerTurn] == COMPUTER) {
-                    currentState = IA_PLAY;
-                    IAPlayTimeoutID = setTimeout(function () {
-                        makeIAPlayRequest(function (json) {
-                            board = json;
-                            updateBoard(board);
-                            nextPlayer();
-                            IAPlayTimeoutID = null;
-                            playTurn();
-                        });
-                    }, 200);
-                } else {
-                    currentState = CHOOSE_MARBLE;
-                }
+
+                // Check if the game is over
+                checkGameIsOverRequest(function(json) {
+                    if(json.isOver) {
+
+                        stopGame();
+
+                        // Display winner
+                        var genericModal = $('#generic-modal');
+                        genericModal.find('h4.modal-title').first().text('Choose play mode');
+                        genericModal.find('div.modal-body').first().html(
+                            '<div class="text-center">' +
+                            '<p>The ' + (playerTurn == 2 ? 'white' : 'black') + ' player win !</p>' +
+                            '</div>'
+                        );
+                        genericModal.find('div.modal-footer').first().html(
+                            '<button type="button" class="btn btn-default" data-dismiss="modal">Ok</button> '
+                        );
+
+                        genericModal.modal('show');
+
+                    } else {
+                        // Play IA if it's a computer player
+                        if (playerType[playerTurn] == COMPUTER) {
+                            currentState = IA_PLAY;
+                            IAPlayTimeoutID = setTimeout(function () {
+                                makeIAPlayRequest(function (json) {
+                                    board = json;
+                                    updateBoard(board);
+                                    nextPlayer();
+                                    IAPlayTimeoutID = null;
+                                    playTurn();
+                                });
+                            }, 200);
+
+                        // Play manual
+                        } else {
+                            currentState = CHOOSE_MARBLE;
+                        }
+
+                    }
+                });
             }
         }
     }
@@ -340,11 +350,11 @@ $(function() {
         });
     }
 
-    function updateDebugInfo() {
+    function updateDebugInfo($tile) {
 
         if(DEBUG) {
 
-            var circleEmptyTitle = $(this).children('circle.emptyTile').first();
+            var circleEmptyTitle = $tile.children('circle.emptyTile').first();
 
             $('#printCx').text(circleEmptyTitle.attr('cx'));
             $('#printCy').text(circleEmptyTitle.attr('cy'));
@@ -363,6 +373,61 @@ $(function() {
 
             }
         }
+    }
+
+    function stopGame() {
+        currentState = STOP;
+        clearTimeout(IAPlayTimeoutID); // Stop the last IA Play
+        IAPlayTimeoutID = null;
+        $('#player').text('-');
+        $('#stop-game').attr('disabled', 'disabled');
+    }
+
+    function startGame() {
+
+        var genericModal = $('#generic-modal');
+        genericModal.find('h4.modal-title').first().text('Choose play mode');
+        genericModal.find('div.modal-body').first().html(
+            '<div class="text-center">' +
+            '<button id="mode-human-vs-human" type="button" class="btn btn-info">Human vs Human</button> ' +
+            '<button id="mode-human-vs-computer" type="button" class="btn btn-info">Human vs Computer</button> ' +
+            '<button id="mode-computer-vs-computer" type="button" class="btn btn-info">Computer vs Computer</button>' +
+            '</div>'
+        );
+        genericModal.find('div.modal-footer').first().html(
+            '<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button> '
+        );
+
+        function stopAndInitGame() {
+            $('#generic-modal').modal('hide');
+            if (currentState != STOP) {
+                stopGame();
+            }
+            initGame();
+        }
+
+        $('#mode-human-vs-human').click(function() {
+            playerType[1] = HUMAN;
+            playerType[2] = HUMAN;
+            stopAndInitGame();
+        });
+
+        $('#mode-human-vs-computer').click(function() {
+            playerType[1] = HUMAN;
+            playerType[2] = COMPUTER;
+            $('#generic-modal').modal('hide');
+            stopAndInitGame();
+        });
+
+        $('#mode-computer-vs-computer').click(function() {
+            playerType[1] = COMPUTER;
+            playerType[2] = COMPUTER;
+            $('#generic-modal').modal('hide');
+            stopAndInitGame();
+        });
+
+        genericModal.modal('show');
+
     }
 });
 
