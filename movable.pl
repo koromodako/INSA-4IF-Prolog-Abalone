@@ -132,14 +132,14 @@ isMovable(Board, InitialSquareContent, Line, Col, LineDest, ColDest, Strength) :
 	(
 		% Destination hors plateau
 		(
-			board:isOut(Board, NewLine, NewCol),
+			board:isOut(Board, LineDest, ColDest),
 			
 			isMovableOutOfBoard(InitialSquareContent, PrevSquareContent, Strength)
 		)
 		;
 		% Destination sur le plateau
 		(
-			not(board:isOut(Board, NewLine, NewCol)),
+			not(board:isOut(Board, LineDest, ColDest)),
 			
 			isMovableInsideBoard(Board, InitialSquareContent, PrevSquareContent, LineDest, ColDest, NewLine, NewCol, Strength)
 		)
