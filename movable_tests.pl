@@ -3,7 +3,7 @@
 :- module(movableTests, []).
 %% -----------------------------------------------------------------------------
 
-:- use_module('movable.pl').
+:- use_module(movable).
 
 %% Initialisation du plateau de test -------------------------------------------
 

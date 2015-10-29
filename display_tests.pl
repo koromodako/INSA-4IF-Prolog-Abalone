@@ -3,7 +3,7 @@
 :- module(displayTests, []).
 %% -----------------------------------------------------------------------------
 
-:- use_module('display.pl').
+:- use_module(display).
 
 %% Initialisation du plateau de test -------------------------------------------
 

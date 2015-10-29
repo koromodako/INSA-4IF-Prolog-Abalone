@@ -3,8 +3,8 @@
 :- module(moveTests, []).
 %% -----------------------------------------------------------------------------
 
-:- use_module('display.pl').
-:- use_module('move.pl').
+:- use_module(display).
+:- use_module(move).
 
 %% Initialisation du plateau de test -------------------------------------------
 
