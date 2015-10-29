@@ -3,15 +3,14 @@
 :- module(gameOver, [gameOver/2]).
 %% -----------------------------------------------------------------------------
 
-:- use_module('board.pl').
+:- use_module(board).
 
 %% 
 %% Game over et son test unitaire
 %% 
 gameOver(Joueur, Board) :- 
-	flatten(Board, InlineBoard),
-	count(Joueur, InlineBoard, N), 
-	N =< 8,
-    print('Le joueur '), print(Joueur), print(' a perdu !'), nl.
+    flatten(Board, InlineBoard),
+    count(Joueur, InlineBoard, N),
+    N =< 8.
 
 % -------------------------------------------------------------------------------
