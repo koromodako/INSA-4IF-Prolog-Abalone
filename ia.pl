@@ -19,10 +19,10 @@ playTurn(Board, Player, NewBoard) :-
 	nth0(3, BestMovement, NextCol),
 	%nth0(4, BestMovement, NewBoard),
 	
-    print('Line : '), print(Line),nl,
-    print('Col : '),print(Col),nl,
-    print('NextLine : '),print(NextLine),nl,
-    print('NextCol : '),print(NextCol),nl,
+    %print('Line : '), print(Line),nl,
+    %print('Col : '),print(Col),nl,
+    %print('NextLine : '),print(NextLine),nl,
+    %print('NextCol : '),print(NextCol),nl,
     moveMarbles(Board, Col, Line, NextCol, NextLine, NewBoard).
     %display:displayBoard(Board).
 
