@@ -72,9 +72,6 @@ $(function() {
                     var col = item[1];
                     var line = item[0];
 
-                    if (line > 5) { // Matrix conversion
-                        col -= line - 5;
-                    }
                     $('g.tile.col-' + col + '.line-' + line).addClass('movable');
                 });
             });
@@ -212,11 +209,19 @@ $(function() {
     }
 
     /*****************************************
-     *** functions                    ***
+     *** functions                         ***
      *****************************************/
 
-    function getClassArrayOfElement($elt) {
-        return $elt.attr('class').split(/\s+/);
+    function getClassArrayOfElement(elt) {
+        return elt.attr('class').split(/\s+/);
+    }
+
+    function colLetterToColNumber(colLetter) {
+        return colLetter.toUpperCase().charCodeAt(0) - 64; // A = 65
+    }
+
+    function colNumberToColLetter(colNumber) {
+        return String.fromCharCode((colNumber + 64));
     }
 
     function getPositionOfTile($tile) {
@@ -230,10 +235,6 @@ $(function() {
             }
         });
 
-        if (line > 5) { // Matrix conversion
-            col += line - 5;
-        }
-
         return {
             col: col,
             line: line
@@ -245,8 +246,7 @@ $(function() {
         var line;
         for (line = 0; line < $board.length; ++line) {
             var col;
-            var realCol;
-            for (col = 0, realCol = 1; col < $board[line].length; ++col) {
+            for (col = 0; col < $board[line].length; ++col) {
 
                 var color = $board[line][col];
 
@@ -254,7 +254,7 @@ $(function() {
                     continue;
                 }
 
-                var tile = $('g.tile.col-' + realCol + '.line-' + (line+1)).first();
+                var tile = $('g.tile.col-' + (col+1) + '.line-' + (line+1)).first();
 
                 if (color == 1 && tile.find('circle.marble.whiteMarble').length == 0) {
 
@@ -269,7 +269,6 @@ $(function() {
                     tile.find('circle.marble').first().removeClass('whiteMarble').removeClass('blackMarble').attr('fill', 'none');
 
                 }
-                ++realCol;
             }
         }
     }
