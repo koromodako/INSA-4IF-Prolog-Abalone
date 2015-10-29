@@ -41,7 +41,8 @@ user:file_search_path(js, projectRoot('web/js')).
 %%  Routing   %%
 %%%%%%%%%%%%%%%%
 
-:- http_handler('/', helloAction, []).
+%:- http_handler('/', helloAction, []).
+:- http_handler('/', http_redirect(moved, '/game'), []).
 :- http_handler('/css', http_reply_from_files(css(.), []), [prefix]).
 :- http_handler('/js', http_reply_from_files(js(.), []), [prefix]).
 :- http_handler('/game', http_reply_from_files(web(.), []), [prefix]).
