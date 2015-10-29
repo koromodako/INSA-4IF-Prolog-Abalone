@@ -110,9 +110,9 @@ computeDistance(Line0, Col0, Line1, Col1, OldResult, NewResult):-
 			NewResult is (OldResult + Temp)
 		);
 		(
-			Sline is sign(Line1 - Line0),
-			Scol is sign(Col1 - Col0),
 			(
+				Sline is sign(Line1 - Line0),
+				Scol is sign(Col1 - Col0),
 				Sline == 1,
 				Scol == 1,
 				Result is OldResult + 1,
@@ -121,6 +121,8 @@ computeDistance(Line0, Col0, Line1, Col1, OldResult, NewResult):-
 				computeDistance(L0, C0, Line1, Col1, Result, NewResult)
 			);
 			(
+				Sline is sign(Line1 - Line0),
+				Scol is sign(Col1 - Col0),
 				Sline == (-1),
 				Scol == (-1),
 				Result is OldResult + 1,
@@ -130,9 +132,9 @@ computeDistance(Line0, Col0, Line1, Col1, OldResult, NewResult):-
 			);
 			(
 				Distline is abs(Line1 - Line0),
-				Distcol is abs(Col1 - Col0), 
+				Distcol is abs(Col1 - Col0),
 				TempSum is (Distcol + Distline),
-				NewResult is (OldResult + TempSum) 
+				NewResult is (OldResult + TempSum)
 			)
 		)
 	).

@@ -118,20 +118,3 @@ checkGameIsOver(Request) :-
        )
     ),
     reply_json(JSONOut).
-
-%%%%%%%%%%%%%%%%%%
-%% JSON Objects %%
-%%%%%%%%%%%%%%%%%%
-
-%json_object row(a, b, c, d, e, f, g, h, i).
-%json_object matrix(ra:row/9,
-%                   rb:row/9,
-%                   rc:row/9,
-%                   rd:row/9,
-%                   re:row/9,
-%                   rf:row/9,
-%                   rg:row/9,
-%                   rh:row/9,
-%                   ri:row/9).
-
-%json_object data_struct(board:matrix/9, player:int, line:int, col:int).

@@ -1,6 +1,6 @@
 %% -----------------------------------------------------------------------------
 %% Module contenant les prédicats permettant d'afficher la grille de jeu
-:- module(gameOver, [gameOver/2, getNumberLeft/3]).
+:- module(gameOver, [gameOver/2]).
 %% -----------------------------------------------------------------------------
 
 :- use_module(board).
