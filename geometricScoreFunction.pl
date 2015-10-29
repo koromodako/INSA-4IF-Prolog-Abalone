@@ -158,7 +158,8 @@ computeScoreDistance(Player, Board, AimPointLine, AimPointCol, Score):-
 %% ceci donne le score des billes en dehors du plateau
 
 scoreMarblesOut(Player, Board, Score):-
-    count(Player, Board, N),  
+	flatten(Board, BoardList),
+    count(Player, BoardList, N),  
     Score is (N-15 * 30).
 
 %% Retourne le score total dans Result pour un Player donné
