@@ -3,7 +3,7 @@
 :- module(displayTests, []).
 %% -----------------------------------------------------------------------------
 
-:- use_module('display.pl').
+:- use_module(display).
 
 %% Initialisation du plateau de test -------------------------------------------
 
@@ -40,18 +40,18 @@ runTests(Result) :-
     initTestMatrix(Matrix),
     
     % Test : Affiche la grille de jeu
-    print('Test 1.............'),
+    write('Test 1.............'),
     (
-        (display:displayBoard(Board), print('SUCCESS\n'), !)
+        (display:displayBoard(Board), write('SUCCESS\n'), !)
         ;
-        (print('...FAIL\n'))
+        (write('...FAIL\n'))
     ),
     
-    print('Test 2.............'),
+    write('Test 2.............'),
     (
-        (display:displayMatrix(Matrix), print('SUCCESS\n'), !)
+        (display:displayMatrix(Matrix), write('SUCCESS\n'), !)
         ;
-        (print('...FAIL\n'))
+        (write('...FAIL\n'))
     ),
 
     Result is 0.

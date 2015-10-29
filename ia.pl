@@ -20,7 +20,7 @@ playTurn(Board, Player, NewBoard) :-
     moveMarbles(Board, Col, Line, NextCol, NextLine, NewBoard).
 
 %% La profondeur max a été atteinte, on récupère donc la valeur de la solution
-alphabeta(MaxAction, Player, Movement, Alpha, Beta, BestMovement, NodeValue, 0) :-
+alphabeta(_, Player, Movement, _, _, _, NodeValue, 0) :-
     % Movements est une liste avec dans l'ordre : Line, Col, NextLine, NextCol,
     % NewBoard
     nth0(4, Movement, Board),
@@ -56,10 +56,10 @@ alphabetaCheckNodes(MaxAction, Player, [CurrentMovement | NextMovements], Alpha,
     
 %% Regarde si les coupures alpha beta peuvent être utilisées, c'est-à-dire si on
 %% doit continuer d'analyser les noeuds
-alphabetaCheckNextNodes(MaxAction, Player, CurrentMovement, [], _, _, NodeValue, CurrentMovement, NodeValue, _) :-
+alphabetaCheckNextNodes(_, _, CurrentMovement, [], _, _, NodeValue, CurrentMovement, NodeValue, _) :-
     !. % Il n'y a pas d'autres noeuds (mouvements) à analyser
     
-alphabetaCheckNextNodes(MaxAction, Player, CurrentMovement, _, Alpha, Beta, NodeValue, CurrentMovement, NodeValue, _) :-
+alphabetaCheckNextNodes(MaxAction, _, CurrentMovement, _, Alpha, Beta, NodeValue, CurrentMovement, NodeValue, _) :-
     MaxAction, NodeValue < Alpha, !; % Coupure Alpha
     not(MaxAction), NodeValue > Beta, !. % Coupure Beta
 
@@ -88,7 +88,7 @@ alphabetaCheckBounds(_, Alpha, Beta, _, Alpha, Beta).
 %% dans une action max, alors on recherche la plus petite valeur, que le noeud
 %% supérieur recherche.
 %% Cas où le mouvement 1 est meilleur que le 2
-alphabetaCompareNodesSolutions(MaxAction, Movement1, Value1, Movement2, Value2, Movement1, Value1) :-
+alphabetaCompareNodesSolutions(MaxAction, Movement1, Value1, _, Value2, Movement1, Value1) :-
     MaxAction, Value1 < Value2, !;
     not(MaxAction), Value1 > Value2, !.
     

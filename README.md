@@ -2,6 +2,10 @@
 
 Drive : [ici](https://docs.google.com/document/d/1E-JNow5ES92GtSDYKef_E-OvXDUMxF-eFcAZj14hXoQ/edit?usp=sharing)
 
+## IHM Console
+
+Ouvrir dans prolog `play.pl`, puis lancer une partie avec le prédicat `play:play.`
+
 ## IHM Web
 
 `web/index.html` contient le code du plateau-test, qui a comme feuille de style `web/css/main.css`.

@@ -5,9 +5,10 @@
 
 :- use_module(board).
 
-%% 
-%% Game over et son test unitaire
-%% 
+%% Game over
+%% Vérification de la condition d'arrêt du jeu
+%% @param Board Plateau de jeu
+%% @param Player Le joueur à vérifier
 gameOver(Joueur, Board) :- 
     flatten(Board, InlineBoard),
     count(Joueur, InlineBoard, N),

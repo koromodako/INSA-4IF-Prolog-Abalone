@@ -1,7 +1,7 @@
 $(function() {
 
     $( document ).ready(function(){
-        if(DEBUG){
+        if(debug){
             $('#debug').show();
         }
     });
@@ -22,8 +22,12 @@ $(function() {
     const HUMAN = 0;
     const COMPUTER = 1;
 
+    /** Rules **/
+    const numberOutToLoose = 6;
+    const numberInitMax = 14;
+
     /**** Globals variables ****/
-    var DEBUG = 1;
+    var debug = true;
     var currentSelectedTile = null;
     var board = null;
     var playerTurn = 1;
@@ -71,8 +75,12 @@ $(function() {
 
                     var col = item[1];
                     var line = item[0];
+                    var tile = $('g.tile.col-' + col + '.line-' + line);
+                    tile.addClass('movable');
 
-                    $('g.tile.col-' + col + '.line-' + line).addClass('movable');
+                    if (typeof item[2] !== 'undefined') {
+                        tile.find('title.title').first().text('Score : ' + (Math.round(item[2] * 100) / 100));
+                    }
                 });
             });
 
@@ -92,7 +100,7 @@ $(function() {
 
                 makePlayerMovementRequest($(this), function(json) {
                     board = json;
-                    updateBoard(board);
+                    updateBoard();
                     nextPlayer();
                     playTurn();
                 });
@@ -108,12 +116,12 @@ $(function() {
      *** Requests                          ***
      *****************************************/
 
-    function getInitBoardRequest($success) {
+    function getInitBoardRequest(success) {
 
         $.ajax({
             method: 'POST',
             url: baseUrl + '/get/init/board',
-            success: $success,
+            success: success,
             error: function (resultat, statut, erreur) {
                 alert("Erreur lors de l'appel de l'initialisation du plateau.");
                 console.log(resultat, statut, erreur);
@@ -122,7 +130,7 @@ $(function() {
 
     }
 
-    function getPlayerMovementsRequest($success) {
+    function getPlayerMovementsRequest(success) {
 
         var position = getPositionOfTile(currentSelectedTile);
 
@@ -134,10 +142,11 @@ $(function() {
                 Board: board,
                 Player: playerTurn,
                 Line: position.line,
-                Col: position.col
+                Col: position.col,
+                Debug: debug
             }),
             contentType: "application/json",
-            success: $success,
+            success: success,
             error: function (resultat, statut, erreur) {
                 alert("Erreur lors de l'appel pour récupérer les mouvements possibles.");
                 console.log(resultat, statut, erreur);
@@ -145,10 +154,10 @@ $(function() {
         });
     }
 
-    function makePlayerMovementRequest($moveToTile, $success) {
+    function makePlayerMovementRequest(moveToTile, success) {
 
         var position = getPositionOfTile(currentSelectedTile);
-        var destination = getPositionOfTile($moveToTile);
+        var destination = getPositionOfTile(moveToTile);
 
         $.ajax({
             method: 'POST',
@@ -162,7 +171,7 @@ $(function() {
                 NextCol: destination.col
             }),
             contentType: "application/json",
-            success: $success,
+            success: success,
             error: function (resultat, statut, erreur) {
                 alert("Erreur lors de l'appel pour effectuer le movement.");
                 console.log(resultat, statut, erreur);
@@ -170,7 +179,7 @@ $(function() {
         });
     }
 
-    function makeIAPlayRequest($success) {
+    function makeIAPlayRequest(success) {
 
         $.ajax({
             method: 'POST',
@@ -181,7 +190,7 @@ $(function() {
                 Player: playerTurn
             }),
             contentType: "application/json",
-            success: $success,
+            success: success,
             error: function (resultat, statut, erreur) {
                 alert("Erreur lors de l'appel pour faire jouer l'IA.");
                 console.log(resultat, statut, erreur);
@@ -189,7 +198,7 @@ $(function() {
         });
     }
 
-    function checkGameIsOverRequest($success) {
+    function checkGameIsOverRequest(success) {
 
         $.ajax({
             method: 'POST',
@@ -200,7 +209,7 @@ $(function() {
                 Player: playerTurn
             }),
             contentType: "application/json",
-            success: $success,
+            success: success,
             error: function (resultat, statut, erreur) {
                 alert("Erreur lors de l'appel pour vérifier si le jeu est terminé.");
                 console.log(resultat, statut, erreur);
@@ -216,19 +225,11 @@ $(function() {
         return elt.attr('class').split(/\s+/);
     }
 
-    function colLetterToColNumber(colLetter) {
-        return colLetter.toUpperCase().charCodeAt(0) - 64; // A = 65
-    }
-
-    function colNumberToColLetter(colNumber) {
-        return String.fromCharCode((colNumber + 64));
-    }
-
-    function getPositionOfTile($tile) {
+    function getPositionOfTile(tile) {
         var col = null, line = null;
 
-        $.each(getClassArrayOfElement($tile), function(index, item) {
-            if (item.match("^col-")) {
+        $.each(getClassArrayOfElement(tile), function(index, item) {
+            if (item.match("^col-")) { // TODO add in the regex the number
                 col = parseInt(item.split('-')[1]);
             } else if (item.match("^line-")) {
                 line = parseInt(item.split('-')[1]);
@@ -241,14 +242,16 @@ $(function() {
         };
     }
 
-    function updateBoard($board) {
+    function updateBoard() {
 
+        var whiteMarblesLeft = 0;
+        var blackMarblesLeft = 0;
         var line;
-        for (line = 0; line < $board.length; ++line) {
+        for (line = 0; line < board.length; ++line) {
             var col;
-            for (col = 0; col < $board[line].length; ++col) {
+            for (col = 0; col < board[line].length; ++col) {
 
-                var color = $board[line][col];
+                var color = board[line][col];
 
                 if (color < 0) {
                     continue;
@@ -256,13 +259,21 @@ $(function() {
 
                 var tile = $('g.tile.col-' + (col+1) + '.line-' + (line+1)).first();
 
-                if (color == 1 && tile.find('circle.marble.whiteMarble').length == 0) {
+                if (color == 1) {
 
-                    tile.find('circle.marble').first().removeClass('blackMarble').addClass('whiteMarble').attr('fill', 'url(#whiteMarble)');
+                    if (tile.find('circle.marble.whiteMarble').length == 0) {
+                        tile.find('circle.marble').first().removeClass('blackMarble').addClass('whiteMarble').attr('fill', 'url(#whiteMarble)');
+                    }
 
-                } else if (color == 2 && tile.find('circle.marble.blackMarble').length == 0) {
+                    whiteMarblesLeft++;
 
-                    tile.find('circle.marble').first().removeClass('whiteMarble').addClass('blackMarble').attr('fill', 'url(#blackMarble)');
+                } else if (color == 2) {
+
+                    if (tile.find('circle.marble.blackMarble').length == 0) {
+                        tile.find('circle.marble').first().removeClass('whiteMarble').addClass('blackMarble').attr('fill', 'url(#blackMarble)');
+                    }
+
+                    blackMarblesLeft++;
 
                 } else if (color == 0) {
 
@@ -271,6 +282,11 @@ $(function() {
                 }
             }
         }
+
+        // TODO move this section in the right place
+        $('#player-1-number-out').text((numberInitMax - whiteMarblesLeft) + ' / ' + numberOutToLoose);
+        $('#player-2-number-out').text((numberInitMax - blackMarblesLeft) + ' / ' + numberOutToLoose);
+
     }
 
     function nextPlayer() {
@@ -286,6 +302,7 @@ $(function() {
 
                 // Check if the game is over
                 checkGameIsOverRequest(function(json) {
+
                     if(json.isOver) {
 
                         stopGame();
@@ -311,7 +328,7 @@ $(function() {
                             IAPlayTimeoutID = setTimeout(function () {
                                 makeIAPlayRequest(function (json) {
                                     board = json;
-                                    updateBoard(board);
+                                    updateBoard();
                                     nextPlayer();
                                     IAPlayTimeoutID = null;
                                     playTurn();
@@ -332,7 +349,7 @@ $(function() {
     function initGame() {
         getInitBoardRequest(function(json){
             board = json;
-            updateBoard(board);
+            updateBoard();
 
             $('#start-game').text('New Game');
             $('#stop-game').removeAttr('disabled');
@@ -349,11 +366,11 @@ $(function() {
         });
     }
 
-    function updateDebugInfo($tile) {
+    function updateDebugInfo(tile) {
 
-        if(DEBUG) {
+        if(debug) {
 
-            var circleEmptyTitle = $tile.children('circle.emptyTile').first();
+            var circleEmptyTitle = tile.children('circle.emptyTile').first();
 
             $('#printCx').text(circleEmptyTitle.attr('cx'));
             $('#printCy').text(circleEmptyTitle.attr('cy'));
@@ -375,11 +392,19 @@ $(function() {
     }
 
     function stopGame() {
+
         currentState = STOP;
-        clearTimeout(IAPlayTimeoutID); // Stop the last IA Play
-        IAPlayTimeoutID = null;
+
+        if (IAPlayTimeoutID != null) {
+            clearTimeout(IAPlayTimeoutID); // Stop the last IA Play
+            IAPlayTimeoutID = null;
+        }
+
         $('#player').text('-');
         $('#stop-game').attr('disabled', 'disabled');
+        $('g.tile.movable').removeClass('movable');
+        $('g.tile.selected').removeClass('selected');
+
     }
 
     function startGame() {
