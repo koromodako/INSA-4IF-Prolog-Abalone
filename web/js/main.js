@@ -70,7 +70,7 @@ $(function() {
 
             // Display possibilities
             getPlayerMovementsRequest(function(json) {
-                console.log(json);
+
                 $.each(json, function(index, item) {
 
                     var col = item[1];
