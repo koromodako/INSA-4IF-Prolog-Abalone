@@ -3,10 +3,10 @@
 :- module(iaRandom, [playTurn/3]).
 %% -----------------------------------------------------------------------------
 
-:- use_module('board.pl').
-:- use_module('movable.pl').
-:- use_module('move.pl').
-:- use_module('display.pl').
+:- use_module(board).
+:- use_module(movable).
+:- use_module(move).
+:- use_module(display).
 
 %% Trouve le prochaine déplacement à effectuer, de façon aléatoire
 %% @param Board Plateau de jeu

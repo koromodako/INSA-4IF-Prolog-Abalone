@@ -4,7 +4,7 @@
 :- module(movable, [isMovable/5,playerMovements/6]).
 %% -----------------------------------------------------------------------------
 
-:- use_module('board.pl').
+:- use_module(board).
 
 %% Vérifie si la Strength testée est bien autorisée par les règles du jeu 
 %% On ne peut déplacer plus de 3 boules

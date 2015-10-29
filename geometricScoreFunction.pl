@@ -24,7 +24,7 @@
 
 %% -----------------------------------------------------------------------------
 
-:- use_module('board.pl').
+:- use_module(board).
 
 %% Calcule un couple (Line, Col) contenant une bille de la couleur du Player
 %% @param Player numéro du joueur (1 ou 2)

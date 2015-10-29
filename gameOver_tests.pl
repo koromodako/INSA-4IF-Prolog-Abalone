@@ -3,7 +3,7 @@
 :- module(gameOverTests, []).
 %% -----------------------------------------------------------------------------
 
-:- use_module('gameOver.pl').
+:- use_module(gameOver).
 
 %% Initialisation du plateau de test -------------------------------------------
 
