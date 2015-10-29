@@ -112,7 +112,7 @@ displayMovements(Line, Col, [[NextLine,NextCol]|NextMouvement]):-
 
 displayMovements(_, _, [], _).
 displayMovements(Line, Col, [[NextLine,NextCol]|NextMouvement], Num):-
-    print(' '), print(Num), print(': '), displayMovement(Line, Col, NextLine, NextCol),
+    write(' '), write(Num), write(': '), displayMovement(Line, Col, NextLine, NextCol),
     NextNum is Num +1,
     displayMovements(Line, Col, NextMouvement, NextNum).
 
@@ -122,18 +122,18 @@ displayMovements(Line, Col, [[NextLine,NextCol]|NextMouvement], Num):-
 %% @param NextLine Numéro de ligne de destination 
 %% @param NextCol Numéro de colonne de destination
 displayMovement(Line, Col, NextLine, NextCol):-
-    print(Line), displayLetter(Col),
-    print(' -> '),
-    print(NextLine), displayLetter(NextCol), nl.
+    write(Line), displayLetter(Col),
+    write(' -> '),
+    write(NextLine), displayLetter(NextCol), nl.
 
 %% Affiche en lettre un numéro de colonne
 %% @param NumCol Numéro de colonne à afficher
-displayLetter(1):- print('A').
-displayLetter(2):- print('B').
-displayLetter(3):- print('C').
-displayLetter(4):- print('D').
-displayLetter(5):- print('E').
-displayLetter(6):- print('F').
-displayLetter(7):- print('G').
-displayLetter(8):- print('H').
-displayLetter(9):- print('I').
+displayLetter(1):- write('A').
+displayLetter(2):- write('B').
+displayLetter(3):- write('C').
+displayLetter(4):- write('D').
+displayLetter(5):- write('E').
+displayLetter(6):- write('F').
+displayLetter(7):- write('G').
+displayLetter(8):- write('H').
+displayLetter(9):- write('I').
