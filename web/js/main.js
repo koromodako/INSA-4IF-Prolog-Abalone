@@ -329,7 +329,7 @@ $(function() {
                         genericModal.find('h4.modal-title').first().text('Congratulation');
                         genericModal.find('div.modal-body').first().html(
                             '<div class="text-center">' +
-                            '<h3>The ' + (playerTurn == 2 ? 'white' : 'black') + ' player win !</h3>' +
+                            '<h3>The ' + (playerTurn == 2 ? 'white' : 'black') + ' player wins !</h3>' +
                             '</div>'
                         );
                         genericModal.find('div.modal-footer').first().html(
