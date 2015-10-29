@@ -12,10 +12,11 @@ $(function() {
 
     /**** Constantes ****/
     /** States **/
-    const INIT = 0;
-    const CHOOSE_MARBLE = 1;
-    const MARBLE_SELECTED = 2;
-    const IA_PLAY = 3;
+    const STOP = 0;
+    const READY = 1;
+    const CHOOSE_MARBLE = 2;
+    const MARBLE_SELECTED = 3;
+    const IA_PLAY = 4;
 
     /** Player **/
     const HUMAN = 0;
@@ -28,8 +29,8 @@ $(function() {
     var baseUrl = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
     var playerTurn = 1;
     var playerType = {1:null, 2:null};
-    var currentState = INIT;
-    var timeoutId = null;
+    var currentState = STOP;
+    var IAPlayTimeoutID = null;
 
     /*****************************************
      *** Actions                           ***
@@ -41,7 +42,7 @@ $(function() {
         genericModal.find('h4.modal-title').first().text('Choose play mode');
         genericModal.find('div.modal-body').first().html(
             '<button id="mode-human-vs-human" type="button" class="btn btn-default">Human vs Human</button> '
-            //+ '<button id="mode-human-vs-computer" type="button" class="btn btn-default">Human vs Computer</button> '
+            + '<button id="mode-human-vs-computer" type="button" class="btn btn-default">Human vs Computer</button> '
             + '<button id="mode-computer-vs-computer" type="button" class="btn btn-default">Computer vs Computer</button>'
         ).addClass('text-center');
 
@@ -68,44 +69,12 @@ $(function() {
 
         genericModal.modal('show');
 
-
-        function initGame() {
-            getInitBoard(function(json){
-                board = json;
-                updateBoard(board);
-
-                $('#start-game').text('New Game');
-                $('#stop-game').removeAttr('disabled');
-                currentSelectedTile = null;
-                playerTurn = 1;
-
-                $('#player').text('player ' + (playerTurn == 1 ? 'white' : 'black'));
-                $('#white-marble-out').text('0');
-                $('#black-marble-out').text('0');
-
-                currentState = IA_PLAY;
-                function playIA(){
-                    makeIAPlay(function (json) {
-                        board = json;
-                        updateBoard(board);
-                        playerTurn = playerTurn == 1 ? 2 : 1;
-                        $('#player').text('player ' + (playerTurn == 1 ? 'white' : 'black'));
-                        if (playerType[playerTurn] == COMPUTER) {
-                            timeoutId = setTimeout(playIA, 200);
-                        } else {
-                            currentState = CHOOSE_MARBLE;
-                        }
-                    });
-                }
-                timeoutId = setTimeout(playIA, 1000);
-            });
-        }
-
     });
 
     $('#stop-game').click(function() {
-        clearTimeout(timeoutId);
-        currentState = INIT;
+        currentState = STOP;
+        clearTimeout(IAPlayTimeoutID); // Stop the last IA Play
+        IAPlayTimeoutID = null;
         $('#player').text('-');
         $(this).attr('disabled', 'disabled');
     });
@@ -129,7 +98,7 @@ $(function() {
             currentState = MARBLE_SELECTED;
 
             // Display possibilities
-            getPlayerMovements(function(json, statut) {
+            getPlayerMovementsRequest(function(json) {
 
                 $.each(json, function(index, item) {
 
@@ -157,48 +126,25 @@ $(function() {
                 $('g.tile.movable').removeClass('movable');
                 $('g.tile.selected').removeClass('selected');
 
-                makePlayerMovement($(this), function(json, statut) {
+                makePlayerMovementRequest($(this), function(json) {
                     board = json;
                     updateBoard(board);
-                    playerTurn = playerTurn == 1 ? 2 : 1;
-                    $('#player').text('player ' + (playerTurn == 1 ? 'white' : 'black'));
-                    currentState = CHOOSE_MARBLE;
+                    nextPlayer();
+                    playTurn();
                 });
 
             }
 
         }
 
-
-        // Debug infos
-        if(DEBUG) {
-
-            var circleEmptyTitle = $(this).children('circle.emptyTile').first();
-
-            $('#printCx').text(circleEmptyTitle.attr('cx'));
-            $('#printCy').text(circleEmptyTitle.attr('cy'));
-
-            if($(this).has('circle.blackMarble').length) {
-
-                $('#printColor').text('Black marble');
-
-            } else if($(this).has('.whiteMarble').length) {
-
-                $('#printColor').text('White marble');
-
-            } else {
-
-                $('#printColor').text('Empty tile');
-
-            }
-        }
+        updateDebugInfo();
     });
 
     /*****************************************
      *** Requests                          ***
      *****************************************/
 
-    function getInitBoard($success) {
+    function getInitBoardRequest($success) {
 
         $.ajax({
             method: 'POST',
@@ -212,7 +158,7 @@ $(function() {
 
     }
 
-    function getPlayerMovements($success) {
+    function getPlayerMovementsRequest($success) {
 
         var position = getPositionOfTile(currentSelectedTile);
 
@@ -235,7 +181,7 @@ $(function() {
         });
     }
 
-    function makePlayerMovement($moveToTile, $success) {
+    function makePlayerMovementRequest($moveToTile, $success) {
 
         var position = getPositionOfTile(currentSelectedTile);
         var destination = getPositionOfTile($moveToTile);
@@ -260,12 +206,11 @@ $(function() {
         });
     }
 
-    function makeIAPlay($success) {
+    function makeIAPlayRequest($success) {
 
         $.ajax({
             method: 'POST',
             url: baseUrl + '/make/ia/play',
-            async: false,
             dataType: 'json',
             data: JSON.stringify({
                 Board: board,
@@ -310,7 +255,7 @@ $(function() {
     }
 
     /*****************************************
-     *** Update Board                      ***
+     *** Other function                    ***
      *****************************************/
 
     function updateBoard($board) {
@@ -343,6 +288,79 @@ $(function() {
 
                 }
                 ++realCol;
+            }
+        }
+    }
+
+    function nextPlayer() {
+        playerTurn = playerTurn == 1 ? 2 : 1;
+        $('#player').text('player ' + (playerTurn == 1 ? 'white' : 'black'));
+    }
+
+    function playTurn() {
+        if (currentState != STOP) { // The game is stopped
+            if (IAPlayTimeoutID != null) { // Wait if the previous turn is not done
+                setTimeout(playTurn, 1000);
+            } else {
+                if (playerType[playerTurn] == COMPUTER) {
+                    currentState = IA_PLAY;
+                    IAPlayTimeoutID = setTimeout(function () {
+                        makeIAPlayRequest(function (json) {
+                            board = json;
+                            updateBoard(board);
+                            nextPlayer();
+                            IAPlayTimeoutID = null;
+                            playTurn();
+                        });
+                    }, 200);
+                } else {
+                    currentState = CHOOSE_MARBLE;
+                }
+            }
+        }
+    }
+
+    function initGame() {
+        getInitBoardRequest(function(json){
+            board = json;
+            updateBoard(board);
+
+            $('#start-game').text('New Game');
+            $('#stop-game').removeAttr('disabled');
+            currentSelectedTile = null;
+            playerTurn = 1;
+
+            $('#player').text('player ' + (playerTurn == 1 ? 'white' : 'black'));
+            $('#white-marble-out').text('0');
+            $('#black-marble-out').text('0');
+
+            currentState = READY;
+
+            playTurn();
+        });
+    }
+
+    function updateDebugInfo() {
+
+        if(DEBUG) {
+
+            var circleEmptyTitle = $(this).children('circle.emptyTile').first();
+
+            $('#printCx').text(circleEmptyTitle.attr('cx'));
+            $('#printCy').text(circleEmptyTitle.attr('cy'));
+
+            if($(this).has('circle.blackMarble').length) {
+
+                $('#printColor').text('Black marble');
+
+            } else if($(this).has('.whiteMarble').length) {
+
+                $('#printColor').text('White marble');
+
+            } else {
+
+                $('#printColor').text('Empty tile');
+
             }
         }
     }
