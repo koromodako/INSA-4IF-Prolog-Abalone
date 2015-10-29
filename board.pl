@@ -15,7 +15,7 @@ isOut(Board, Line, Col) :-
 	not(
 		(
 			% Case existante dans la matrice
-			between(0, 9, Line), between(0, 9, Col), 
+			between(1, 9, Line), between(1, 9, Col), 
 			
 			% Vérifie si la case existe, ie. valeur != -1 
 			not(squareContains(Board, Line, Col, -1))
