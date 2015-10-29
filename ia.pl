@@ -11,7 +11,7 @@
 %% @param Board Plateau de jeu
 %% @param Player Le joueur qui doit jouer son tour
 playTurn(Board, Player, NewBoard) :-
-    alphabeta(true, Player, [0, 0, 0, 0, Board], -10000, 10000, BestMovement, _, 2),
+    alphabeta(false, Player, [0, 0, 0, 0, Board], -10000, 10000, BestMovement, NodeValue, 2),
     nth0(0, BestMovement, Line),
     nth0(1, BestMovement, Col),
     nth0(2, BestMovement, NextLine),
