@@ -22,6 +22,10 @@ $(function() {
     const HUMAN = 0;
     const COMPUTER = 1;
 
+    /** Rules **/
+    const numberOutToLoose = 6;
+    const numberInitMax = 14;
+
     /**** Globals variables ****/
     var DEBUG = 1;
     var currentSelectedTile = null;
@@ -92,7 +96,7 @@ $(function() {
 
                 makePlayerMovementRequest($(this), function(json) {
                     board = json;
-                    updateBoard(board);
+                    updateBoard();
                     nextPlayer();
                     playTurn();
                 });
@@ -216,19 +220,11 @@ $(function() {
         return elt.attr('class').split(/\s+/);
     }
 
-    function colLetterToColNumber(colLetter) {
-        return colLetter.toUpperCase().charCodeAt(0) - 64; // A = 65
-    }
-
-    function colNumberToColLetter(colNumber) {
-        return String.fromCharCode((colNumber + 64));
-    }
-
     function getPositionOfTile($tile) {
         var col = null, line = null;
 
         $.each(getClassArrayOfElement($tile), function(index, item) {
-            if (item.match("^col-")) {
+            if (item.match("^col-")) { // TODO add in the regex the number
                 col = parseInt(item.split('-')[1]);
             } else if (item.match("^line-")) {
                 line = parseInt(item.split('-')[1]);
@@ -241,14 +237,16 @@ $(function() {
         };
     }
 
-    function updateBoard($board) {
+    function updateBoard() {
 
+        var whiteMarblesLeft = 0;
+        var blackMarblesLeft = 0;
         var line;
-        for (line = 0; line < $board.length; ++line) {
+        for (line = 0; line < board.length; ++line) {
             var col;
-            for (col = 0; col < $board[line].length; ++col) {
+            for (col = 0; col < board[line].length; ++col) {
 
-                var color = $board[line][col];
+                var color = board[line][col];
 
                 if (color < 0) {
                     continue;
@@ -256,13 +254,21 @@ $(function() {
 
                 var tile = $('g.tile.col-' + (col+1) + '.line-' + (line+1)).first();
 
-                if (color == 1 && tile.find('circle.marble.whiteMarble').length == 0) {
+                if (color == 1) {
 
-                    tile.find('circle.marble').first().removeClass('blackMarble').addClass('whiteMarble').attr('fill', 'url(#whiteMarble)');
+                    if (tile.find('circle.marble.whiteMarble').length == 0) {
+                        tile.find('circle.marble').first().removeClass('blackMarble').addClass('whiteMarble').attr('fill', 'url(#whiteMarble)');
+                    }
 
-                } else if (color == 2 && tile.find('circle.marble.blackMarble').length == 0) {
+                    whiteMarblesLeft++;
 
-                    tile.find('circle.marble').first().removeClass('whiteMarble').addClass('blackMarble').attr('fill', 'url(#blackMarble)');
+                } else if (color == 2) {
+
+                    if (tile.find('circle.marble.blackMarble').length == 0) {
+                        tile.find('circle.marble').first().removeClass('whiteMarble').addClass('blackMarble').attr('fill', 'url(#blackMarble)');
+                    }
+
+                    blackMarblesLeft++;
 
                 } else if (color == 0) {
 
@@ -271,6 +277,11 @@ $(function() {
                 }
             }
         }
+
+        // TODO move this section in the right place
+        $('#player-1-number-out').text((numberInitMax - whiteMarblesLeft) + ' / ' + numberOutToLoose);
+        $('#player-2-number-out').text((numberInitMax - blackMarblesLeft) + ' / ' + numberOutToLoose);
+
     }
 
     function nextPlayer() {
@@ -286,6 +297,7 @@ $(function() {
 
                 // Check if the game is over
                 checkGameIsOverRequest(function(json) {
+
                     if(json.isOver) {
 
                         stopGame();
@@ -311,7 +323,7 @@ $(function() {
                             IAPlayTimeoutID = setTimeout(function () {
                                 makeIAPlayRequest(function (json) {
                                     board = json;
-                                    updateBoard(board);
+                                    updateBoard();
                                     nextPlayer();
                                     IAPlayTimeoutID = null;
                                     playTurn();
@@ -332,7 +344,7 @@ $(function() {
     function initGame() {
         getInitBoardRequest(function(json){
             board = json;
-            updateBoard(board);
+            updateBoard();
 
             $('#start-game').text('New Game');
             $('#stop-game').removeAttr('disabled');
@@ -375,11 +387,17 @@ $(function() {
     }
 
     function stopGame() {
+
         currentState = STOP;
-        clearTimeout(IAPlayTimeoutID); // Stop the last IA Play
-        IAPlayTimeoutID = null;
+
+        if (IAPlayTimeoutID != null) {
+            clearTimeout(IAPlayTimeoutID); // Stop the last IA Play
+            IAPlayTimeoutID = null;
+        }
+
         $('#player').text('-');
         $('#stop-game').attr('disabled', 'disabled');
+
     }
 
     function startGame() {

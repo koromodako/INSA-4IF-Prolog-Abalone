@@ -103,21 +103,21 @@ makeIAPlayAction(Request) :-
     reply_json(JSONOut).
 
 checkGameIsOver(Request) :-
-       member(method(post), Request), !,
-       http_read_json(Request, JSONIn),
-       json_to_prolog(JSONIn, DataStruct),
-       DataStruct=json(['Board'=Board,'Player'=Player]),
+    member(method(post), Request), !,
+    http_read_json(Request, JSONIn),
+    json_to_prolog(JSONIn, DataStruct),
+    DataStruct=json(['Board'=Board,'Player'=Player]),
+    (
        (
-           (
-               gameOver:gameOver(Player, Board),
-               JSONOut=json([ 'isOver' = @true ])
-           )
-           ;
-           (
-               JSONOut=json([ 'isOver' = @false ])
-           )
-       ),
-       reply_json(JSONOut).
+           gameOver:gameOver(Player, Board),
+           JSONOut=json([ 'isOver' = @true ])
+       )
+       ;
+       (
+           JSONOut=json([ 'isOver' = @false ])
+       )
+    ),
+    reply_json(JSONOut).
 
 %%%%%%%%%%%%%%%%%%
 %% JSON Objects %%
