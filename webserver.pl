@@ -61,8 +61,8 @@ server(Port) :-
 
 % say hello, to test if server is running
 helloAction(_) :-
-    format('Content-type: text/plain~n~n'),
-    format('Hello world ! Server is running').
+    format('Content-type: text/html~n~n'),
+    format('Pour jouer, il faut aller  <a href="/game"> ici ! </a>').
 
 getInitBoardAction(_) :-
       initBoard(Board),
