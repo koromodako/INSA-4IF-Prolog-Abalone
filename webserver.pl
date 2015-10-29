@@ -22,6 +22,7 @@
 :- use_module(board).
 :- use_module(movable).
 :- use_module(move).
+:- use_module(ia).
 
 %%%%%%%%%%%%%%%%%%%
 %% Configuration %%
@@ -46,6 +47,7 @@ user:file_search_path(js, projectRoot('web/js')).
 :- http_handler('/get/init/board', getInitBoardAction, [prefix]).
 :- http_handler('/get/player/movements', getPlayerMovementsAction, [prefix]).
 :- http_handler('/make/player/movement', makePlayerMovementAction, [prefix]).
+:- http_handler('/make/ia/play', makeIAPlayAction, [prefix]).
 
 %%%%%%%%%%%%%%%%
 %%  Actions   %%
@@ -86,6 +88,15 @@ makePlayerMovementAction(Request) :-
     json_to_prolog(JSONIn, DataStruct),
     DataStruct=json(['Board'=Board,'Line'=Line,'Col'=Col,'NextLine'=NextLine,'NextCol'=NextCol]),
     move:moveMarbles(Board, Col, Line, NextCol, NextLine, NewBoard),
+    prolog_to_json(NewBoard, JSONOut),
+    reply_json(JSONOut).
+
+makeIAPlayAction(Request) :-
+    member(method(post), Request), !,
+    http_read_json(Request, JSONIn),
+    json_to_prolog(JSONIn, DataStruct),
+    DataStruct=json(['Board'=Board,'Player'=Player]),
+    ia:playTurn(Board, Player, NewBoard),
     prolog_to_json(NewBoard, JSONOut),
     reply_json(JSONOut).
 

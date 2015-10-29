@@ -15,7 +15,7 @@ $(function() {
     const INIT = 0;
     const CHOOSE_MARBLE = 1;
     const MARBLE_SELECTED = 2;
-    const UPDATE_BOARD = 3;
+    const IA_PLAY = 3;
 
     /** Player **/
     const HUMAN = 0;
@@ -27,8 +27,9 @@ $(function() {
     var board = null;
     var baseUrl = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
     var playerTurn = 1;
-    var playerType = {one:null, two:null};
+    var playerType = {1:null, 2:null};
     var currentState = INIT;
+    var timeoutId = null;
 
     /*****************************************
      *** Actions                           ***
@@ -39,47 +40,71 @@ $(function() {
         var genericModal = $('#generic-modal');
         genericModal.find('h4.modal-title').first().text('Choose play mode');
         genericModal.find('div.modal-body').first().html(
-            '<button id="mode-human-vs-human" type="button" class="btn btn-default" data-dismiss="modal">Human vs Human</button> '
-            + '<button id="mode-human-vs-computer" type="button" class="btn btn-default" data-dismiss="modal">Human vs Computer</button> '
-            + '<button id="mode-computer-vs-computer" type="button" class="btn btn-default" data-dismiss="modal">Computer vs Computer</button>'
+            '<button id="mode-human-vs-human" type="button" class="btn btn-default">Human vs Human</button> '
+            //+ '<button id="mode-human-vs-computer" type="button" class="btn btn-default">Human vs Computer</button> '
+            + '<button id="mode-computer-vs-computer" type="button" class="btn btn-default">Computer vs Computer</button>'
         ).addClass('text-center');
+
+        $('#mode-human-vs-human').click(function() {
+            playerType[1] = HUMAN;
+            playerType[2] = HUMAN;
+            $('#generic-modal').modal('hide');
+            initGame();
+        });
+
+        $('#mode-human-vs-computer').click(function() {
+            playerType[1] = HUMAN;
+            playerType[2] = COMPUTER;
+            $('#generic-modal').modal('hide');
+            initGame();
+        });
+
+        $('#mode-computer-vs-computer').click(function() {
+            playerType[1] = COMPUTER;
+            playerType[2] = COMPUTER;
+            $('#generic-modal').modal('hide');
+            initGame();
+        });
 
         genericModal.modal('show');
 
-        genericModal.on('hide.bs.modal', function (e) {
-            // TODO Add a loading popup
-            getInitBoard(function(json, statut){
+
+        function initGame() {
+            getInitBoard(function(json){
                 board = json;
                 updateBoard(board);
-                currentState = CHOOSE_MARBLE;
+
                 $('#start-game').text('New Game');
+                $('#stop-game').removeAttr('disabled');
                 currentSelectedTile = null;
                 playerTurn = 1;
+
                 $('#player').text('player ' + (playerTurn == 1 ? 'white' : 'black'));
                 $('#white-marble-out').text('0');
                 $('#black-marble-out').text('0');
-                $('#stop-game').removeAttr('disabled');
+
+                currentState = IA_PLAY;
+                function playIA(){
+                    makeIAPlay(function (json) {
+                        board = json;
+                        updateBoard(board);
+                        playerTurn = playerTurn == 1 ? 2 : 1;
+                        $('#player').text('player ' + (playerTurn == 1 ? 'white' : 'black'));
+                        if (playerType[playerTurn] == COMPUTER) {
+                            timeoutId = setTimeout(playIA, 200);
+                        } else {
+                            currentState = CHOOSE_MARBLE;
+                        }
+                    });
+                }
+                timeoutId = setTimeout(playIA, 1000);
             });
-        });
+        }
 
-    });
-
-    $('#mode-human-vs-human').click(function() {
-        playerType.one = HUMAN;
-        playerType.two = HUMAN;
-    });
-
-    $('#mode-human-vs-computer').click(function() {
-        playerType.one = HUMAN;
-        playerType.two = COMPUTER;
-    });
-
-    $('#mode-computer-vs-computer').click(function() {
-        playerType.one = COMPUTER;
-        playerType.two = COMPUTER;
     });
 
     $('#stop-game').click(function() {
+        clearTimeout(timeoutId);
         currentState = INIT;
         $('#player').text('-');
         $(this).attr('disabled', 'disabled');
@@ -136,6 +161,7 @@ $(function() {
                     board = json;
                     updateBoard(board);
                     playerTurn = playerTurn == 1 ? 2 : 1;
+                    $('#player').text('player ' + (playerTurn == 1 ? 'white' : 'black'));
                     currentState = CHOOSE_MARBLE;
                 });
 
@@ -229,6 +255,26 @@ $(function() {
             success: $success,
             error: function (resultat, statut, erreur) {
                 alert("Erreur lors de l'appel pour effectuer le movement.");
+                console.log(resultat, statut, erreur);
+            }
+        });
+    }
+
+    function makeIAPlay($success) {
+
+        $.ajax({
+            method: 'POST',
+            url: baseUrl + '/make/ia/play',
+            async: false,
+            dataType: 'json',
+            data: JSON.stringify({
+                Board: board,
+                Player: playerTurn
+            }),
+            contentType: "application/json",
+            success: $success,
+            error: function (resultat, statut, erreur) {
+                alert("Erreur lors de l'appel pour faire jouer l'IA.");
                 console.log(resultat, statut, erreur);
             }
         });
