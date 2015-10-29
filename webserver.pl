@@ -24,6 +24,7 @@
 :- use_module(move).
 :- use_module(ia).
 :- use_module(gameOver).
+:- use_module(geometricScoreFunction).
 
 %%%%%%%%%%%%%%%%%%%
 %% Configuration %%
@@ -41,7 +42,8 @@ user:file_search_path(js, projectRoot('web/js')).
 %%  Routing   %%
 %%%%%%%%%%%%%%%%
 
-:- http_handler('/', helloAction, []).
+%:- http_handler('/', helloAction, []).
+:- http_handler('/', http_redirect(moved, '/game'), []).
 :- http_handler('/css', http_reply_from_files(css(.), []), [prefix]).
 :- http_handler('/js', http_reply_from_files(js(.), []), [prefix]).
 :- http_handler('/game', http_reply_from_files(web(.), []), [prefix]).
@@ -73,15 +75,33 @@ getPlayerMovementsAction(Request) :-
     member(method(post), Request), !,
     http_read_json(Request, JSONIn),
     json_to_prolog(JSONIn, DataStruct),
-    DataStruct=json(['Board'=Board,'Player'=Player,'Line'=Line,'Col'=Col]),
-    findall(
-        [NextLine, NextCol],
+    DataStruct=json(['Board'=Board,'Player'=Player,'Line'=Line,'Col'=Col,'Debug'=Debug]),
+    (
         (
-           movable:playerMovements(Board, Player, Line, Col, NextLine, NextCol)
-        ),
-        NewMovements
+            Debug == @true,
+            findall(
+                [NextLine, NextCol, NodeValue],
+                (
+                    movable:playerMovements(Board, Player, Line, Col, NextLine, NextCol),
+                    move:moveMarbles(Board, Col, Line, NextCol, NextLine, NewBoard),
+                    geometricScoreFunction:geometricScore(NewBoard, Player, NodeValue)
+                ),
+                NewMovements
+            ),
+            prolog_to_json(NewMovements, JSONOut)
+       )
+       ;
+       (
+           findall(
+               [NextLine, NextCol],
+               (
+                  movable:playerMovements(Board, Player, Line, Col, NextLine, NextCol)
+               ),
+               NewMovements
+           ),
+           prolog_to_json(NewMovements, JSONOut)
+       )
     ),
-    prolog_to_json(NewMovements, JSONOut),
     reply_json(JSONOut).
 
 makePlayerMovementAction(Request) :-
@@ -103,35 +123,18 @@ makeIAPlayAction(Request) :-
     reply_json(JSONOut).
 
 checkGameIsOver(Request) :-
-       member(method(post), Request), !,
-       http_read_json(Request, JSONIn),
-       json_to_prolog(JSONIn, DataStruct),
-       DataStruct=json(['Board'=Board,'Player'=Player]),
+    member(method(post), Request), !,
+    http_read_json(Request, JSONIn),
+    json_to_prolog(JSONIn, DataStruct),
+    DataStruct=json(['Board'=Board,'Player'=Player]),
+    (
        (
-           (
-               gameOver:gameOver(Player, Board),
-               JSONOut=json([ 'isOver' = @true ])
-           )
-           ;
-           (
-               JSONOut=json([ 'isOver' = @false ])
-           )
-       ),
-       reply_json(JSONOut).
-
-%%%%%%%%%%%%%%%%%%
-%% JSON Objects %%
-%%%%%%%%%%%%%%%%%%
-
-%json_object row(a, b, c, d, e, f, g, h, i).
-%json_object matrix(ra:row/9,
-%                   rb:row/9,
-%                   rc:row/9,
-%                   rd:row/9,
-%                   re:row/9,
-%                   rf:row/9,
-%                   rg:row/9,
-%                   rh:row/9,
-%                   ri:row/9).
-
-%json_object data_struct(board:matrix/9, player:int, line:int, col:int).
+           gameOver:gameOver(Player, Board),
+           JSONOut=json([ 'isOver' = @true ])
+       )
+       ;
+       (
+           JSONOut=json([ 'isOver' = @false ])
+       )
+    ),
+    reply_json(JSONOut).
