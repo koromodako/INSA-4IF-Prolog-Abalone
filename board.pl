@@ -6,21 +6,21 @@
 %% Vérifie si le plateau "Board" contient la valeur "Value" à l'emplacement
 %% (Line, Col).
 squareContains(Board, Line, Col, Value) :-
-	nth1(Line, Board, Lines),
-	nth1(Col, Lines, Value).
+    nth1(Line, Board, Lines),
+    nth1(Col, Lines, Value).
 
 %% Vérifie si la case (Line, Col) correspond à un emplacement en dehors du 
 %% plateau de jeu.
 isOut(Board, Line, Col) :- 
-	not(
-		(
-			% Case existante dans la matrice
-			between(1, 9, Line), between(1, 9, Col), 
-			
-			% Vérifie si la case existe, ie. valeur != -1 
-			not(squareContains(Board, Line, Col, -1))
-		)
-	).
+    not(
+        (
+            % Case existante dans la matrice
+            between(1, 9, Line), between(1, 9, Col), 
+            
+            % Vérifie si la case existe, ie. valeur != -1 
+            not(squareContains(Board, Line, Col, -1))
+        )
+    ).
 
 %%
 %% Compte le nombre d'occurences d'un élément dans une liste
