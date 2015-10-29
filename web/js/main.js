@@ -113,8 +113,7 @@ $(function() {
 
             } else { // Make movement
 
-                $('g.tile.movable').removeClass('movable');
-                $('g.tile.selected').removeClass('selected');
+                removeSelectedAndMovableClass();
 
                 makePlayerMovementRequest($(this), function(json) {
                     board = json;
