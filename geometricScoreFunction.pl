@@ -157,7 +157,7 @@ computeScoreDistance(Player, Board, AimPointLine, AimPointCol, Score):-
 
 scoreMarblesOut(Player, Board, Score):-
 	count(Player, Board, N),  
-	Score is (N * 10).
+	Score is (N-15 * 30).
 
 %% Retourne le score total dans Result pour un Player donné
 
