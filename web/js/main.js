@@ -354,12 +354,14 @@ $(function() {
                         if (playerType[playerTurn] == COMPUTER) {
                             currentState = IA_PLAY;
                             IAPlayTimeoutID = setTimeout(function () {
+                                showLoading('Wait ...');
                                 makeIAPlayRequest(function (json) {
                                     board = json;
                                     updateBoard();
                                     nextPlayer();
                                     IAPlayTimeoutID = null;
                                     playTurn();
+                                    hideLoading();
                                 });
                             }, 200);
 
@@ -595,5 +597,15 @@ $(function() {
         $('g.tile.selected').removeClass('selected');
     }
 
+    function showLoading(message) {
+        if (message) {
+            $('#loading').html(message);
+        }
+        $('#loading').show();
+    }
+
+    function hideLoading() {
+        $('#loading').hide();
+    }
 });
 
