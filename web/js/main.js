@@ -34,6 +34,16 @@ $(function() {
     var playerType = {1:null, 2:null};
     var currentState = STOP;
     var IAPlayTimeoutID = null;
+    var IAPlayerConfiguration = {
+        1: {
+            depth: 1,
+            aggressiveness: 1000
+        },
+        2: {
+            depth: 1,
+            aggressiveness: 1000
+        }
+    };
 
     /**
      * URL is the same so nothing needed here
@@ -97,7 +107,6 @@ $(function() {
                     if (debug) {
                         tile.find('title.title').first().text('Score : ' + (Math.round(item[2] * 100) / 100));
                         var scoreNorm = ((( item[2] - min ) / ( max - min )) / 3 ) * 2;
-                        console.log('Min: ' + min + ' - Max: ' + max + ' - Score: ' + item[2] + ' Norm: ' + scoreNorm);
                         tile.find('polygon').first().css('fill', 'rgba(195,225,227,' + (scoreNorm + 0.33) + ')');
                     }
                 });
@@ -204,7 +213,9 @@ $(function() {
             dataType: 'json',
             data: JSON.stringify({
                 Board: board,
-                Player: playerTurn
+                Player: playerTurn,
+                Depth: IAPlayerConfiguration[playerTurn].depth,
+                Aggressiveness: IAPlayerConfiguration[playerTurn].aggressiveness
             }),
             contentType: "application/json",
             success: success,
@@ -426,15 +437,18 @@ $(function() {
     function startGame() {
 
         var genericModal = $('#generic-modal');
-        genericModal.find('h4.modal-title').first().text('Choose play mode');
-        genericModal.find('div.modal-body').first().html(
+        var genericModalTitle = genericModal.find('h4.modal-title').first();
+        var genericModalBody = genericModal.find('div.modal-body').first();
+        var genericModalFooter = genericModal.find('div.modal-footer').first();
+        genericModalTitle.text('Choose play mode');
+        genericModalBody.html(
             '<div class="text-center">' +
-            '<button id="mode-human-vs-human" type="button" class="btn btn-info">Human vs Human</button> ' +
-            '<button id="mode-human-vs-computer" type="button" class="btn btn-info">Human vs Computer</button> ' +
-            '<button id="mode-computer-vs-computer" type="button" class="btn btn-info">Computer vs Computer</button>' +
+                '<button id="mode-human-vs-human" type="button" class="btn btn-info">Human vs Human</button> ' +
+                '<button id="mode-human-vs-computer" type="button" class="btn btn-info">Human vs Computer</button> ' +
+                '<button id="mode-computer-vs-computer" type="button" class="btn btn-info">Computer vs Computer</button>' +
             '</div>'
         );
-        genericModal.find('div.modal-footer').first().html(
+        genericModalFooter.html(
             '<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button> '
         );
 
@@ -449,21 +463,121 @@ $(function() {
         $('#mode-human-vs-human').click(function() {
             playerType[1] = HUMAN;
             playerType[2] = HUMAN;
+            genericModal.modal('hide');
             stopAndInitGame();
         });
 
         $('#mode-human-vs-computer').click(function() {
             playerType[1] = HUMAN;
             playerType[2] = COMPUTER;
-            $('#generic-modal').modal('hide');
-            stopAndInitGame();
+            genericModalTitle.text('Configuration IA Player');
+            genericModalBody.html(
+                '<form id="setConfigurationIA" class="form-horizontal">' +
+                    '<div class="form-group">' +
+                        '<label for="selectDifficulty" class="col-sm-5 control-label">Select the difficulty</label>' +
+                        '<div class="col-sm-6">' +
+                            '<select id="selectDifficulty" class="form-control">' +
+                                '<option value="1">Easy (depth 1)</option>' +
+                                '<option value="2">Medium (depth 2)</option>' +
+                                '<option value="3">Expert (depth 3)</option>' +
+                            '</select>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="form-group">' +
+                        '<label for="selectAggressiveness" class="col-sm-5 control-label">Select the aggressiveness</label>' +
+                        '<div class="col-sm-6">' +
+                            '<select id="selectAggressiveness" class="form-control">' +
+                                '<option value="500">Gentle (500)</option>' +
+                                '<option value="1000">Default (1000)</option>' +
+                                '<option value="1500">Aggressive (1500)</option>' +
+                            '</select>' +
+                        '</div>'+
+                    '</div>'+
+                    '<div class="text-right">' +
+                        '<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>  ' +
+                        '<button type="submit" class="btn btn-primary">Start</button> ' +
+                    '</div>'+
+                '</form>'
+            );
+            genericModalFooter.html('');
+            $( "#setConfigurationIA" ).submit(function( event ) {
+                event.preventDefault();
+                IAPlayerConfiguration[2].depth = parseInt($('#selectDifficulty').val());
+                IAPlayerConfiguration[2].aggressiveness = parseInt($('#selectAggressiveness').val());
+                $('#generic-modal').modal('hide');
+                stopAndInitGame();
+            });
         });
 
         $('#mode-computer-vs-computer').click(function() {
             playerType[1] = COMPUTER;
             playerType[2] = COMPUTER;
-            $('#generic-modal').modal('hide');
-            stopAndInitGame();
+            genericModalTitle.text('Configuration IA Players');
+            genericModalBody.html(
+                '<form id="setConfigurationIA" class="form-horizontal">' +
+                    '<fieldset>' +
+                        '<legend>White Player</legend>' +
+                        '<div class="form-group">' +
+                            '<label for="selectDifficultyPlayer1" class="col-sm-5 control-label">Select the difficulty</label>' +
+                            '<div class="col-sm-6">' +
+                                '<select id="selectDifficultyPlayer1" class="form-control">' +
+                                    '<option value="1">Easy (depth 1)</option>' +
+                                    '<option value="2">Medium (depth 2)</option>' +
+                                    '<option value="3">Expert (depth 3)</option>' +
+                                '</select>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="form-group">' +
+                            '<label for="selectAggressivenessPlayer1" class="col-sm-5 control-label">Select the aggressiveness</label>' +
+                            '<div class="col-sm-6">' +
+                                '<select id="selectAggressivenessPlayer1" class="form-control">' +
+                                    '<option value="500">Gentle (500)</option>' +
+                                    '<option value="1000">Default (1000)</option>' +
+                                    '<option value="1500">Aggressive (1500)</option>' +
+                                '</select>' +
+                            '</div>'+
+                        '</div>'+
+                    '</fieldset>' +
+                    '<fieldset>' +
+                        '<legend>Black Player</legend>' +
+                        '<div class="form-group">' +
+                            '<label for="selectDifficultyPlayer2" class="col-sm-5 control-label">Select the difficulty</label>' +
+                            '<div class="col-sm-6">' +
+                                '<select id="selectDifficultyPlayer2" class="form-control">' +
+                                    '<option value="1">Easy (depth 1)</option>' +
+                                    '<option value="2">Medium (depth 2)</option>' +
+                                    '<option value="3">Expert (depth 3)</option>' +
+                                '</select>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="form-group">' +
+                            '<label for="selectAggressivenessPlayer2" class="col-sm-5 control-label">Select the aggressiveness</label>' +
+                            '<div class="col-sm-6">' +
+                                '<select id="selectAggressivenessPlayer2" class="form-control">' +
+                                    '<option value="500">Gentle (500)</option>' +
+                                    '<option value="1000">Default (1000)</option>' +
+                                    '<option value="1500">Aggressive (1500)</option>' +
+                                '</select>' +
+                            '</div>'+
+                        '</div>'+
+                    '</fieldset>' +
+                    '<div class="text-right">' +
+                        '<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>  ' +
+                        '<button type="submit" class="btn btn-primary">Start</button> ' +
+                    '</div>'+
+                '</form>'
+            );
+            genericModalFooter.html('');
+            $( "#setConfigurationIA" ).submit(function( event ) {
+                event.preventDefault();
+                IAPlayerConfiguration[1].depth = parseInt($('#selectDifficultyPlayer1').val());
+                IAPlayerConfiguration[1].aggressiveness = parseInt($('#selectAggressivenessPlayer1').val());
+                IAPlayerConfiguration[2].depth = parseInt($('#selectDifficultyPlayer2').val());
+                IAPlayerConfiguration[2].aggressiveness = parseInt($('#selectAggressivenessPlayer2').val());
+                $('#generic-modal').modal('hide');
+                console.log(IAPlayerConfiguration);
+                stopAndInitGame();
+            });
         });
 
         genericModal.modal('show');
@@ -480,5 +594,6 @@ $(function() {
         }
         $('g.tile.selected').removeClass('selected');
     }
+
 });
 
