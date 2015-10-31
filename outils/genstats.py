@@ -35,6 +35,21 @@ MAX_IT = 250;
 ##
 MAX_GAMES = 2;
 
+##
+#   AI depth levels
+##
+IA_DIFF_EASY = 1;
+IA_DIFF_MEDIUM = 2;
+IA_DIFF_EXPERT  = 3;
+
+##
+#   AI aggressiveness levels
+##
+IA_AGG_GENTLE = 500;
+IA_AGG_DEFAULT = 1000;
+IA_AGG_AGGRESSIVE  = 1500;
+
+
 #---------------------- FUNCTIONS ------------------------#
 
 def initLocalGameVars():
@@ -49,13 +64,6 @@ def initLocalGameVars():
 def getHeaders():
     headers = {'Content-Type':'application/json; charset=UTF-8'};
     return headers;
-
-##
-##  Returns standardized payload content
-##
-def getPayload():
-    payload = json.dumps({"Player":PLAYER,"Board":BOARD}, sort_keys=True);
-    return payload;
 
 ##
 ## Update BOARD with init value
@@ -74,17 +82,17 @@ def getInitBoardRequest():
 ##
 def checkGameIsOverRequest():
     # Get response from post request
-    response = requests.post(BASE_URL + "/check/game/is/over", data=getPayload(), headers=getHeaders());
+    response = requests.post(BASE_URL + "/check/game/is/over", data=json.dumps({"Player":PLAYER,"Board":BOARD}, sort_keys=True), headers=getHeaders());
     # return isOver value
     return response.json()['isOver'];
 
 ## 
 ##  Update BOARD with the next move played by the IA
 ##
-def makeIAPlayRequest():
+def makeIAPlayRequest(depth, aggressiveness):
     global BOARD; # sale mais c'est plus simple
     # Get response from post request
-    response = requests.post(BASE_URL + "/make/ia/play", data=getPayload(), headers=getHeaders());
+    response = requests.post(BASE_URL + "/make/ia/play", data=json.dumps({"Player":PLAYER,"Board":BOARD,"Depth":depth,"Aggressiveness":aggressiveness}, sort_keys=True), headers=getHeaders());
     # Update board
     BOARD = response.json();
     # return void
@@ -93,19 +101,23 @@ def makeIAPlayRequest():
 ##
 ##  Plays next turn of a game
 ##
-def playTurn():
+def playTurn(w_ia_depth, w_ia_aggr, b_ia_depth, b_ia_aggr):
     global PLAYER; # sale mais c'est plus simple
     # If game is over
     if checkGameIsOverRequest():
         # On retourne faux lorsque la partie est finie
         return False; 
     else:
-        # On demande à l'IA de jouer
-        makeIAPlayRequest();
         # On passe au prochain joueur
-        if PLAYER == 1:
+        if PLAYER == 1: # White AI turn
+            # On demande à l'IA de jouer
+            makeIAPlayRequest(w_ia_depth, w_ia_aggr);
+            # On change de player
             PLAYER = 2;
-        else:
+        else: # Black AI turn
+            # On demande à l'IA de jouer
+            makeIAPlayRequest(b_ia_depth, b_ia_aggr);
+            # On change de player
             PLAYER = 1;
         # On retourne vrai si la partie n'est pas finie
         return True; 
@@ -135,14 +147,14 @@ def detectInfiniteLoop():
 ##
 ##  Plays a complete game
 ##
-def playGame(maxit):
+def playGame(maxit, w_ia_depth, w_ia_aggr, b_ia_depth, b_ia_aggr):
     global WINNER_SEQ; # sale mais c'est plus simple
     global ITER_COUNT_SEQ; # sale mais c'est plus simple
     initLocalGameVars();
     getInitBoardRequest();
     interrupted = False;
     i = 0;
-    while(playTurn()):
+    while(playTurn(w_ia_depth, w_ia_aggr, b_ia_depth, b_ia_aggr)):
         if detectInfiniteLoop():
             interrupted = True;
             print("<!> INIFINITE LOOP DETECTED <!>")
@@ -174,17 +186,53 @@ def printStatistics():
     print("\n>> Statistics:\n")
     for i in range(0, len(WINNER_SEQ)):
         print("- Result: winner is %s after %s iterations." % (WINNER_SEQ[i],ITER_COUNT_SEQ[i]));
+    # Reset 
 
+
+
+def playGameSequence(w_ia_depth, w_ia_aggr, b_ia_depth, b_ia_aggr):
+    global WINNER_SEQ;
+    global ITER_COUNT_SEQ;
+    # Reset statistiques
+    WINNER_SEQ = [];
+    ITER_COUNT_SEQ = [];
+    # Get init board
+    getInitBoardRequest();
+    for i in range(0, MAX_GAMES):
+        print(">> Starting game %s" % i);
+        playGame(MAX_IT, w_ia_depth, w_ia_aggr, b_ia_depth, b_ia_aggr);
+        print(">> Game finished.\n");
+    printStatistics();
 
 #---------------------- SCRIPT ------------------------#
 
 try:
-    getInitBoardRequest();
-    for i in range(0, MAX_GAMES):
-        print(">> Starting game %s" % i);
-        playGame(MAX_IT);
-        print(">> Game finished.\n");
-    printStatistics();
+    # IA 1 vs IA 2
+    print("\n -------------------------- IA 1 vs. IA 2 -------------------------- ")
+    print("\n ************** IA 1 vs IA 2, both gentle **************\n");
+    playGameSequence(IA_DIFF_EASY, IA_AGG_GENTLE, IA_DIFF_MEDIUM, IA_AGG_GENTLE); #  
+    print("\n ************** IA 1 vs IA 2, both default **************\n");
+    playGameSequence(IA_DIFF_EASY, IA_AGG_DEFAULT, IA_DIFF_MEDIUM, IA_AGG_DEFAULT); #
+    print("\n ************** IA 1 vs IA 2, both aggressive **************\n");
+    playGameSequence(IA_DIFF_EASY, IA_AGG_AGGRESSIVE, IA_DIFF_MEDIUM, IA_AGG_AGGRESSIVE); # 
+    print("\n ************** IA 1 default vs IA 2 gentle **************\n");
+    playGameSequence(IA_DIFF_EASY, IA_AGG_DEFAULT, IA_DIFF_MEDIUM, IA_AGG_GENTLE); #     
+    print("\n ************** IA 1 aggressive vs IA 2 gentle **************\n");
+    playGameSequence(IA_DIFF_EASY, IA_AGG_AGGRESSIVE, IA_DIFF_MEDIUM, IA_AGG_GENTLE); #
+         
+    # IA 2 vs IA 3
+    print("\n -------------------------- IA 2 vs. IA 3 -------------------------- ")
+    print("\n ************** IA 2 vs IA 3, both gentle **************\n");
+    playGameSequence(IA_DIFF_MEDIUM, IA_AGG_GENTLE, IA_DIFF_EXPERT, IA_AGG_GENTLE); #  
+    print("\n ************** IA 2 vs IA 3, both default **************\n");
+    playGameSequence(IA_DIFF_MEDIUM, IA_AGG_DEFAULT, IA_DIFF_EXPERT, IA_AGG_DEFAULT); #
+    print("\n ************** IA 2 vs IA 3, both aggressive **************\n");
+    playGameSequence(IA_DIFF_MEDIUM, IA_AGG_AGGRESSIVE, IA_DIFF_EXPERT, IA_AGG_AGGRESSIVE); # 
+    print("\n ************** IA 2 default vs IA 3 gentle **************\n");
+    playGameSequence(IA_DIFF_MEDIUM, IA_AGG_DEFAULT, IA_DIFF_EXPERT, IA_AGG_GENTLE); #     
+    print("\n ************** IA 2 aggressive vs IA 3 gentle **************\n");
+    playGameSequence(IA_DIFF_MEDIUM, IA_AGG_AGGRESSIVE, IA_DIFF_EXPERT, IA_AGG_GENTLE); #
+
 except Exception, e:
     print("<!> Error : You may have forgotten to start PROLOG server at %s" % BASE_URL)
     print("Details:\n%s" % e);
