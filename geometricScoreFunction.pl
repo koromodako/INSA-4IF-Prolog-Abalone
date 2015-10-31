@@ -157,17 +157,17 @@ computeScoreDistance(Player, Board, AimPointLine, AimPointCol, Score):-
 %% donné, multiplié par 10 (arbitraire).
 %% ceci donne le score des billes en dehors du plateau
 
-scoreMarblesOut(Player, Board, Score):-
+scoreMarblesOut(Player, Board, Score, Aggressiveness):-
 	flatten(Board, BoardList),
     count(Player, BoardList, N),  
-    Score is (N * (-100)).
+    Score is (N * (-1 * Aggressiveness)).
 
 %% Retourne le score total dans Result pour un Player donné
 
-computeTotalScoreDistance(Player, Board, AimPointLine, AimPointCol, Result):- 
+computeTotalScoreDistance(Player, Board, AimPointLine, AimPointCol, Result, Aggressiveness):- 
     findall(Score, computeScoreDistance(Player, Board, AimPointLine, AimPointCol, Score), Scores),
     sum_list(Scores, ScoreIn),
-    scoreMarblesOut(Player, Board, ScoreOut),
+    scoreMarblesOut(Player, Board, ScoreOut, Aggressiveness),
     Result is (ScoreIn + ScoreOut).
     
 %% On calcule la différence entre les deux scores, et cela nous donne la valeur de 
@@ -190,6 +190,9 @@ compareScore(Player, ScoreWhite, ScoreBlack, FinalScore):-
 %% Trouve le score calculé selon l'heuristique
 %% @param Board le plateau de jeu à analyser
 geometricScore(Board, Player, FinalScore) :-
+	geometricScore(Board, Player, FinalScore, 1000).
+
+geometricScore(Board, Player, FinalScore, Aggressiveness) :-
     
     %% 1/ Calcul du centre de masse des deux couleurs BaryLine/ColBlack et BaryLine/ColWhite
     getBarycenter(1, Board, BaryLineBlack, BaryColBlack),
@@ -199,8 +202,8 @@ geometricScore(Board, Player, FinalScore) :-
     getAimPoint(BaryLineBlack, BaryColBlack, BaryLineWhite, BaryColWhite, AimPointLine, AimPointCol),
     
     %% 3/ Calcul des distances de Manhattan
-    computeTotalScoreDistance(1, Board, AimPointLine, AimPointCol, ScoreDistanceBlack),
-    computeTotalScoreDistance(2, Board, AimPointLine, AimPointCol, ScoreDistanceWhite),
+    computeTotalScoreDistance(1, Board, AimPointLine, AimPointCol, ScoreDistanceBlack, Aggressiveness),
+    computeTotalScoreDistance(2, Board, AimPointLine, AimPointCol, ScoreDistanceWhite, Aggressiveness),
     
     %% 4/ Comparaison des deux scores
     compareScore(Player, ScoreDistanceWhite, ScoreDistanceBlack, FinalScore), 

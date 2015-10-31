@@ -7,28 +7,30 @@
 :- use_module(move).
 :- use_module(geometricScoreFunction).
 
+playTurn(Board, Player, NewBoard) :-
+	playTurn(Board, Player, NewBoard, 3, 1000).
+
 %% Joue le tour du joueur passé en argument.
 %% @param Board Plateau de jeu
 %% @param Player Le joueur qui doit jouer son tour
-playTurn(Board, Player, NewBoard) :-
-    alphabeta(true, Player, [0, 0, 0, 0, Board], -10000, 10000, BestMovement, NodeValue, 2),
+playTurn(Board, Player, NewBoard, Level, Aggressiveness) :-
+    alphabeta(true, Player, [0, 0, 0, 0, Board], -10000, 10000, BestMovement, _, Level, Aggressiveness),
     nth0(0, BestMovement, Line),
     nth0(1, BestMovement, Col),
     nth0(2, BestMovement, NextLine),
     nth0(3, BestMovement, NextCol),
-    %nth0(4, BestMovement, NewBoard),
     moveMarbles(Board, Col, Line, NextCol, NextLine, NewBoard).
 
 %% La profondeur max a été atteinte, on récupère donc la valeur de la solution
-alphabeta(_, Player, Movement, _, _, _, NodeValue, 0) :-
+alphabeta(_, Player, Movement, _, _, _, NodeValue, 0, Aggressiveness) :-
     % Movements est une liste avec dans l'ordre : Line, Col, NextLine, NextCol,
     % NewBoard
     nth0(4, Movement, Board),
-    geometricScoreFunction:geometricScore(Board, Player, NodeValue), !.
+    geometricScoreFunction:geometricScore(Board, Player, NodeValue, Aggressiveness), !.
 
 %% Alpha beta sur un noeud, c'est-à-dire un déplacement et une configuration à tester,
 %% avec profondeur > 0    
-alphabeta(MaxAction, Player, Movement, Alpha, Beta, BestMovement, NodeValue, Depth) :-
+alphabeta(MaxAction, Player, Movement, Alpha, Beta, BestMovement, NodeValue, Depth, Aggressiveness) :-
     
     % Récupération des données du mouvement à analyser
     nth0(4, Movement, Board),
@@ -47,28 +49,28 @@ alphabeta(MaxAction, Player, Movement, Alpha, Beta, BestMovement, NodeValue, Dep
     swapMinMax(MaxAction, NewMaxAction),
     
     % Analyse des noeuds fils du mouvement analysé
-    alphabetaCheckNodes(NewMaxAction, Player, NewMovements, Alpha, Beta, BestMovement, NodeValue, NewDepth).
+    alphabetaCheckNodes(NewMaxAction, Player, NewMovements, Alpha, Beta, BestMovement, NodeValue, NewDepth, Aggressiveness).
 
 %% Analyse une collection de noeuds, afin d'appliquer alpha beta sur ces noeuds fils, en commencant par le premier
-alphabetaCheckNodes(MaxAction, Player, [CurrentMovement | NextMovements], Alpha, Beta, BestMovement, BestValue, Depth) :-
-    alphabeta(MaxAction, Player, CurrentMovement, Alpha, Beta, _, NodeValue, Depth),
-    alphabetaCheckNextNodes(MaxAction, Player, CurrentMovement, NextMovements, Alpha, Beta, NodeValue, BestMovement, BestValue, Depth).
+alphabetaCheckNodes(MaxAction, Player, [CurrentMovement | NextMovements], Alpha, Beta, BestMovement, BestValue, Depth, Aggressiveness) :-
+    alphabeta(MaxAction, Player, CurrentMovement, Alpha, Beta, _, NodeValue, Depth, Aggressiveness),
+    alphabetaCheckNextNodes(MaxAction, Player, CurrentMovement, NextMovements, Alpha, Beta, NodeValue, BestMovement, BestValue, Depth, Aggressiveness).
     
 %% Regarde si les coupures alpha beta peuvent être utilisées, c'est-à-dire si on
 %% doit continuer d'analyser les noeuds
-alphabetaCheckNextNodes(_, _, CurrentMovement, [], _, _, NodeValue, CurrentMovement, NodeValue, _) :-
+alphabetaCheckNextNodes(_, _, CurrentMovement, [], _, _, NodeValue, CurrentMovement, NodeValue, _, _) :-
     !. % Il n'y a pas d'autres noeuds (mouvements) à analyser
     
-alphabetaCheckNextNodes(MaxAction, _, CurrentMovement, _, Alpha, Beta, NodeValue, CurrentMovement, NodeValue, _) :-
+alphabetaCheckNextNodes(MaxAction, _, CurrentMovement, _, Alpha, Beta, NodeValue, CurrentMovement, NodeValue, _, _) :-
     MaxAction, NodeValue < Alpha, !; % Coupure Alpha
     not(MaxAction), NodeValue > Beta, !. % Coupure Beta
 
 %% Si aucune coupure n'a pu être appliquée, on analyse les noeuds restants
-alphabetaCheckNextNodes(MaxAction, Player, CurrentMovement, NextMovements, Alpha, Beta, NodeValue, BestMovement, BestValue, Depth) :-
+alphabetaCheckNextNodes(MaxAction, Player, CurrentMovement, NextMovements, Alpha, Beta, NodeValue, BestMovement, BestValue, Depth, Aggressiveness) :-
     % Mise à jour des bornes alpha et beta
     alphabetaCheckBounds(MaxAction, Alpha, Beta, NodeValue, NewAlpha, NewBeta),
     % Analyse des noeuds (mouvements)
-    alphabetaCheckNodes(MaxAction, Player, NextMovements, NewAlpha, NewBeta, PotentialBestMovement, PotentialBestValue, Depth),
+    alphabetaCheckNodes(MaxAction, Player, NextMovements, NewAlpha, NewBeta, PotentialBestMovement, PotentialBestValue, Depth, Aggressiveness),
     % On regarde quelle solution est à retenir
     alphabetaCompareNodesSolutions(MaxAction, CurrentMovement, NodeValue, PotentialBestMovement, PotentialBestValue, BestMovement, BestValue).
     
