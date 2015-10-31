@@ -598,10 +598,13 @@ $(function() {
     }
 
     function showLoading(message) {
+        var loading = $('#loading');
         if (message) {
-            $('#loading').html(message);
+            loading.html(message);
+        } else {
+            loading.html('');
         }
-        $('#loading').show();
+        loading.show();
     }
 
     function hideLoading() {
