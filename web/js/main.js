@@ -212,10 +212,10 @@ $(function() {
             url: baseUrl + '/make/ia/play',
             dataType: 'json',
             data: JSON.stringify({
+                Aggressiveness: IAPlayerConfiguration[playerTurn].aggressiveness,
                 Board: board,
-                Player: playerTurn,
                 Depth: IAPlayerConfiguration[playerTurn].depth,
-                Aggressiveness: IAPlayerConfiguration[playerTurn].aggressiveness
+                Player: playerTurn
             }),
             contentType: "application/json",
             success: success,

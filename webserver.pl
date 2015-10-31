@@ -117,7 +117,7 @@ makeIAPlayAction(Request) :-
     member(method(post), Request), !,
     http_read_json(Request, JSONIn),
     json_to_prolog(JSONIn, DataStruct),
-    DataStruct=json(['Board'=Board,'Player'=Player,'Depth'=Depth,'Aggressiveness'=Aggressiveness]),
+    DataStruct=json(['Aggressiveness'=Aggressiveness,'Board'=Board,'Depth'=Depth,'Player'=Player]),
     ia:playTurn(Board, Player, NewBoard, Depth, Aggressiveness),
     prolog_to_json(NewBoard, JSONOut),
     reply_json(JSONOut).
