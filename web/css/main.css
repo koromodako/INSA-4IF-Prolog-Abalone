@@ -4,7 +4,9 @@ svg {
     -moz-user-select: none;
     user-select: none;
 }
-
+.well {
+    background-image: none; 
+}
 svg > * {
     pointer-events: none;
 }
