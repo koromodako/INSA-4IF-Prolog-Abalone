@@ -417,10 +417,16 @@ $(function() {
                 if (playerType[1] == COMPUTER) {
                     $('#player-1-depth').text(IAPlayerConfiguration[1].depth);
                     $('#player-1-aggressiveness').text(IAPlayerConfiguration[1].aggressiveness);
+                } else {
+                    $('#player-1-depth').text('-');
+                    $('#player-1-aggressiveness').text('-');
                 }
                 if (playerType[2] == COMPUTER) {
                     $('#player-2-depth').text(IAPlayerConfiguration[2].depth);
                     $('#player-2-aggressiveness').text(IAPlayerConfiguration[2].aggressiveness);
+                } else {
+                    $('#player-2-depth').text('-');
+                    $('#player-2-aggressiveness').text('-');
                 }
             }
 
