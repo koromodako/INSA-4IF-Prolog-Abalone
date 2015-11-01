@@ -218,6 +218,12 @@ try:
     playGameSequence(IA_DIFF_EASY, IA_AGG_AGGRESSIVE, IA_DIFF_EASY, IA_AGG_GENTLE); #
     print("\n ************** IA 1 aggressive vs IA 1 default **************\n");
     playGameSequence(IA_DIFF_EASY, IA_AGG_AGGRESSIVE, IA_DIFF_EASY, IA_AGG_DEFAULT); #
+    print("\n ************** IA 1 gentle vs IA 1 default **************\n");
+    playGameSequence(IA_DIFF_EASY, IA_AGG_GENTLE, IA_DIFF_EASY, IA_AGG_DEFAULT); #
+    print("\n ************** IA 1 gentle vs IA 1 aggressive **************\n");
+    playGameSequence(IA_DIFF_EASY, IA_AGG_GENTLE, IA_DIFF_EASY, IA_AGG_AGGRESSIVE); #
+    print("\n ************** IA 1 default vs IA 1 aggressive **************\n");
+    playGameSequence(IA_DIFF_EASY, IA_AGG_DEFAULT, IA_DIFF_EASY, IA_AGG_AGGRESSIVE); #
 
     # IA 2 vs IA 2
     print("\n -------------------------- IA 2 vs. IA 2 -------------------------- ")
@@ -227,6 +233,12 @@ try:
     playGameSequence(IA_DIFF_MEDIUM, IA_AGG_AGGRESSIVE, IA_DIFF_MEDIUM, IA_AGG_GENTLE); #
     print("\n ************** IA 2 aggressive vs IA 2 default **************\n");
     playGameSequence(IA_DIFF_MEDIUM, IA_AGG_AGGRESSIVE, IA_DIFF_MEDIUM, IA_AGG_DEFAULT); #
+    print("\n ************** IA 2 gentle vs IA 2 default **************\n");
+    playGameSequence(IA_DIFF_MEDIUM, IA_AGG_GENTLE, IA_DIFF_MEDIUM, IA_AGG_DEFAULT); #
+    print("\n ************** IA 2 gentle vs IA 2 aggressive **************\n");
+    playGameSequence(IA_DIFF_MEDIUM, IA_AGG_GENTLE, IA_DIFF_MEDIUM, IA_AGG_AGGRESSIVE); #
+    print("\n ************** IA 2 default vs IA 2 aggressive **************\n");
+    playGameSequence(IA_DIFF_MEDIUM, IA_AGG_DEFAULT, IA_DIFF_MEDIUM, IA_AGG_AGGRESSIVE); #
 
     # IA 3 vs IA 3
     print("\n -------------------------- IA 3 vs. IA 3 -------------------------- ")
@@ -236,6 +248,12 @@ try:
     playGameSequence(IA_DIFF_EXPERT, IA_AGG_AGGRESSIVE, IA_DIFF_EXPERT, IA_AGG_GENTLE); #
     print("\n ************** IA 3 aggressive vs IA 3 default **************\n");
     playGameSequence(IA_DIFF_EXPERT, IA_AGG_AGGRESSIVE, IA_DIFF_EXPERT, IA_AGG_DEFAULT); #
+    print("\n ************** IA 3 gentle vs IA 3 default **************\n");
+    playGameSequence(IA_DIFF_EXPERT, IA_AGG_GENTLE, IA_DIFF_EXPERT, IA_AGG_DEFAULT); #
+    print("\n ************** IA 3 gentle vs IA 3 aggressive **************\n");
+    playGameSequence(IA_DIFF_EXPERT, IA_AGG_GENTLE, IA_DIFF_EXPERT, IA_AGG_AGGRESSIVE); #
+    print("\n ************** IA 3 default vs IA 3 aggressive **************\n");
+    playGameSequence(IA_DIFF_EXPERT, IA_AGG_DEFAULT, IA_DIFF_EXPERT, IA_AGG_AGGRESSIVE); #
 
     # IA 1 vs IA 2
     print("\n -------------------------- IA 1 vs. IA 2 -------------------------- ")
