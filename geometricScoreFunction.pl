@@ -203,7 +203,7 @@ geometricScore(Board, Player, FinalScore) :-
 
 
 geometricScore(Board, Player, FinalScore, Aggressiveness) :-
-	geometricScore(Board, Player, FinalScore, Aggressiveness, 1).
+	geometricScore(Board, Player, FinalScore, Aggressiveness, 0).
 	
 geometricScore(Board, Player, FinalScore, Aggressiveness, Random) :-
 	(
