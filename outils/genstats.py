@@ -33,7 +33,7 @@ MAX_IT = 500;
 #   Variable globale donnant le nombre de parties à jouer pour réaliser les statisques 
 #       (idéalement au moins 100)
 ##
-MAX_GAMES = 2;
+MAX_GAMES = 1;
 
 ##
 #   AI depth levels
@@ -207,6 +207,33 @@ def playGameSequence(w_ia_depth, w_ia_aggr, b_ia_depth, b_ia_aggr):
 #---------------------- SCRIPT ------------------------#
 
 try:
+    # IA 1 vs IA 1
+    print("\n -------------------------- IA 1 vs. IA 1 -------------------------- ")
+    print("\n ************** IA 1 default vs IA 1 gentle **************\n");
+    playGameSequence(IA_DIFF_EASY, IA_AGG_DEFAULT, IA_DIFF_EASY, IA_AGG_GENTLE); #     
+    print("\n ************** IA 1 aggressive vs IA 1 gentle **************\n");
+    playGameSequence(IA_DIFF_EASY, IA_AGG_AGGRESSIVE, IA_DIFF_EASY, IA_AGG_GENTLE); #
+    print("\n ************** IA 1 aggressive vs IA 1 default **************\n");
+    playGameSequence(IA_DIFF_EASY, IA_AGG_AGGRESSIVE, IA_DIFF_EASY, IA_AGG_DEFAULT); #
+
+    # IA 2 vs IA 2
+    print("\n -------------------------- IA 2 vs. IA 2 -------------------------- ")
+    print("\n ************** IA 2 default vs IA 2 gentle **************\n");
+    playGameSequence(IA_DIFF_MEDIUM, IA_AGG_DEFAULT, IA_DIFF_MEDIUM, IA_AGG_GENTLE); #     
+    print("\n ************** IA 2 aggressive vs IA 2 gentle **************\n");
+    playGameSequence(IA_DIFF_MEDIUM, IA_AGG_AGGRESSIVE, IA_DIFF_MEDIUM, IA_AGG_GENTLE); #
+    print("\n ************** IA 2 aggressive vs IA 2 default **************\n");
+    playGameSequence(IA_DIFF_MEDIUM, IA_AGG_AGGRESSIVE, IA_DIFF_MEDIUM, IA_AGG_DEFAULT); #
+
+    # IA 3 vs IA 3
+    print("\n -------------------------- IA 3 vs. IA 3 -------------------------- ")
+    print("\n ************** IA 3 default vs IA 3 gentle **************\n");
+    playGameSequence(IA_DIFF_EXPERT, IA_AGG_DEFAULT, IA_DIFF_EXPERT, IA_AGG_GENTLE); #     
+    print("\n ************** IA 3 aggressive vs IA 3 gentle **************\n");
+    playGameSequence(IA_DIFF_EXPERT, IA_AGG_AGGRESSIVE, IA_DIFF_EXPERT, IA_AGG_GENTLE); #
+    print("\n ************** IA 3 aggressive vs IA 3 default **************\n");
+    playGameSequence(IA_DIFF_EXPERT, IA_AGG_AGGRESSIVE, IA_DIFF_EXPERT, IA_AGG_DEFAULT); #
+
     # IA 1 vs IA 2
     print("\n -------------------------- IA 1 vs. IA 2 -------------------------- ")
     print("\n ************** IA 1 vs IA 2, both gentle **************\n");
@@ -261,13 +288,13 @@ try:
     playGameSequence(IA_DIFF_MEDIUM, IA_AGG_DEFAULT, IA_DIFF_EXPERT, IA_AGG_GENTLE); #     
     print("\n ************** IA 2 aggressive vs IA 3 gentle **************\n");
     playGameSequence(IA_DIFF_MEDIUM, IA_AGG_AGGRESSIVE, IA_DIFF_EXPERT, IA_AGG_GENTLE); #
-    print("\n ************** IA 1 gentle vs IA 3 default **************\n");
+    print("\n ************** IA 2 gentle vs IA 3 default **************\n");
     playGameSequence(IA_DIFF_MEDIUM, IA_AGG_GENTLE, IA_DIFF_EXPERT, IA_AGG_DEFAULT); #     
-    print("\n ************** IA 1 gentle vs IA 3 aggressive **************\n");
+    print("\n ************** IA 2 gentle vs IA 3 aggressive **************\n");
     playGameSequence(IA_DIFF_MEDIUM, IA_AGG_GENTLE, IA_DIFF_EXPERT, IA_AGG_GENTLE); #
-    print("\n ************** IA 1 aggressive vs IA 3 default **************\n");
+    print("\n ************** IA 2 aggressive vs IA 3 default **************\n");
     playGameSequence(IA_DIFF_MEDIUM, IA_AGG_AGGRESSIVE, IA_DIFF_EXPERT, IA_AGG_DEFAULT); #
-    print("\n ************** IA 1 default vs IA 3 aggressive **************\n");
+    print("\n ************** IA 2 default vs IA 3 aggressive **************\n");
     playGameSequence(IA_DIFF_MEDIUM, IA_AGG_DEFAULT, IA_DIFF_EXPERT, IA_AGG_AGGRESSIVE); #
 
 except Exception, e:
