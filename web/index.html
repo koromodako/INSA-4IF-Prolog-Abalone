@@ -482,18 +482,45 @@
             </div>
 
             <div id="debug" class="well row" style="display: none">
-                <h1>DEBUG</h1>
-                <h2>Board infos</h2>
-                <ul>
-                    <li>HexSideSize = 20</li>
-                    <li>SquareMatrixDimension = 9</li>
-                </ul>
-                <h2>Tile infos</h2>
-                <ul>
-                    <li><span id="printColor">No tile selected.</span></li>
-                    <li>cx = <span id="printCx">No tile selected.</span></li>
-                    <li>cy = <span id="printCy">No tile selected.</span></li>
-                </ul>
+                <h1 class="text-center">DEBUG</h1>
+                <div class="col-sm-3">
+                    <h2>Board infos</h2>
+                    <ul>
+                        <li>HexSideSize = 20</li>
+                        <li>SquareMatrixDimension = 9</li>
+                    </ul>
+                </div>
+                <div class="col-sm-3">
+                    <h2>Tile infos</h2>
+                    <ul>
+                        <li><span id="printColor">No tile selected.</span></li>
+                        <li>cx = <span id="printCx">No tile selected.</span></li>
+                        <li>cy = <span id="printCy">No tile selected.</span></li>
+                    </ul>
+                </div>
+                <div class="col-sm-6">
+                    <h2 class="text-center">Players infos</h2>
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h3>Player 1 (White)</h3>
+                                <ul>
+                                    <li>Type : <span id="player-1-type">-</span></li>
+                                    <li>Depth : <span id="player-1-depth">-</span></li>
+                                    <li>Aggressiveness : <span id="player-1-aggressiveness">-</span></li>
+                                </ul>
+                            </div>
+                            <div class="col-sm-6">
+                                <h3>Player 2 (Black)</h3>
+                                <ul>
+                                    <li>Type : <span id="player-2-type">-</span></li>
+                                    <li>Depth : <span id="player-2-depth">-</span></li>
+                                    <li>Aggressiveness : <span id="player-2-aggressiveness">-</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
