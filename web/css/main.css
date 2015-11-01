@@ -32,7 +32,8 @@ svg > * {
     fill: #66CCFF;
 }
 
-.tile .emptyTile {
+.tile .emptyTile,
+.tile-out .emptyTile {
     fill: rgb(255, 255, 255);
     stroke: hsl(0, 0%, 70%);
     stroke-width: 0.5;
@@ -44,11 +45,22 @@ svg > * {
     position: absolute;
     width: 100%;
     height: 100%;
-    background: url('ajax-loader.gif') center center no-repeat rgba(255,255,255,0.5);
     border-radius: 4px;
     padding: 10px;
 }
 
 #board-container {
     margin-bottom: 20px;
+}
+
+#info {
+    margin-top: 20px;
+}
+
+#timer {
+    padding: 19px;
+}
+
+#winner {
+    padding: 19px 10px;
 }

@@ -44,6 +44,10 @@ $(function() {
             aggressiveness: 1000
         }
     };
+    var timerID = null;
+    var seconds = 0;
+    var minutes = 0;
+    var hours = 0;
 
     /**
      * URL is the same so nothing needed here
@@ -312,9 +316,23 @@ $(function() {
         }
 
         // TODO move this section in the right place
-        $('#player-1-number-out').text((numberInitMax - whiteMarblesLeft) + ' / ' + numberOutToLoose);
-        $('#player-2-number-out').text((numberInitMax - blackMarblesLeft) + ' / ' + numberOutToLoose);
-
+        var whiteMarblesOut = numberInitMax - whiteMarblesLeft;
+        $('#player-1-number-out').text(whiteMarblesOut + ' / ' + numberOutToLoose);
+        if (whiteMarblesOut > 0) {
+            $('#tiles-out-white').find('.tile-out-' + whiteMarblesOut + ' circle.marble').first().addClass('whiteMarble').attr('fill', 'url(#whiteMarble)');
+        }
+        var blackMarblesOut = numberInitMax - blackMarblesLeft;
+        $('#player-2-number-out').text(blackMarblesOut + ' / ' + numberOutToLoose);
+        if (blackMarblesOut > 0) {
+            $('#tiles-out-black').find('.tile-out-' + blackMarblesOut + ' circle.marble').first().addClass('blackMarble').attr('fill', 'url(#blackMarble)');
+        }
+        if (whiteMarblesOut == blackMarblesOut) {
+            $('#winner').text('=');
+        } else if (whiteMarblesOut > blackMarblesOut) {
+            $('#winner').text('>');
+        } else {
+            $('#winner').text('<');
+        }
     }
 
     function nextPlayer() {
@@ -354,7 +372,7 @@ $(function() {
                         if (playerType[playerTurn] == COMPUTER) {
                             currentState = IA_PLAY;
                             IAPlayTimeoutID = setTimeout(function () {
-                                showLoading('Wait ...');
+                                showLoading();
                                 makeIAPlayRequest(function (json) {
                                     board = json;
                                     updateBoard();
@@ -389,6 +407,15 @@ $(function() {
             $('#player').text('player ' + (playerTurn == 1 ? 'white' : 'black'));
             $('#white-marble-out').text('0');
             $('#black-marble-out').text('0');
+            $('#tiles-out-white').find('.tile-out circle.marble').removeClass('whiteMarble').attr('fill', 'none');
+            $('#tiles-out-black').find('.tile-out circle.marble').removeClass('blackMarble').attr('fill', 'none');
+            $('#winner').text('-');
+
+            seconds = 0;
+            minutes = 0;
+            hours = 0;
+            $('#timer').html('00 : 00 : 00');
+            timerID = setInterval(timer, 1000);
 
             currentState = READY;
 
@@ -429,6 +456,8 @@ $(function() {
             clearTimeout(IAPlayTimeoutID); // Stop the last IA Play
             IAPlayTimeoutID = null;
         }
+
+        clearInterval(timerID);
 
         $('#player').text('-');
         $('#stop-game').attr('disabled', 'disabled');
@@ -482,6 +511,7 @@ $(function() {
                                 '<option value="1">Easy (depth 1)</option>' +
                                 '<option value="2">Medium (depth 2)</option>' +
                                 '<option value="3">Expert (depth 3)</option>' +
+                                '<option value="4">Guru (depth 4 - Very long)</option>' +
                             '</select>' +
                         '</div>' +
                     '</div>' +
@@ -492,6 +522,7 @@ $(function() {
                                 '<option value="500">Gentle (500)</option>' +
                                 '<option value="1000">Default (1000)</option>' +
                                 '<option value="1500">Aggressive (1500)</option>' +
+                                '<option value="2000">Very aggressive (2000)</option>' +
                             '</select>' +
                         '</div>'+
                     '</div>'+
@@ -526,6 +557,7 @@ $(function() {
                                     '<option value="1">Easy (depth 1)</option>' +
                                     '<option value="2">Medium (depth 2)</option>' +
                                     '<option value="3">Expert (depth 3)</option>' +
+                                    '<option value="4">Guru (depth 4 - Very long)</option>' +
                                 '</select>' +
                             '</div>' +
                         '</div>' +
@@ -536,6 +568,7 @@ $(function() {
                                     '<option value="500">Gentle (500)</option>' +
                                     '<option value="1000">Default (1000)</option>' +
                                     '<option value="1500">Aggressive (1500)</option>' +
+                                    '<option value="2000">Very aggressive (2000)</option>' +
                                 '</select>' +
                             '</div>'+
                         '</div>'+
@@ -549,6 +582,7 @@ $(function() {
                                     '<option value="1">Easy (depth 1)</option>' +
                                     '<option value="2">Medium (depth 2)</option>' +
                                     '<option value="3">Expert (depth 3)</option>' +
+                                    '<option value="4">Guru (depth 4 - Very long)</option>' +
                                 '</select>' +
                             '</div>' +
                         '</div>' +
@@ -559,6 +593,7 @@ $(function() {
                                     '<option value="500">Gentle (500)</option>' +
                                     '<option value="1000">Default (1000)</option>' +
                                     '<option value="1500">Aggressive (1500)</option>' +
+                                    '<option value="2000">Very aggressive (2000)</option>' +
                                 '</select>' +
                             '</div>'+
                         '</div>'+
@@ -577,7 +612,6 @@ $(function() {
                 IAPlayerConfiguration[2].depth = parseInt($('#selectDifficultyPlayer2').val());
                 IAPlayerConfiguration[2].aggressiveness = parseInt($('#selectAggressivenessPlayer2').val());
                 $('#generic-modal').modal('hide');
-                console.log(IAPlayerConfiguration);
                 stopAndInitGame();
             });
         });
@@ -599,10 +633,11 @@ $(function() {
 
     function showLoading(message) {
         var loading = $('#loading');
+        var textLoading = loading.find('.text').first();
         if (message) {
-            loading.html(message);
+            textLoading.text(message);
         } else {
-            loading.html('');
+            textLoading.text('');
         }
         loading.show();
     }
@@ -610,5 +645,18 @@ $(function() {
     function hideLoading() {
         $('#loading').hide();
     }
-});
 
+    function timer(){
+        seconds += 1;
+
+        if(seconds > 59){
+            minutes += 1;
+            seconds = 0;
+        }
+        if(minutes > 59){
+            hours += 1;
+            minutes = 0;
+        }
+        $("#timer").html(('0000' + hours).substr(-2) + ' : ' + ('0' + minutes).substr(-2) + ' : ' + ('0' + seconds).substr(-2));
+    }
+});
