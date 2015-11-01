@@ -187,28 +187,53 @@ compareScore(Player, ScoreWhite, ScoreBlack, FinalScore):-
         )
     ).
 
+
+computeRandomScore(ScoreRandom):-
+	random_between(-100, 100, ScoreRandom).
+
+computeMarbleScore(Player, Board, Aggressiveness, ScoreRandom, FinalScore):-
+	scoreMarblesOut(Player, Board, ScoreOut, Aggressiveness),
+	FinalScore is (ScoreOut + ScoreRandom).
+
+
 %% Trouve le score calculé selon l'heuristique
 %% @param Board le plateau de jeu à analyser
 geometricScore(Board, Player, FinalScore) :-
 	geometricScore(Board, Player, FinalScore, 1000).
 
+
 geometricScore(Board, Player, FinalScore, Aggressiveness) :-
-    
-    %% 1/ Calcul du centre de masse des deux couleurs BaryLine/ColBlack et BaryLine/ColWhite
-    getBarycenter(1, Board, BaryLineBlack, BaryColBlack),
-    getBarycenter(2, Board, BaryLineWhite, BaryColWhite),
-    
-    %% 2/ Calcul de la moyenne R des barycentres et du centre du plateau Cp
-    getAimPoint(BaryLineBlack, BaryColBlack, BaryLineWhite, BaryColWhite, AimPointLine, AimPointCol),
-    
-    %% 3/ Calcul des distances de Manhattan
-    computeTotalScoreDistance(1, Board, AimPointLine, AimPointCol, ScoreDistanceBlack, Aggressiveness),
-    computeTotalScoreDistance(2, Board, AimPointLine, AimPointCol, ScoreDistanceWhite, Aggressiveness),
-    
-    %% 4/ Comparaison des deux scores
-    compareScore(Player, ScoreDistanceWhite, ScoreDistanceBlack, FinalScore), 
-    
-    !.
+	geometricScore(Board, Player, FinalScore, Aggressiveness, 1).
+	
+geometricScore(Board, Player, FinalScore, Aggressiveness, Random) :-
+	(
+		(
+			Random == 1,
+			computeRandomScore(ScoreRandom), 
+			computeMarbleScore(Player, Board, Aggressiveness, ScoreRandom, FinalScore)
+		);
+		(
+
+			Random == 0,
+
+		    %% 1/ Calcul du centre de masse des deux couleurs BaryLine/ColBlack et BaryLine/ColWhite
+		    getBarycenter(1, Board, BaryLineBlack, BaryColBlack),
+		    getBarycenter(2, Board, BaryLineWhite, BaryColWhite),
+		    
+		    %% 2/ Calcul de la moyenne R des barycentres et du centre du plateau Cp
+		    getAimPoint(BaryLineBlack, BaryColBlack, BaryLineWhite, BaryColWhite, AimPointLine, AimPointCol),
+		    
+		    %% 3/ Calcul des distances de Manhattan
+		    computeTotalScoreDistance(1, Board, AimPointLine, AimPointCol, ScoreDistanceBlack, Aggressiveness),
+		    computeTotalScoreDistance(2, Board, AimPointLine, AimPointCol, ScoreDistanceWhite, Aggressiveness),
+		    
+		    %% 4/ Comparaison des deux scores
+		    compareScore(Player, ScoreDistanceWhite, ScoreDistanceBlack, FinalScore), 
+		    
+		    !
+		)
+	).
+
 
     
     
