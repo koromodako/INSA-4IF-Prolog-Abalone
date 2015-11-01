@@ -411,6 +411,19 @@ $(function() {
             $('#tiles-out-black').find('.tile-out circle.marble').removeClass('blackMarble').attr('fill', 'none');
             $('#winner').text('-');
 
+            if (debug) {
+                $('#player-1-type').text((playerType[1] == HUMAN ? 'human' : 'computer'));
+                $('#player-2-type').text((playerType[2] == HUMAN ? 'human' : 'computer'));
+                if (playerType[1] == COMPUTER) {
+                    $('#player-1-depth').text(IAPlayerConfiguration[1].depth);
+                    $('#player-1-aggressiveness').text(IAPlayerConfiguration[1].aggressiveness);
+                }
+                if (playerType[2] == COMPUTER) {
+                    $('#player-2-depth').text(IAPlayerConfiguration[2].depth);
+                    $('#player-2-aggressiveness').text(IAPlayerConfiguration[2].aggressiveness);
+                }
+            }
+
             seconds = 0;
             minutes = 0;
             hours = 0;
