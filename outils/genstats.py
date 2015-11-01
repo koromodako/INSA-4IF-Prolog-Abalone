@@ -33,7 +33,7 @@ MAX_IT = 500;
 #   Variable globale donnant le nombre de parties à jouer pour réaliser les statisques 
 #       (idéalement au moins 100)
 ##
-MAX_GAMES = 2;
+MAX_GAMES = 1;
 
 ##
 #   AI depth levels
