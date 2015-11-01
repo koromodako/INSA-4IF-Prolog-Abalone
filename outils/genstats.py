@@ -28,7 +28,7 @@ ITER_COUNT_SEQ = [];
 ##
 #   Variable globale donnant le nombre maximal de coups pour chaque partie
 ##
-MAX_IT = 250;
+MAX_IT = 500;
 ##
 #   Variable globale donnant le nombre de parties à jouer pour réaliser les statisques 
 #       (idéalement au moins 100)
@@ -219,7 +219,36 @@ try:
     playGameSequence(IA_DIFF_EASY, IA_AGG_DEFAULT, IA_DIFF_MEDIUM, IA_AGG_GENTLE); #     
     print("\n ************** IA 1 aggressive vs IA 2 gentle **************\n");
     playGameSequence(IA_DIFF_EASY, IA_AGG_AGGRESSIVE, IA_DIFF_MEDIUM, IA_AGG_GENTLE); #
-         
+    print("\n ************** IA 1 gentle vs IA 2 default **************\n");
+    playGameSequence(IA_DIFF_EASY, IA_AGG_GENTLE, IA_DIFF_MEDIUM, IA_AGG_DEFAULT); #     
+    print("\n ************** IA 1 gentle vs IA 2 aggressive **************\n");
+    playGameSequence(IA_DIFF_EASY, IA_AGG_GENTLE, IA_DIFF_MEDIUM, IA_AGG_GENTLE); #
+    print("\n ************** IA 1 aggressive vs IA 2 default **************\n");
+    playGameSequence(IA_DIFF_EASY, IA_AGG_AGGRESSIVE, IA_DIFF_MEDIUM, IA_AGG_DEFAULT); #
+    print("\n ************** IA 1 default vs IA 2 aggressive **************\n");
+    playGameSequence(IA_DIFF_EASY, IA_AGG_DEFAULT, IA_DIFF_MEDIUM, IA_AGG_AGGRESSIVE); #
+
+    # IA 1 vs IA 3
+    print("\n -------------------------- IA 1 vs. IA 3 -------------------------- ")
+    print("\n ************** IA 1 vs IA 3, both gentle **************\n");
+    playGameSequence(IA_DIFF_EASY, IA_AGG_GENTLE, IA_DIFF_EXPERT, IA_AGG_GENTLE); #  
+    print("\n ************** IA 1 vs IA 3, both default **************\n");
+    playGameSequence(IA_DIFF_EASY, IA_AGG_DEFAULT, IA_DIFF_EXPERT, IA_AGG_DEFAULT); #
+    print("\n ************** IA 1 vs IA 3, both aggressive **************\n");
+    playGameSequence(IA_DIFF_EASY, IA_AGG_AGGRESSIVE, IA_DIFF_EXPERT, IA_AGG_AGGRESSIVE); # 
+    print("\n ************** IA 1 default vs IA 3 gentle **************\n");
+    playGameSequence(IA_DIFF_EASY, IA_AGG_DEFAULT, IA_DIFF_EXPERT, IA_AGG_GENTLE); #     
+    print("\n ************** IA 1 aggressive vs IA 3 gentle **************\n");
+    playGameSequence(IA_DIFF_EASY, IA_AGG_AGGRESSIVE, IA_DIFF_EXPERT, IA_AGG_GENTLE); #
+    print("\n ************** IA 1 gentle vs IA 3 default **************\n");
+    playGameSequence(IA_DIFF_EASY, IA_AGG_GENTLE, IA_DIFF_EXPERT, IA_AGG_DEFAULT); #     
+    print("\n ************** IA 1 gentle vs IA 3 aggressive **************\n");
+    playGameSequence(IA_DIFF_EASY, IA_AGG_GENTLE, IA_DIFF_EXPERT, IA_AGG_GENTLE); #
+    print("\n ************** IA 1 aggressive vs IA 3 default **************\n");
+    playGameSequence(IA_DIFF_EASY, IA_AGG_AGGRESSIVE, IA_DIFF_EXPERT, IA_AGG_DEFAULT); #
+    print("\n ************** IA 1 default vs IA 3 aggressive **************\n");
+    playGameSequence(IA_DIFF_EASY, IA_AGG_DEFAULT, IA_DIFF_EXPERT, IA_AGG_AGGRESSIVE); #
+
     # IA 2 vs IA 3
     print("\n -------------------------- IA 2 vs. IA 3 -------------------------- ")
     print("\n ************** IA 2 vs IA 3, both gentle **************\n");
@@ -232,6 +261,14 @@ try:
     playGameSequence(IA_DIFF_MEDIUM, IA_AGG_DEFAULT, IA_DIFF_EXPERT, IA_AGG_GENTLE); #     
     print("\n ************** IA 2 aggressive vs IA 3 gentle **************\n");
     playGameSequence(IA_DIFF_MEDIUM, IA_AGG_AGGRESSIVE, IA_DIFF_EXPERT, IA_AGG_GENTLE); #
+    print("\n ************** IA 1 gentle vs IA 3 default **************\n");
+    playGameSequence(IA_DIFF_MEDIUM, IA_AGG_GENTLE, IA_DIFF_EXPERT, IA_AGG_DEFAULT); #     
+    print("\n ************** IA 1 gentle vs IA 3 aggressive **************\n");
+    playGameSequence(IA_DIFF_MEDIUM, IA_AGG_GENTLE, IA_DIFF_EXPERT, IA_AGG_GENTLE); #
+    print("\n ************** IA 1 aggressive vs IA 3 default **************\n");
+    playGameSequence(IA_DIFF_MEDIUM, IA_AGG_AGGRESSIVE, IA_DIFF_EXPERT, IA_AGG_DEFAULT); #
+    print("\n ************** IA 1 default vs IA 3 aggressive **************\n");
+    playGameSequence(IA_DIFF_MEDIUM, IA_AGG_DEFAULT, IA_DIFF_EXPERT, IA_AGG_AGGRESSIVE); #
 
 except Exception, e:
     print("<!> Error : You may have forgotten to start PROLOG server at %s" % BASE_URL)
