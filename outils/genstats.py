@@ -157,18 +157,18 @@ def playGame(maxit, w_ia_depth, w_ia_aggr, b_ia_depth, b_ia_aggr):
     while(playTurn(w_ia_depth, w_ia_aggr, b_ia_depth, b_ia_aggr)):
         if detectInfiniteLoop():
             interrupted = True;
-            print("<!> INIFINITE LOOP DETECTED <!>")
+            #print("<!> INIFINITE LOOP DETECTED <!>")
             # On signale l'interruption
             WINNER_SEQ.append("INF LOOP");
             ITER_COUNT_SEQ.append(i);
             break;
         elif i < maxit:
             i+=1;
-            if (i % 10) == 0:
-                print("- Iteration %s, continuing..." % i); 
+            #if (i % 10) == 0:
+                #print("- Iteration %s, continuing..." % i);
         else:
             interrupted = True;
-            print("<!> MAX ITERATION REACHED <!>")
+            #print("<!> MAX ITERATION REACHED <!>")
             # On signale l'interruption
             WINNER_SEQ.append("MAX IT");
             ITER_COUNT_SEQ.append(i);
@@ -186,7 +186,7 @@ def playGame(maxit, w_ia_depth, w_ia_aggr, b_ia_depth, b_ia_aggr):
 ##  Prints game sequence statistics
 ##
 def printStatistics():
-    print("\n>> Statistics:\n")
+    #print("\n>> Statistics:\n")
     for i in range(0, len(WINNER_SEQ)):
         print("- Result: winner is %s after %s iterations." % (WINNER_SEQ[i],ITER_COUNT_SEQ[i]));
     # Reset 
@@ -202,9 +202,9 @@ def playGameSequence(w_ia_depth, w_ia_aggr, b_ia_depth, b_ia_aggr):
     # Get init board
     getInitBoardRequest();
     for i in range(0, MAX_GAMES):
-        print(">> Starting game %s" % i);
+        #print(">> Starting game %s" % i);
         playGame(MAX_IT, w_ia_depth, w_ia_aggr, b_ia_depth, b_ia_aggr);
-        print(">> Game finished.\n");
+        #print(">> Game finished.\n");
     printStatistics();
 
 #---------------------- SCRIPT ------------------------#
