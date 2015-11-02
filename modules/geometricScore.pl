@@ -1,24 +1,27 @@
 %% -----------------------------------------------------------------------------
 %% Heuristique 1 : billes centrées et compactes
-%% 1/ Calcul du centre de masse des deux couleurs Cn et Cb
+%% 1/ Calcul du centre de masse des deux couleurs Cn (centre noir) et Cb (centre
+%% blanc).
 %% Pour le calculer, il faut faire la somme des coordonnées en x et y de toutes 
-%% les billes présentes sur le plateau (on ignore pour l’instant les billes tombées) 
-%% par couleur, puis on divise cette somme par le nombre total de billes prises en compte.
+%% les billes présentes sur le plateau (on ignore pour l’instant les billes 
+%% tombées) par couleur, puis on divise cette somme par le nombre total de bil-
+%% les prises en compte.
 %% 
 %% 2/ Calcul de la moyenne R de Cn, Cb, et du centre du plateau Cp
-%% Voilà.
 %% 
 %% 3/ Calcul des distances de Manhattan
-%% Pour chaque couleur on calcule la somme des distances de Manhattan entre chaque 
-%% bille et le centre R. On compte aussi les billes sorties avec une valeur 
-%% constante > distance max possible sur le plateau. On obtient deux scores : Sn et Sb.
+%% Pour chaque couleur on calcule la somme des distances de Manhattan entre 
+%% chaque bille et le centre R. On compte aussi les billes sorties avec une 
+%% valeur constante > distance max possible sur le plateau. On obtient deux 
+%% scores : Sn et Sb.
 %% 
 %% 4/ Comparaison des deux scores
-%% On calcule la différence entre les deux scores, et cela nous donne la valeur de 
-%% notre heuristique pour ce plateau et pour la couleur examinée.
+%% On calcule la différence entre les deux scores, et cela nous donne la valeur 
+%% de notre heuristique pour ce plateau et pour la couleur examinée.
 %% Le meilleur score est le plus petit.
-%% Je suis noir. Pour savoir si un coup est bon, il faut que je cherche à maximiser 
-%% Sb - Sn (= les blancs doivent avoir un score énorme, et moi un petit score)
+%% Je suis noir. Pour savoir si un coup est bon, il faut que je cherche à 
+%% maximiser Sb - Sn (= les blancs doivent avoir un score énorme, et moi un 
+%% petit score)
  
 :- module(geometricScore, [geometricScore/3]).
 
@@ -35,8 +38,9 @@ teamMarbleCoord(Player, Board, Line, Col) :-
     between(1, 9, Col), between(1, 9, Line),
     board:squareContains(Board, Line, Col, Player).
 
-%% Calcule le centre de masse d'une couleur (=la somme des coordonnees de l'ensemble des billes d'une couleur présentes
-%% sur le plateau / nb billes d'une couleur)
+%% Calcule le centre de masse d'une couleur (=la somme des coordonnees de l'en-
+%% semble des billes d'une couleur présentes sur le plateau / nb billes d'une 
+%% couleur)
 %%
 %% @param Player numéro du joueur (1 ou 2)
 %% @param Board le plateau a analyser
@@ -51,8 +55,8 @@ getBarycenter(Player, Board, BarycenterLine, BarycenterCol) :-
     sum_list(Cols, SumCol),
     BarycenterCol is SumCol / LinesLength.
 
-%% Calcul le point objectif du plateau en faisant la moyenne des barycentres des boules
-%% des deux joueurs et du centre du plateau.
+%% Calcul le point objectif du plateau en faisant la moyenne des barycentres des
+%% boules des deux joueurs et du centre du plateau.
 %%
 %% @param BaryLineBlack barycentre du noir selon les lignes
 %% @param BaryColBlack barycentre du noir selon les colonnes
@@ -71,7 +75,7 @@ getAimPoint(BaryLineBlack, BaryColBlack, BaryLineWhite, BaryColWhite, AimPointLi
 %% @param Line1 : coordonnées du point 1 en colonnes
 %% @param Col1 : coordonnées du point 1 en colonnes
 %%
-%% EXPLICATION DE L'ALGO
+%% EXPLICATIONS DE L'ALGO
 %%
 %% Si les deux points sont sur la même ligne, alors la différence sur
 %% les colonnes donne la distance
@@ -80,14 +84,14 @@ getAimPoint(BaryLineBlack, BaryColBlack, BaryLineWhite, BaryColWhite, AimPointLi
 %% de cases qui les sépare en ligne ou en colonne
 %% Sinon, on regarde la postion du poit par rapport à l'autre
 %% 3 cas : 
-%%         le pt1 est en bas à droite par rapport au pt0
+%%   le pt1 est en bas à droite par rapport au pt0
 %%       --> On refait appel à computeDistance en déplaçant le point de départ
 %%           et en incrémentant OldResult
-%%         le pt1 est en haut à gauche par rapport au pt0
+%%   le pt1 est en haut à gauche par rapport au pt0
 %%       --> On refait appel à computeDistance en déplaçant le point de départ
 %%           et en incrémentant OldResult
-%%         le pt1 est en haut à droite ou en bas à droite (diagonale interdite)
-%%        par rapport au pt0
+%%   le pt1 est en haut à droite ou en bas à droite (diagonale interdite) par 
+%%   rapport au pt0
 %%       --> on calcule la distance qui les sépare en faisant
 %%            D = |x1 - x0| + |y1 - y0|
 computeDistance(Line0, Col0, Line1, Col1, OldResult, NewResult):- 
@@ -139,8 +143,7 @@ computeDistance(Line0, Col0, Line1, Col1, OldResult, NewResult):-
         )
     ).
 
-
-%% vrai si sign(A) == sign(B)
+%% Vrai si sign(A) == sign(B)
 compareSign(A, B):-
     X is sign(A),
     Y is sign(B),
@@ -170,11 +173,12 @@ computeTotalScoreDistance(Player, Board, AimPointLine, AimPointCol, Result, Aggr
     scoreMarblesOut(Player, Board, ScoreOut, Aggressiveness),
     Result is (ScoreIn + ScoreOut).
     
-%% On calcule la différence entre les deux scores, et cela nous donne la valeur de 
-%% notre heuristique pour ce plateau et pour la couleur examinée.
+%% On calcule la différence entre les deux scores, et cela nous donne la valeur
+%% de notre heuristique pour ce plateau et pour la couleur examinée.
 %% Le meilleur score est le plus petit.
-%% Je suis noir. Pour savoir si un coup est bon, il faut que je cherche à maximiser 
-%% Sb - Sn (= les blancs doivent avoir un score énorme, et moi un petit score)
+%% Je suis noir. Pour savoir si un coup est bon, il faut que je cherche à maxi-
+%% miser Sb - Sn (= les blancs doivent avoir un score énorme, et moi un petit 
+%% score)
 compareScore(Player, ScoreWhite, ScoreBlack, FinalScore):-
     (
         (
