@@ -24,7 +24,7 @@
 :- use_module('modules/move').
 :- use_module('modules/ia').
 :- use_module('modules/gameOver').
-:- use_module('modules/geometricScoreFunction').
+:- use_module('modules/geometricScore').
 
 %%%%%%%%%%%%%%%%%%%
 %% Configuration %%
@@ -84,7 +84,7 @@ getPlayerMovementsAction(Request) :-
                 (
                     movable:playerMovements(Board, Player, Line, Col, NextLine, NextCol),
                     move:moveMarbles(Board, Col, Line, NextCol, NextLine, NewBoard),
-                    geometricScoreFunction:geometricScore(NewBoard, Player, NodeValue)
+                    geometricScore:geometricScore(NewBoard, Player, NodeValue)
                 ),
                 NewMovements
             ),

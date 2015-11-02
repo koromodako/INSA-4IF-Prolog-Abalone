@@ -20,7 +20,7 @@
 %% Je suis noir. Pour savoir si un coup est bon, il faut que je cherche à maximiser 
 %% Sb - Sn (= les blancs doivent avoir un score énorme, et moi un petit score)
  
-:- module(geometricScoreFunction, [geometricScore/3]).
+:- module(geometricScore, [geometricScore/3]).
 
 %% -----------------------------------------------------------------------------
 
