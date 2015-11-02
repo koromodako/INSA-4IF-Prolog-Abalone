@@ -5,7 +5,7 @@
 :- use_module('modules/movable_tests').
 :- use_module('modules/gameOver_tests').
 :- use_module('modules/move_tests').
-:- use_module('modules/geometricScore').
+:- use_module('modules/geometricScore_tests').
 
 % Lancement de tous les tests unitaires
 runAllTests:-
@@ -32,6 +32,6 @@ runAllTests:-
     nl,
     write('--------------------- Module : geometricScore --------------------'),
     nl, nl,
-    geometricScore:runTests(_),
+    geometricScoreTests:runTests(_),
     
     nl, nl.
