@@ -1,6 +1,6 @@
 %% -----------------------------------------------------------------------------
 %% Module contenant les tests du module "geometricScore".
-:- module(geometricScoreTests, [runTests/1]).
+:- module(geometricScoreTests, []).
 %% -----------------------------------------------------------------------------
 
 :- use_module(geometricScore).

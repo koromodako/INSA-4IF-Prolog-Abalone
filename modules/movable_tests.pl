@@ -1,6 +1,6 @@
 %% -----------------------------------------------------------------------------
 %% Module contenant les tests du module "movable".
-:- module(movableTests, [runTests/1]).
+:- module(movableTests, []).
 %% -----------------------------------------------------------------------------
 
 :- use_module(movable).
