@@ -42,10 +42,18 @@ Vous trouverez plus d'explications sur les outils (génération du SVG et géné
 L'ensemble des tests unitaires sont dans le dossier `tests`.
 Vous pouvez lancer tous les tests en chargeant le fichier `tests.pl` qui ira automatiquement chercher tous les tests du dossier `tests`, puis exécuter le prédicat `runAllTests.`.
 
-## Architecture
-
-
-
 ## Présentation
 
 Vous trouverez le support de présentation, explicant nos choix techniques et l'heuristique de l'intelligence artificielle, dans le dossier `docs` : [Présentation](docs/presentation.pdf).
+
+## Architecture
+
+### Fonctionnement IHM Console
+
+![Architecture des modules pour l'IHM console](docs/architecture-gui-console.png)
+
+### Architecture générale
+
+Présentation des interfaces publiques des modules :
+
+![Architecture de tous les modules](docs/architecture-all-modules.png)
