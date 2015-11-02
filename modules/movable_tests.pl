@@ -135,14 +135,48 @@ runTests(Result) :-
         (write('...FAIL'),nl)
     ),
 
+    % Test : playerMovements, sur une case vide
+    % Résultat : 0 déplacement
+    write('Test 13............'),
+    (
+        (
+            findall([NextLine, NextCol], movable:playerMovements(Board, 1, 0, 0, NextLine, NextCol), Movements1),
+            length(Movements1, NbMovements1),
+            NbMovements1 == 0,
+            write('SUCCESS'), nl, !
+        )
+        ;
+        (write('...FAIL'),nl)
+    ),
+    
+    % Test : playerMovements, sur une bille adverse
+    % Résultat : 0 déplacement
+    write('Test 14............'),
+    (
+        (
+            findall([NextLine, NextCol], movable:playerMovements(Board, 1, 2, 4, NextLine, NextCol), Movements2),
+            length(Movements2, NbMovements2),
+            NbMovements2 == 0,
+            write('SUCCESS'), nl, !
+        )
+        ;
+        (write('...FAIL'),nl)
+    ),
+    
+    % Test : playerMovements, sur une bille étant bloquée dans certaines
+    % directions
+    % Résultat : 5 déplacements
+    write('Test 15............'),
+    (
+        (
+            findall([NextLine, NextCol], movable:playerMovements(Board, 1, 2, 2, NextLine, NextCol), Movements3),
+            length(Movements3, NbMovements3),
+            NbMovements3 == 5,
+            write('SUCCESS'), nl, !
+        )
+        ;
+        (write('...FAIL'),nl)
+    ),
 
-    % Test : playerMovements
-    %board:initBoard(BoardInit),
-
-    %(
-    %    movable:playerMovements(BoardInit, 1, Line, Col, NextLine, NextCol),
-    %    Line == 
-
-    %),
 
     Result is 0.
