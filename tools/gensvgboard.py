@@ -5,7 +5,7 @@
 
 import sys, math
 
-# ----------------------------------- FUNCTIONS -------------------------------
+# ----------------------------------- FONCTIONS -------------------------------
 
 def get6uplet(X,Y, HexSideSize):
 #   Calcul des constantes

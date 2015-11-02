@@ -3,12 +3,28 @@
 
 import requests, json
 
-#---------------------- CONSTANTS ------------------------#
+#---------------------- CONFIGURATION ------------------------#
 
 ##
 #   URL de base pour le serveur PROLOG
 ##
 BASE_URL = "http://localhost:8080";
+##
+#   Activation/Desactivation de la detection des boucles infinie
+##
+DISABLE_INFINITE_LOOP_DETECTION = True;
+##
+#   Variable globale donnant le nombre maximal de coups pour chaque partie
+##
+MAX_IT = 500;
+##
+#   Variable globale donnant le nombre de parties à jouer pour réaliser les statisques 
+#       (idéalement au moins 100)
+##
+MAX_GAMES = 1;
+
+#---------------------- CONSTANTES ------------------------#
+
 ##
 #   Variable globale contenant le plateau de jeu à tout moment
 ##
@@ -25,89 +41,80 @@ WINNER_SEQ = [];
 #   Variable gloable de stockage du total d'itérations pour chaque partie
 ##
 ITER_COUNT_SEQ = [];
-##
-#   Variable globale donnant le nombre maximal de coups pour chaque partie
-##
-MAX_IT = 500;
-##
-#   Variable globale donnant le nombre de parties à jouer pour réaliser les statisques 
-#       (idéalement au moins 100)
-##
-MAX_GAMES = 1;
 
 ##
-#   AI depth levels
+#   Profondeur de recherche dans l'arbre pour l'IA
 ##
 IA_DIFF_EASY = 1;
 IA_DIFF_MEDIUM = 2;
 IA_DIFF_EXPERT  = 3;
 
 ##
-#   AI aggressiveness levels
+#   Niveau d'aggressivité de l'IA
 ##
 IA_AGG_GENTLE = 500;
 IA_AGG_DEFAULT = 1000;
 IA_AGG_AGGRESSIVE  = 1500;
 
 
-#---------------------- FUNCTIONS ------------------------#
+#---------------------- FONCTIONS ------------------------#
 
 def initLocalGameVars():
-    global BOARD; # sale mais c'est plus simple
-    global PLAYER; # sale mais c'est plus simple
+    global BOARD; 
+    global PLAYER; 
     BOARD = "";
     PLAYER = 1;
 
 ##
-##  Returns standardized payload headers
+##  Retourne le contenu du header standard pour la requête HTTP
 ##
 def getHeaders():
     headers = {'Content-Type':'application/json; charset=UTF-8'};
     return headers;
 
 ##
-## Update BOARD with init value
+## Réinitialise le plateau de jeu global avec le board de démarrage
 ##
 def getInitBoardRequest():
-    global BOARD; # sale mais c'est plus simple
-    # Get response from post request
+    global BOARD; 
+    # Recupere la réponse à la requete
     response = requests.post(BASE_URL + "/get/init/board");
-    # Update BOARD with the initBoard
+    # Met à jour le plateau de jeu
     BOARD = response.json();
-    # return void
+    # Retourne void
     return;
 
 ##
-##  Return true if game is over
+##  Retourne vrai si le jeu est terminé, faux dans le cas contraire
 ##
 def checkGameIsOverRequest():
-    # Get response from post request
+    # Recupere la reponse à la requete
     response = requests.post(BASE_URL + "/check/game/is/over", data=json.dumps({"Player":PLAYER,"Board":BOARD}, sort_keys=True), headers=getHeaders());
-    # return isOver value
+    # Retourne la valeur de isOver
     return response.json()['isOver'];
 
 ## 
-##  Update BOARD with the next move played by the IA
+##  Met à jour le plateau de jeu global ave le dernier mouvement de l'IA pris en compte
 ##
 def makeIAPlayRequest(depth, aggressiveness):
-    global BOARD; # sale mais c'est plus simple
-    # Get response from post request
+    global BOARD; 
+    # Recupere la reponse à la requete
     response = requests.post(BASE_URL + "/make/ia/play", data=json.dumps({"Player":PLAYER,"Board":BOARD,"Depth":depth,"Aggressiveness":aggressiveness}, sort_keys=True), headers=getHeaders());
-    # Update board
+    # Met à jour le plateau de jeu global
     BOARD = response.json();
-    # return void
+    # Retourne void
     return;
 
 ##
-##  Plays next turn of a game
+##  Joue le prochain tour de jeu avec les valeurs données pour la profondeur et l'aggressivite de chaque IA
 ##
 def playTurn(w_ia_depth, w_ia_aggr, b_ia_depth, b_ia_aggr):
-    global PLAYER; # sale mais c'est plus simple
-    # If game is over
+    global PLAYER; 
+    # Si le jeu est terminé, ...
     if checkGameIsOverRequest():
         # On retourne faux lorsque la partie est finie
         return False; 
-    else:
+    else: # Sinon ...
         # On passe au prochain joueur
         if PLAYER == 1: # White AI turn
             # On demande à l'IA de jouer
@@ -127,14 +134,16 @@ BOARD_NM2 = ""
 BOARD_NM3 = ""
 BOARD_NM4 = ""
 
-## Detects one kind of infinite loop
+## Detection des boucles infinies de 5 coups
 def detectInfiniteLoop():
     global BOARD_NM1;
     global BOARD_NM2;
     global BOARD_NM3;
     global BOARD_NM4;
-    #print(BOARD);
-    #print(BOARD_NM4);
+    
+    if DISABLE_INFINITE_LOOP_DETECTION: # CONDITION de forçage de la non verification d'apparition de boucle infinie
+        return False;
+
     if(BOARD == BOARD_NM4):
         return True; # Infinite loop detected
     else:
@@ -145,11 +154,11 @@ def detectInfiniteLoop():
         return False;
 
 ##
-##  Plays a complete game
+##  Joue une partie complete entre deux IAs avec les parametres donnés
 ##
 def playGame(maxit, w_ia_depth, w_ia_aggr, b_ia_depth, b_ia_aggr):
-    global WINNER_SEQ; # sale mais c'est plus simple
-    global ITER_COUNT_SEQ; # sale mais c'est plus simple
+    global WINNER_SEQ; 
+    global ITER_COUNT_SEQ; 
     initLocalGameVars();
     getInitBoardRequest();
     interrupted = False;
@@ -183,7 +192,7 @@ def playGame(maxit, w_ia_depth, w_ia_aggr, b_ia_depth, b_ia_aggr):
             WINNER_SEQ.append(1);
 
 ##
-##  Prints game sequence statistics
+##  Affiche les statistiques de la partie venant d'etre jouée
 ##
 def printStatistics():
     #print("\n>> Statistics:\n")
@@ -192,14 +201,16 @@ def printStatistics():
     # Reset 
 
 
-
+##
+##  Joue une sequence de parties et affiche les statistiques de la séquence de parties venant d'etre jouées
+##
 def playGameSequence(w_ia_depth, w_ia_aggr, b_ia_depth, b_ia_aggr):
     global WINNER_SEQ;
     global ITER_COUNT_SEQ;
     # Reset statistiques
     WINNER_SEQ = [];
     ITER_COUNT_SEQ = [];
-    # Get init board
+    # Recuperation board de depart
     getInitBoardRequest();
     for i in range(0, MAX_GAMES):
         #print(">> Starting game %s" % i);
