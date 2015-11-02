@@ -19,12 +19,12 @@
 :- use_module(library(http/json_convert)).
 :- use_module(library(http/http_mime_plugin)).
 
-:- use_module(board).
-:- use_module(movable).
-:- use_module(move).
-:- use_module(ia).
-:- use_module(gameOver).
-:- use_module(geometricScoreFunction).
+:- use_module('modules/board').
+:- use_module('modules/movable').
+:- use_module('modules/move').
+:- use_module('modules/ia').
+:- use_module('modules/gameOver').
+:- use_module('modules/geometricScoreFunction').
 
 %%%%%%%%%%%%%%%%%%%
 %% Configuration %%

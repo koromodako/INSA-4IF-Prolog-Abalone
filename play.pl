@@ -3,17 +3,17 @@
 :- module(play, []).
 %% -----------------------------------------------------------------------------
 
-:- use_module(board).
-:- use_module(gameOver).
-:- use_module(ia).
-:- use_module(playManual).
+:- use_module('modules/board').
+:- use_module('modules/gameOver').
+:- use_module('modules/ia').
+:- use_module('modules/playManual').
 
 %% Joue le tour du joueur passé en argument
 %% @param Board Plateau de jeu
 %% @param Player Le joueur qui doit jouer son tour
 %% @param I Variable temporaire, pour limiter le nombre de boucles (dev)
 play(Board, Player, I) :-
-    I =< 10, % DEBUG
+    I =< 100, % Nombre d'itération maximum
     write('------------------------------'), nl,
 
     write('Iteration : '), write(I), nl, % DEBUG

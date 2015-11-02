@@ -8,7 +8,7 @@
 :- use_module(geometricScoreFunction).
 
 playTurn(Board, Player, NewBoard) :-
-	playTurn(Board, Player, NewBoard, 3, 1000).
+	playTurn(Board, Player, NewBoard, 2, 1000).
 
 %% Joue le tour du joueur passé en argument.
 %% @param Board Plateau de jeu
