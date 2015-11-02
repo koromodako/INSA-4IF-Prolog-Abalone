@@ -5,7 +5,7 @@
 
 :- use_module(movable).
 :- use_module(move).
-:- use_module(geometricScoreFunction).
+:- use_module(geometricScore).
 
 playTurn(Board, Player, NewBoard) :-
 	playTurn(Board, Player, NewBoard, 2, 1000).
@@ -26,7 +26,7 @@ alphabeta(_, Player, Movement, _, _, _, NodeValue, 0, Aggressiveness) :-
     % Movements est une liste avec dans l'ordre : Line, Col, NextLine, NextCol,
     % NewBoard
     nth0(4, Movement, Board),
-    geometricScoreFunction:geometricScore(Board, Player, NodeValue, Aggressiveness), !.
+    geometricScore:geometricScore(Board, Player, NodeValue, Aggressiveness), !.
 
 %% Alpha beta sur un noeud, c'est-à-dire un déplacement et une configuration à tester,
 %% avec profondeur > 0    

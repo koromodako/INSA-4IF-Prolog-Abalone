@@ -20,6 +20,8 @@ Vous pouvez modifier ce paramètre dans le haut du fichier `play.pl` (sous le pr
 
 ## IHM Web
 
+![Capture IHM Web](docs/web-gui.png)
+
 Dans le fichier `web/index.html`, on trouve le code du plateau, qui a comme feuille de style `web/css/main.css`.
 Les autres fichiers concernant l'interface web sont dans le dossier `web`.
 
