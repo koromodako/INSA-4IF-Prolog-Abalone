@@ -30,14 +30,14 @@ Suivre les instructions dans la console pour jouer.
 
 ### Configuration
 
-Par défaut, un nombre maximum d'itération est en place (100) afin de se prémunir des boucles infinies.
+Par défaut, un nombre maximum d'itérations est en place (100) afin de se prémunir des boucles infinies.
 Vous pouvez modifier ce paramètre dans le haut du fichier `play.pl` (sous le prédicat play).
 
 ## IHM Web
 
 ![Capture IHM Web](docs/web-gui.png)
 
-Dans le fichier `web/index.html`, on trouve le code du plateau, qui a comme feuille de style `web/css/main.css`.
+Dans le fichier `web/index.html`, se trouve le code du plateau, qui a comme feuille de style `web/css/main.css`.
 Les autres fichiers concernant l'interface web sont dans le dossier `web`.
 
 L'interface propose elle aussi les trois modes de jeu.

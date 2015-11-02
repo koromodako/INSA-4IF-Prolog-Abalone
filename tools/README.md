@@ -3,7 +3,7 @@
 ## Génération des statistiques
 
 Le script python `genstats.py` permet de lancer des parties d'abalone où des IAs différentes s'affrontent.
-Un ensemble de configuration est possible, comme le nombre de partie par combat, les différents facteurs d'aggressivités ou le niveau de profondeur dans l'arbre de recherche de solutions.
+Un ensemble de configurations est possible, comme le nombre de parties par combat, les différents facteurs d'aggressivité ou le niveau de profondeur dans l'arbre de recherche de solutions.
 Tous ces paramètres sont configurables dans des constantes dans le haut du fichier `genstats.py`.
 
 ## Génération plateau SVG
