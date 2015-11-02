@@ -1,5 +1,6 @@
 %% -----------------------------------------------------------------------------
-%% Module contenant les prédicats permettant d'afficher la grille de jeu
+%% Module contenant les prédicats permettant de déterminer si le jeu est terminé
+%% pour un joueur.
 :- module(gameOver, [gameOver/2]).
 %% -----------------------------------------------------------------------------
 
