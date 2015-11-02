@@ -36,3 +36,10 @@ Cependant, elle présente un avantage sur la configuration de l'ordinateur qui c
 ## Outils
 
 Vous trouverez plus d'explications sur les outils (génération du SVG et génération de statistiques) : [Outils](tools/README.md)
+
+## Tests
+
+L'ensemble des tests unitaires sont dans le dossier `tests`. Vous pouvez lancer l'ensemble des tests à l'aide du fichier `tests.pl` et du prédicat ``.
+
+## Architecture
+
