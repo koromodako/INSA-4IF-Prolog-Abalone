@@ -7,6 +7,11 @@ Le jeu a été fait principalement en prolog avec deux interfaces disponibles :
 
 Cette réalisation a été faite dans le cadre d'un projet en école d'ingénieurs (Master 1) autour des intelligences artificielles.
 
+## Dépendances
+
+Il ne faut pas de dépendances particulières, cependant le web serveur demande une version de [SWI-Prolog](http://www.swi-prolog.org/) > 7.0.0.
+Le jeu a été testé sur [SWI-Prolog](http://www.swi-prolog.org/) 7.2.3.
+
 ## IHM Console
 
 ![Capture IHM Console](docs/console-gui.png)
