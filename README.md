@@ -39,7 +39,13 @@ Vous trouverez plus d'explications sur les outils (génération du SVG et géné
 
 ## Tests
 
-L'ensemble des tests unitaires sont dans le dossier `tests`. Vous pouvez lancer l'ensemble des tests à l'aide du fichier `tests.pl` et du prédicat ``.
+L'ensemble des tests unitaires sont dans le dossier `tests`.
+Vous pouvez lancer tous les tests en chargeant le fichier `tests.pl` qui ira automatiquement chercher tous les tests du dossier `tests`, puis exécuter le prédicat `runAllTests.`.
 
 ## Architecture
 
+
+
+## Présentation
+
+Vous trouverez le support de présentation, explicant nos choix techniques et l'heuristique de l'intelligence artificielle, dans le dossier `docs` : [Présentation](docs/presentation.pdf).
