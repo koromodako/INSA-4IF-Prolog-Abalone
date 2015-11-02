@@ -1,6 +1,6 @@
 %% -----------------------------------------------------------------------------
 %% Module permettant de jouer de manière interactive avec l'utilisateur
-:- module(playManual,[playTurnManually/3]).
+:- module(playManual, [playTurnManually/3]).
 %% -----------------------------------------------------------------------------
 
 :- use_module('display.pl').

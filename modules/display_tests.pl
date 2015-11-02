@@ -47,6 +47,8 @@ runTests(Result) :-
         (write('...FAIL\n'))
     ),
     
+    nl,
+    
     write('Test 2.............'),
     (
         (display:displayMatrix(Matrix), write('SUCCESS\n'), !)
