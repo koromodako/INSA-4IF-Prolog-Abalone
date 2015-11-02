@@ -7,6 +7,8 @@
 :- use_module(move).
 :- use_module(geometricScore).
 
+%% joue le tour du joueur passé en argument, avec une profondeur de 2 et une
+%% agressivité de 1000, considérée comme par défaut.
 playTurn(Board, Player, NewBoard) :-
 	playTurn(Board, Player, NewBoard, 2, 1000).
 
@@ -14,7 +16,7 @@ playTurn(Board, Player, NewBoard) :-
 %% @param Board Plateau de jeu
 %% @param Player Le joueur qui doit jouer son tour
 playTurn(Board, Player, NewBoard, Level, Aggressiveness) :-
-    alphabeta(true, Player, [0, 0, 0, 0, Board], -10000, 10000, BestMovement, _, Level, Aggressiveness),
+    alphabeta(true, Player, [0, 0, 0, 0, Board], -1000000, 1000000, BestMovement, _, Level, Aggressiveness),
     nth0(0, BestMovement, Line),
     nth0(1, BestMovement, Col),
     nth0(2, BestMovement, NextLine),

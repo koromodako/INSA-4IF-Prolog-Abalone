@@ -22,10 +22,8 @@ isOut(Board, Line, Col) :-
         )
     ).
 
-%%
 %% Compte le nombre d'occurences d'un élément dans une liste
 %% (fonctionnel)
-%%
 count(_, [], 0) :- !. /* empty list, base case */
 count(X, [X|T], N) :- /* if X is in the head of the list */
     count(X, T, N2), /* count on the tail (let this N2) */
@@ -34,16 +32,16 @@ count(X, [Y|T], N) :-
     X \= Y,          /* if X is not in the head */
     count(X, T, N).  /* just count the rest */
     
-%% Initiale le plateau
+%% Initialise le plateau
 initBoard(
 [
-[1,1,0,0,0,-1,-1,-1,-1],
-[1,1,0,0,0,0,-1,-1,-1],
-[1,1,1,0,0,0,0,-1,-1],
-[1,1,1,0,0,0,0,2,-1],
-[1,1,1,0,0,0,2,2,2],
-[-1,1,0,0,0,0,2,2,2],
-[-1,-1,0,0,0,0,2,2,2],
-[-1,-1,-1,0,0,0,0,2,2],
-[-1,-1,-1,-1,0,0,0,2,2]
+[ 1, 1, 0, 0, 0,-1,-1,-1,-1],
+[ 1, 1, 0, 0, 0, 0,-1,-1,-1],
+[ 1, 1, 1, 0, 0, 0, 0,-1,-1],
+[ 1, 1, 1, 0, 0, 0, 0, 2,-1],
+[ 1, 1, 1, 0, 0, 0, 2, 2, 2],
+[-1, 1, 0, 0, 0, 0, 2, 2, 2],
+[-1,-1, 0, 0, 0, 0, 2, 2, 2],
+[-1,-1,-1, 0, 0, 0, 0, 2, 2],
+[-1,-1,-1,-1, 0, 0, 0, 2, 2]
 ]).
