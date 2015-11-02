@@ -1,12 +1,22 @@
 # Abalone (prolog)
 
+Le jeu a été fait principalement en prolog avec deux interfaces disponibles :
+
+- Une IHM console, directement accessible en ligne de commande dans prolog.
+- Une IHM web, visible dans un navigateur web après le lancement du serveur prolog.
+
+Cette réalisation a été faite dans le cadre d'un projet en école d'ingénieurs (Master 1) autour des intelligences artificielles.
+
 ## IHM Console
+
+![Capture IHM Console](docs/console-gui.png)
 
 Ouvrir dans prolog `play.pl`, puis lancer une partie avec le prédicat `play:play.`
 
 ### Jouer
 
 Il y a trois modes de jeu :
+
 - Humain contre Humain
 - Humain contre Ordinateur
 - Ordinateur contre Ordinateur
